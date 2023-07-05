@@ -1,18 +1,16 @@
 <template>
     <div class="boxWrapper">
         <div class="content">
-            <el-button class="closeButton" type="primary" link @click="goHome"><el-icon><CloseBold /></el-icon></el-button>
+            <el-button class="closeButton" type="primary" link @click="goHome"><i class="fi fi-br-cross"></i></el-button>
             <div class="wrapper">
-                <img alt="" src="@/assets/login.gif"/>
-                <slot></slot>
+                <img alt="" src="../assets/login.gif"/>
+                <RouterView></RouterView>
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
-
-import {CloseBold} from "@element-plus/icons-vue";
 
 const goHome = () => {
     window.location.href='/'
