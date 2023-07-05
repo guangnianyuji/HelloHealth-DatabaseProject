@@ -13,8 +13,13 @@ function loginButtonClicked () {
     router.push("/login")
 }
 
-const handleMenuItemClick = (ke) => {
+const menuItemClick = (ke) => {
     router.push(ke.index)
+}
+
+const searchStart = (msg) => {
+    // TODO 不知道要干什么，先提示一下
+    alert("搜索开始！"+msg)
 }
 
 const exitButtonClicked = async ()=>{
@@ -92,7 +97,7 @@ let userGroupNameDict = {
         <div class="headerHolder">
             <div class="leftTitle">
                 <img alt="" src="../assets/logo.png">
-                <SearchBox></SearchBox>
+                <SearchBox @searchStart="searchStart"></SearchBox>
             </div>
             <div class="rightTitle" :class="{notVisible: !isLogin}">
                 <img alt="" src="../assets/titleImg1.png">
@@ -125,7 +130,7 @@ let userGroupNameDict = {
                     :default-active="router.currentRoute.value.path"
                     class="sideBarMenu"
                 >
-                    <el-menu-item v-for="item in menus" :index="item.path" @click="handleMenuItemClick">
+                    <el-menu-item v-for="item in menus" :index="item.path" @click="menuItemClick">
                         <i class="fi" :class="item.icon"></i>
                         <span>{{item.title}}</span>
                     </el-menu-item>
