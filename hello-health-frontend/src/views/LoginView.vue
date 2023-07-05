@@ -31,6 +31,7 @@
 import {reactive, ref} from 'vue'
 import axios from "axios";
 import {changeTheme} from "@/assets/changeTheme";
+import router from "@/router";
 
 changeTheme("#93b27b")
 
@@ -62,10 +63,10 @@ const onSubmit = async () => {
         errorMsg.value = "错误代码" + responseObj.errorCode;
         isError.value = true;
     }else{
-        if(response.data.status){
+        if(responseObj.data.status){
             isError.value = false;
             errorMsg.value = ''
-            alert("登录成功！")
+            await router.push("/")
         }else{
             errorMsg.value = "用户名或密码错误";
             isError.value = true;
