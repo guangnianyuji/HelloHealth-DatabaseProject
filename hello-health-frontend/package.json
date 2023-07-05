@@ -12,7 +12,6 @@
     "@flaticon/flaticon-uicons": "^2.2.0",
     "axios": "^1.4.0",
     "element-plus": "^2.3.7",
-    "mockjs": "^1.1.0",
     "unplugin-element-plus": "^0.7.1",
     "vite-plugin-mock": "^3.0.0",
     "vue": "^3.3.4",

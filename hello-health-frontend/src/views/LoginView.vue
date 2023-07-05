@@ -56,7 +56,7 @@ const onSubmit = async () => {
         return
     }
     //http://192.168.1.104:5144
-    let response = await axios.post("http://192.168.1.104:5144/api/Login",loginCredential)
+    let response = await axios.post("/api/Login",loginCredential)
     let responseObj = response.data;
     if(responseObj.errorCode!==200){
         errorMsg.value = "错误代码" + responseObj.errorCode;
