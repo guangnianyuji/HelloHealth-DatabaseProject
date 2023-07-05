@@ -1,38 +1,38 @@
 <template>
-    <ControlContainer>
-            <el-form
-                :label-position="'top'"
-                label-width="60px"
-                :model="loginCredential"
-                class="loginForm"
-            >
-                <div class="titleWrapper">
-                    <div class="loginTitle">登录</div>
-                    <div class="loginSubTitle">登录以继续</div>
-                </div>
+    <el-form
+        :label-position="'top'"
+        label-width="60px"
+        :model="loginCredential"
+        class="loginForm"
+    >
+        <div class="titleWrapper">
+            <div class="loginTitle">登录</div>
+            <div class="loginSubTitle">登录以继续</div>
+        </div>
 
-                <el-form-item label="手机号" v-bind:class="{ error: isError }">
-                    <el-input v-model="loginCredential.user_phone" @click="clearErrorBorder"/>
-                </el-form-item>
-                <el-form-item label="密码" v-bind:class="{ error: isError }">
-                    <el-input v-model="loginCredential.password" type="password" @click="clearErrorBorder"/>
-                </el-form-item>
-                <div class="errorText">{{errorMsg}}</div>
-                <div class="textButtonHolder">
-                    <el-button type="primary" link>注册</el-button>
-                    <el-button type="primary" link>忘记密码?</el-button>
-                </div>
-                <div class="loginButtonHolder">
-                    <el-button type="primary" @click="onSubmit">登录</el-button>
-                </div>
-            </el-form>
-    </ControlContainer>
+        <el-form-item label="手机号" v-bind:class="{ error: isError }">
+            <el-input v-model="loginCredential.user_phone" @click="clearErrorBorder"/>
+        </el-form-item>
+        <el-form-item label="密码" v-bind:class="{ error: isError }">
+            <el-input v-model="loginCredential.password" type="password" @click="clearErrorBorder"/>
+        </el-form-item>
+        <div class="errorText">{{errorMsg}}</div>
+        <div class="textButtonHolder">
+            <el-button type="primary" link>注册</el-button>
+            <el-button type="primary" link>忘记密码?</el-button>
+        </div>
+        <div class="loginButtonHolder">
+            <el-button type="primary" @click="onSubmit">登录</el-button>
+        </div>
+    </el-form>
 </template>
 
-<script lang="ts" setup>
+<script setup>
 import {reactive, ref} from 'vue'
-import ControlContainer from "../components/LoginContainer.vue";
 import axios from "axios";
+import {changeTheme} from "@/assets/changeTheme";
+
+changeTheme("#93b27b")
 
 const loginCredential = reactive({
     user_phone: '',
@@ -42,8 +42,11 @@ const loginCredential = reactive({
 const errorMsg = ref('')
 const isError = ref(false)
 const onSubmit = async () => {
+    errorMsg.value = "";
+    isError.value = false;
+
     let regPhone = /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/
-    if(loginCredential.user_phone==''){
+    if(loginCredential.user_phone===''){
         errorMsg.value = "请输入手机号！"
         isError.value = true
         return
@@ -55,7 +58,7 @@ const onSubmit = async () => {
     //http://192.168.1.104:5144
     let response = await axios.post("http://192.168.1.104:5144/api/Login",loginCredential)
     let responseObj = response.data;
-    if(responseObj.errorCode!=200){
+    if(responseObj.errorCode!==200){
         errorMsg.value = "错误代码" + responseObj.errorCode;
         isError.value = true;
     }else{
@@ -77,7 +80,8 @@ const clearErrorBorder = () =>{
 }
 </script>
 
-<style>
+<style scoped>
+
 .demo-form-inline .el-input {
     --el-input-width: 220px;
 }
