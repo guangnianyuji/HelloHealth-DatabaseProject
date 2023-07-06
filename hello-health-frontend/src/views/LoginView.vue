@@ -14,12 +14,16 @@
             <el-input v-model="loginCredential.user_phone" @click="clearErrorBorder"/>
         </el-form-item>
         <el-form-item label="密码" v-bind:class="{ error: isError }">
-            <el-input v-model="loginCredential.password" type="password" @click="clearErrorBorder"/>
+            <el-input v-model="loginCredential.password" type="password" @click="clearErrorBorder" show-password/>
         </el-form-item>
         <div class="errorText">{{errorMsg}}</div>
         <div class="textButtonHolder">
-            <el-button type="primary" link>注册</el-button>
-            <el-button type="primary" link>忘记密码?</el-button>
+            <router-link to="/login/register">
+                <el-button type="primary" link>注册</el-button>
+            </router-link>
+            <router-link to="/login/forgot">
+                <el-button type="primary" link>忘记密码?</el-button>
+            </router-link>
         </div>
         <div class="loginButtonHolder">
             <el-button type="primary" @click="onSubmit">登录</el-button>
