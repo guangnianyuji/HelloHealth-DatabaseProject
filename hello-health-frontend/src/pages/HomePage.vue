@@ -6,6 +6,7 @@ import {changeTheme} from "@/assets/changeTheme";
 import router from "@/router";
 import axios from "axios";
 import {reactive, ref} from "vue";
+import UserInfoCard from "@/components/UserInfoCard.vue";
 
 changeTheme("#00bfa8")
 
@@ -67,12 +68,11 @@ const isLogin = ref(false);
 (async ()=>{
     let response = await axios.get("/api/UserInfo")
 
-    console.log(response.data)
     if(response.data.errorCode!==200) return;
     let responseObj = response.data.data
     isLogin.value = responseObj.login;
-    console.log(responseObj.login)
     if(!responseObj.login) return;
+
     userInfo.user_group = responseObj.user_group;
     userInfo.user_phone = responseObj.user_phone;
     userInfo.user_id = responseObj.user_id;
@@ -80,7 +80,6 @@ const isLogin = ref(false);
     userInfo.avatar_url = responseObj.avatar_url;
     userInfo.user_name = responseObj.user_name;
     userInfo.unread_notification = responseObj.unread_notification;
-    console.log(responseObj.unread_notification)
 
 })()
 
@@ -116,13 +115,7 @@ let userGroupNameDict = {
         <div class="contentHolder">
             <div class="sideBar">
                 <div class="userInfoWrapper">
-                    <div class="avatarHolder" @click="avatarClicked">
-                        <el-avatar class="avatar" :size="50" :src="userInfo.avatar_url" />
-                        <div class="userInfoHolder">
-                            <div class="userName">{{userInfo.user_name}}</div>
-                            <div class="userGroup">{{userGroupNameDict[userInfo.user_group]}}</div>
-                        </div>
-                    </div>
+                    <UserInfoCard :group-id="userInfo.user_group" :user-name="userInfo.user_name" :src="userInfo.avatar_url" showAvatarBorder></UserInfoCard>
                 </div>
 
 
@@ -202,7 +195,7 @@ let userGroupNameDict = {
 
 
 .content{
-    overflow-y: scroll;
+    overflow-y: auto;
     background-color: var(--el-color-primary-light-9);
     flex: 1;
 }
@@ -226,15 +219,9 @@ let userGroupNameDict = {
 .userInfoWrapper{
     padding: 10px 20px;
     border-bottom: 1px #eee solid;
-}
-
-.avatarHolder{
-    width: 100%;
-    display: flex;
-    align-items: center;
-    flex-direction: row;
     cursor: pointer;
 }
+
 
 .avatarHolder .avatar{
     border: 5px var(--el-color-primary-light-7) solid;

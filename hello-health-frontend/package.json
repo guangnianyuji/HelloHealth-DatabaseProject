@@ -10,6 +10,9 @@
   "dependencies": {
     "@element-plus/icons-vue": "^2.1.0",
     "@flaticon/flaticon-uicons": "^2.2.0",
+    "@tiptap/pm": "^2.0.3",
+    "@tiptap/starter-kit": "^2.0.3",
+    "@tiptap/vue-3": "^2.0.3",
     "axios": "^1.4.0",
     "element-plus": "^2.3.7",
     "unplugin-element-plus": "^0.7.1",
