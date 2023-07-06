@@ -1,62 +1,59 @@
 <template>
-    <el-form 
-        :label-position="'top'" 
+    <el-form
+        :label-position="'top'"
         label-width="60px"
-        :model="registerCredential"
-        class="registerForm"
+        :model="forgotPasswordCredential"
+        class="forgotForm"
     >
         <div class="titleWrapper">
-            <div class="registerTitle">注册</div>
+            <div class="forgotTitle">找回密码</div>
+            <div class="forgotSubTitle">验证手机以重设密码</div>
         </div>
 
-        <el-form-item label="用户名" v-bind:class="{ error: isError }">
-            <el-input v-model="registerCredential.username" @click="clearErrorBorder" />
-        </el-form-item>
         <el-form-item label="手机号" v-bind:class="{ error: isError }">
-            <el-input v-model="registerCredential.user_phone" @click="clearErrorBorder" />
+            <el-input v-model="forgotPasswordCredential.user_phone" @click="clearErrorBorder"/>
         </el-form-item>
         <el-form-item label="验证码" v-bind:class="{ error: isError }">
             <div class="inputWithButton">
-                <el-input v-model="registerCredential.verification_code" @click="clearErrorBorder" />
+                <el-input v-model="forgotPasswordCredential.verification_code" @click="clearErrorBorder" />
                 <el-button :disabled="countdown > 0" @click="sendVerificationCode">
                     {{ countdown > 0 ? `重新发送(${countdown})` : "发送验证码" }}
                 </el-button>
             </div>
         </el-form-item>
-        <el-form-item label="密码" v-bind:class="{ error: isError }">
-            <el-input v-model="registerCredential.password" type="password" @click="clearErrorBorder" show-password/>
+        <el-form-item label="新密码" v-bind:class="{ error: isError }">
+            <el-input v-model="forgotPasswordCredential.password" type="password" @click="clearErrorBorder" show-password/>
         </el-form-item>
         <el-form-item label="确认密码" v-bind:class="{ error: isError }">
             <el-input v-model="repeatPassword" type="password" @click="clearErrorBorder" show-password/>
         </el-form-item>
-        <div class="errorText">{{ errorMsg }}</div>
+        <div class="errorText">{{errorMsg}}</div>
         <div class="textButtonHolder">
             <router-link to="/login">
                 <el-button type="primary" link>已有账号?点此登录</el-button>
             </router-link>
-            <router-link to="/login/forgot">
-                <el-button type="primary" link>忘记密码?</el-button>
+            <router-link to="/login/register">
+                <el-button type="primary" link>注册</el-button>
             </router-link>
         </div>
-        <div class="registerButtonHolder">
-            <el-button type="primary" @click="onSubmit">注册</el-button>
+        <div class="forgotButtonHolder">
+            <el-button type="primary" @click="onSubmit">重设密码</el-button>
         </div>
     </el-form>
 </template>
-  
+
 <script setup>
 import {reactive, ref} from 'vue'
 import axios from "axios";
 import {changeTheme} from "@/assets/changeTheme";
 import router from "@/router";
 
-changeTheme('#93b27b')
+changeTheme("#93b27b")
 
-const registerCredential = reactive({
-    username: '',
+const forgotPasswordCredential = reactive({
     user_phone: '',
     verification_code: '',
-    password: '',
+    new_password: '',
 })
 
 const repeatPassword = ref('')
@@ -64,56 +61,57 @@ const repeatPassword = ref('')
 const errorMsg = ref('')
 const isError = ref(false)
 const onSubmit = async () => {
-    errorMsg.value = ''
-    isError.value = false
+    errorMsg.value = "";
+    isError.value = false;
 
     let regPhone = /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/
-    if (registerCredential.username === '') {
-        errorMsg.value = '请输入用户名！'
+    if(forgotPasswordCredential.user_phone===''){
+        errorMsg.value = "请输入手机号！"
         isError.value = true
         return
-    } else if (registerCredential.user_phone === '') {
-        errorMsg.value = '请输入手机号！'
+    } else if(!regPhone.test(forgotPasswordCredential.user_phone)){
+        errorMsg.value = "请输入正确的手机号！"
         isError.value = true
         return
-    } else if (!regPhone.test(registerCredential.user_phone)) {
-        errorMsg.value = '请输入正确的手机号！'
-        isError.value = true
-        return
-    } else if (registerCredential.verification_code === '') {
+    } else if (forgotPasswordCredential.verification_code === '') {
         errorMsg.value = '请输入验证码！'
         isError.value = true
         return
-    } else if (repeatPassword.value != registerCredential.password) {
+    } else if (forgotPasswordCredential.password === '') {
+        errorMsg.value = '请输入新密码！'
+        isError.value = true
+        return
+    } else if (repeatPassword.value != forgotPasswordCredential.password) {
         errorMsg.value = '两次密码输入不一致！'
         isError.value = true
         return
     }
-    let response = await axios.post('/api/Register', registerCredential)
-    let responseObj = response.data
-    if (responseObj.errorCode !== 200) {
-        errorMsg.value = '错误代码' + responseObj.errorCode
-        isError.value = true
-    } else {
-        if (responseObj.data.status) {
-            isError.value = false
+
+    let response = await axios.post("/api/ForgotPassword",forgotPasswordCredential)
+    let responseObj = response.data;
+    if(responseObj.errorCode!==200){
+        errorMsg.value = "错误代码" + responseObj.errorCode;
+        isError.value = true;
+    } else{
+        if(responseObj.data.status){
+            isError.value = false;
             errorMsg.value = ''
-            alert('注册成功！')
+            alert('密码重设成功！')
             await router.push("/login")
-        } else {
+        } else{
             if (responseObj.data.errorType == 'wrong vertification code') {
                 errorMsg.value = '验证码错误！'
                 isError.value = true
-            } else if (responseObj.data.errorType == 'phone number already registered') {
-                errorMsg.value = '用户已存在！'
+            } else if (responseObj.data.errorType == 'phone number not registered') {
+                errorMsg.value = '用户不存在！'
                 isError.value = true
             }
         }
     }
 }
 
-const clearErrorBorder = () => {
-    isError.value = false
+const clearErrorBorder = () =>{
+    isError.value = false;
 }
 
 const countdown = ref(0)
@@ -123,15 +121,15 @@ const sendVerificationCode = async () => {
     isError.value = false
 
     const requestVertificationCode = {
-        user_phone: registerCredential.user_phone,
+        user_phone: forgotPasswordCredential.user_phone,
     }
 
     let regPhone = /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/
-    if (registerCredential.user_phone === '') {
+    if (forgotPasswordCredential.user_phone === '') {
         errorMsg.value = '请输入手机号！'
         isError.value = true
         return
-    } else if (!regPhone.test(registerCredential.user_phone)) {
+    } else if (!regPhone.test(forgotPasswordCredential.user_phone)) {
         errorMsg.value = '请输入正确的手机号！'
         isError.value = true
         return
@@ -162,50 +160,51 @@ const sendVerificationCode = async () => {
     }
 }
 </script>
-  
+
 <style scoped>
+
 .demo-form-inline .el-input {
     --el-input-width: 220px;
 }
 
-.titleWrapper {
+
+.titleWrapper{
     text-align: center;
-    margin-bottom: 10px;
+    margin-bottom:  20px;
     position: relative;
 }
 
-.registerTitle {
+.forgotTitle{
     font-size: 30px;
     color: var(--el-color-primary);
     font-weight: bold;
     margin-bottom: 5px;
 }
 
-.registerSubTitle {
+.forgotSubTitle{
     color: var(--el-color-primary);
 }
 
-.registerForm {
+.forgotForm{
     width: 40%;
-    height: 100%;
+    height: 90%;
 }
 
-.textButtonHolder {
+.textButtonHolder{
     text-align: right;
     margin-bottom: 20px;
 }
 
-.registerButtonHolder {
+.forgotButtonHolder{
     width: 100%;
     text-align: center;
 }
 
-.registerButtonHolder>button {
+.forgotButtonHolder>button{
     height: 40px;
     width: 60%;
 }
-
-.errorText {
+.errorText{
     font-size: 10px;
     height: 0;
     width: 100%;
@@ -213,8 +212,9 @@ const sendVerificationCode = async () => {
     transform: translateY(-15px);
 }
 
-.error .el-input {
-    --el-input-border-color: var(--el-color-error);
+.error .el-input{
+    --el-input-border-color:var(--el-color-error)
+
 }
 
 .inputWithButton {
@@ -226,4 +226,3 @@ const sendVerificationCode = async () => {
     margin-right: 10px;
 }
 </style>
-  
