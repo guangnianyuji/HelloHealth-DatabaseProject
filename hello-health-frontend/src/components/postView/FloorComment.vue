@@ -1,14 +1,17 @@
 <script setup>
 import UserInfoCard from "@/components/UserInfoCard.vue";
 
-defineProps(['userInfo','content'])
+defineProps(['commentInfo'])
 </script>
 
 <template>
 <div class="commentWrapper">
-    <UserInfoCard :user-name="userInfo.userName" :group-id="userInfo.groupId" :src="userInfo.avatarUrl"></UserInfoCard>
+    <UserInfoCard :user-info="commentInfo.author"></UserInfoCard>
     <div class="content">
-        <slot></slot>
+        {{commentInfo.content}}
+    </div>
+    <div class="reward_info">
+        {{JSON.stringify(commentInfo.reward_count)}}
     </div>
 </div>
 </template>
@@ -22,5 +25,8 @@ defineProps(['userInfo','content'])
 }
 .content{
     padding-left: 60px;
+    font-size: 0.9em;
+    line-height: 1.6em;
+    color: #222;
 }
 </style>
