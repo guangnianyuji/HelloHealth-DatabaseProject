@@ -15,7 +15,12 @@ const router = createRouter({
                 }, {
                     path: "register",
                     name: "registerView",
-                    component: ()=>import("@/views/TestView2.vue"),
+                    component: ()=>import("@/views/RegisterView.vue"),
+                }
+                , {
+                    path: "forgot",
+                    name: "forgotView",
+                    component: ()=>import("@/views/ForgotView.vue"),
                 }
             ]
         },
