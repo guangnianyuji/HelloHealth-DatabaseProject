@@ -1,12 +1,9 @@
 <script setup>
 //这是个展示用户的头像、用户名、用户组的组件，具体参考首页左上角
-// groupName和groupId选一个即可，两者都有选择groupName
+// 传入一个对象，至少要有user_id、user_name、user_group、avatar_url、verified这5个属性
 const props = defineProps({
-    src: String,
-    userName: String,
-    groupName: String,
-    groupId: String,
-    showAvatarBorder: Boolean
+    userInfo: Object,
+    showAvatarBorder: Boolean,
 })
 
 let userGroupNameDict = {
@@ -19,10 +16,10 @@ let userGroupNameDict = {
 
 <template>
     <div class="avatarHolder">
-        <el-avatar class="avatar" :size="50" :src="src" :class="{showAvatarBorder: showAvatarBorder}"/>
+        <el-avatar class="avatar" :size="50" :src="userInfo.avatar_url" :class="{showAvatarBorder: showAvatarBorder}"/>
         <div class="userInfoHolder">
-            <div class="userName">{{ userName }}</div>
-            <div class="userGroup">{{ typeof(groupName) == "undefined" ? userGroupNameDict[groupId] : groupName }}</div>
+            <div class="userName">{{ userInfo.user_name }}</div>
+            <div class="userGroup"><span>{{ userGroupNameDict[userInfo.user_group] }}</span><i class="fi fi-ss-hexagon-check verifiedIcon" :class="{notVisible:!userInfo.verified}"></i></div>
         </div>
     </div>
 </template>
@@ -56,4 +53,16 @@ let userGroupNameDict = {
     margin-top:7px;
     line-height: 18px;
 }
+
+.verifiedIcon{
+    color: var(--el-color-primary);
+    visibility: visible;
+    vertical-align: middle;
+    margin-left: 5px;
+}
+
+.notVisible{
+    visibility: hidden;
+}
+
 </style>

@@ -55,12 +55,16 @@ const menus = [
 ];
 
 let userInfo = reactive({
-    user_phone:"",
-    user_name:"未登录",
-    user_id:123456,
-    user_group:"none",
-    avatar_url:"/src/assets/defaultAvatar.png",
-    unread_notification:true
+    data:{
+        user_phone:"",
+        user_name:"未登录",
+        user_id:123456,
+        user_group:"none",
+        avatar_url:"/src/assets/defaultAvatar.png",
+        unread_notification:true,
+        verified: false
+    }
+
 });
 
 const isLogin = ref(false);
@@ -73,13 +77,7 @@ const isLogin = ref(false);
     isLogin.value = responseObj.login;
     if(!responseObj.login) return;
 
-    userInfo.user_group = responseObj.user_group;
-    userInfo.user_phone = responseObj.user_phone;
-    userInfo.user_id = responseObj.user_id;
-    userInfo.user_group = responseObj.user_group;
-    userInfo.avatar_url = responseObj.avatar_url;
-    userInfo.user_name = responseObj.user_name;
-    userInfo.unread_notification = responseObj.unread_notification;
+    userInfo.data = responseObj
 
 })()
 
@@ -115,7 +113,7 @@ let userGroupNameDict = {
         <div class="contentHolder">
             <div class="sideBar">
                 <div class="userInfoWrapper">
-                    <UserInfoCard :group-id="userInfo.user_group" :user-name="userInfo.user_name" :src="userInfo.avatar_url" showAvatarBorder></UserInfoCard>
+                    <UserInfoCard :user-info="userInfo.data" showAvatarBorder></UserInfoCard>
                 </div>
 
 
@@ -141,7 +139,7 @@ let userGroupNameDict = {
 <style scoped>
 
 .headerHolder{
-    width: 100vw;
+    width: 100%;
     height: 60px;
     box-sizing: border-box;
     background-color: #00bfa8;
@@ -158,7 +156,8 @@ let userGroupNameDict = {
 
 .pageWrapper{
     height: 100vh;
-    width: 100vw;
+    width: 100%;
+    min-width: 1200px;
     max-height: 100vh;
     box-sizing: border-box;
     display: flex;
@@ -220,26 +219,6 @@ let userGroupNameDict = {
     padding: 10px 20px;
     border-bottom: 1px #eee solid;
     cursor: pointer;
-}
-
-
-.avatarHolder .avatar{
-    border: 5px var(--el-color-primary-light-7) solid;
-    margin-right: 10px;
-}
-
-.avatarHolder .userName{
-    font-weight: bold;
-    font-size: 15px;
-}
-
-.avatarHolder .userGroup{
-    font-size: 10px;
-}
-
-.userInfoHolder{
-    margin-top:7px;
-    line-height: 18px;
 }
 
 .notVisible{
