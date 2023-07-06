@@ -1,10 +1,13 @@
 <script setup>
+import {ref} from "vue";
+
 defineProps({
   msg: {
     type: String,
     required: true
   }
 })
+
 </script>
 
 <template>
