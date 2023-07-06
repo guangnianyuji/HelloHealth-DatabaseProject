@@ -1,6 +1,15 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+<script>
+// import { RouterLink, RouterView } from 'vue-router'
+// import HelloWorld from './components/HelloWorld.vue'
+//
+
+import FindMedicineView from './views/FindMedicineView.vue'
+export default {
+    name: 'App',
+    components: {
+        FindMedicineView
+    }
+}
 </script>
 
 <template>
@@ -16,8 +25,8 @@ import HelloWorld from './components/HelloWorld.vue'
 <!--      </nav>-->
 <!--    </div>-->
 <!--  </header>-->
-
-  <RouterView />
+    <FindMedicineView />
+<!--  <RouterView />-->
 </template>
 
 <style scoped>
