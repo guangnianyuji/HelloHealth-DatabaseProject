@@ -28,7 +28,7 @@ const goHome = () => {
 
 .content {
     width: 800px;
-    height: 480px;
+    height: 520px;
     box-shadow: 0 6px 15px rgba(36,37,38,.1);
     padding: 30px 20px;
     border-radius: 3px;
