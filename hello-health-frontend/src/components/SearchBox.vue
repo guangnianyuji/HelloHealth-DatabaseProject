@@ -1,12 +1,20 @@
 <script setup>
+import {ref} from "vue";
 
-import {Search} from "@element-plus/icons-vue";
+const emit = defineEmits(['searchStart'])
+
+const searchInput = ref()
+const emitSearchStart = () => {
+    if(searchInput.value.value==="") return
+    emit('searchStart',searchInput.value.value)
+}
+
 </script>
 
 <template>
 <div class="searchBox">
-    <input placeholder="搜索">
-    <i class="icon fi fi-br-search"></i>
+    <input ref="searchInput" placeholder="搜索"  v-on:keyup.enter="emitSearchStart">
+    <i class="icon fi fi-br-search" @click="emitSearchStart"></i>
 </div>
 </template>
 
@@ -27,6 +35,7 @@ import {Search} from "@element-plus/icons-vue";
     width: 150px;
     height: 20px;
     outline: none;
+    font-size: 10px;
 }
 
 .searchBox .icon{
@@ -34,5 +43,6 @@ import {Search} from "@element-plus/icons-vue";
     color: #00bfa8;
     height: 1em;
     width: 1em;
+    cursor: pointer;
 }
 </style>

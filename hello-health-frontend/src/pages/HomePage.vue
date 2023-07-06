@@ -4,16 +4,41 @@ import SearchBox from "@/components/SearchBox.vue";
 import LinkButtonWithIcon from "@/components/LinkButtonWithIcon.vue";
 import {changeTheme} from "@/assets/changeTheme";
 import router from "@/router";
+import axios from "axios";
+import {reactive, ref} from "vue";
 
 changeTheme("#00bfa8")
-function viewMsgBtnClicked (hasNotification) {
-    alert("点击消息通知!")
-    hasNotification.value = ! hasNotification.value
+
+function loginButtonClicked () {
+    router.push("/login")
 }
 
-const handleClick = (ke) => {
+const menuItemClick = (ke) => {
     router.push(ke.index)
+}
 
+const searchStart = (msg) => {
+    // TODO 不知道要干什么，先提示一下
+    alert("搜索开始！"+msg)
+}
+
+const exitButtonClicked = async ()=>{
+    await axios.get("/api/Logout")
+    window.location.href ="/";
+}
+
+const notificationButtonClicked = () => {
+    // TODO 不知道要干什么，先写个切换小红点的代码
+    userInfo.unread_notification = !userInfo.unread_notification
+}
+
+const avatarClicked = () =>{
+    if(isLogin.value){
+        //TODO
+        alert("跳转到个人主页！")
+    }else{
+        router.push("/login")
+    }
 }
 
 const menus = [
@@ -26,9 +51,44 @@ const menus = [
     {"title":"健康日程档案","icon":"fi-rr-calendar-clock","path":"/calender"},
     {"title":"个人信息管理","icon":"fi-rr-user-gear","path":"/settings"},
     {"title":"客服中心","icon":"fi-rr-headset","path":"/customer_service"},
+];
 
+let userInfo = reactive({
+    user_phone:"",
+    user_name:"未登录",
+    user_id:123456,
+    user_group:"none",
+    avatar_url:"/src/assets/defaultAvatar.png",
+    unread_notification:true
+});
 
-]
+const isLogin = ref(false);
+
+(async ()=>{
+    let response = await axios.get("/api/UserInfo")
+
+    console.log(response.data)
+    if(response.data.errorCode!==200) return;
+    let responseObj = response.data.data
+    isLogin.value = responseObj.login;
+    console.log(responseObj.login)
+    if(!responseObj.login) return;
+    userInfo.user_group = responseObj.user_group;
+    userInfo.user_phone = responseObj.user_phone;
+    userInfo.user_id = responseObj.user_id;
+    userInfo.user_group = responseObj.user_group;
+    userInfo.avatar_url = responseObj.avatar_url;
+    userInfo.user_name = responseObj.user_name;
+    userInfo.unread_notification = responseObj.unread_notification;
+    console.log(responseObj.unread_notification)
+
+})()
+
+let userGroupNameDict = {
+    "none": "点击登录",
+    "normal": "普通用户",
+    "doctor": "医生"
+}
 
 </script>
 
@@ -37,26 +97,30 @@ const menus = [
         <div class="headerHolder">
             <div class="leftTitle">
                 <img alt="" src="../assets/logo.png">
-                <SearchBox></SearchBox>
+                <SearchBox @searchStart="searchStart"></SearchBox>
             </div>
-            <div class="rightTitle">
+            <div class="rightTitle" :class="{notVisible: !isLogin}">
                 <img alt="" src="../assets/titleImg1.png">
-                <LinkButtonWithIcon font-color="#fff" text="消息通知" icon="fi-rr-bell" :has-notification="true" @buttonClicked="viewMsgBtnClicked"></LinkButtonWithIcon>
+                <LinkButtonWithIcon font-color="#fff" text="消息通知" icon="fi-rr-bell" :has-notification="userInfo.unread_notification" @click="notificationButtonClicked"></LinkButtonWithIcon>
                 <LinkButtonWithIcon font-color="#fff" text="联系客服" icon="fi-rr-headset"></LinkButtonWithIcon>
                 <div class="line">
                 </div>
-                <LinkButtonWithIcon font-color="#fff" text="退出" icon=""></LinkButtonWithIcon>
+                <LinkButtonWithIcon font-color="#fff" text="退出" icon="" @click="exitButtonClicked"></LinkButtonWithIcon>
+            </div>
+            <div class="rightTitle" :class="{notVisible: isLogin}">
+                <img alt="" src="../assets/titleImg1.png">
 
+                <LinkButtonWithIcon font-color="#fff" text="点击登录" icon="" @click="loginButtonClicked"></LinkButtonWithIcon>
             </div>
         </div>
         <div class="contentHolder">
             <div class="sideBar">
                 <div class="userInfoWrapper">
-                    <div class="avatarHolder">
-                        <el-avatar class="avatar" :size="50" :src="'src/assets/101933351.jpg'" />
+                    <div class="avatarHolder" @click="avatarClicked">
+                        <el-avatar class="avatar" :size="50" :src="userInfo.avatar_url" />
                         <div class="userInfoHolder">
-                            <div class="userName">HH小患</div>
-                            <div class="userGroup">普通用户</div>
+                            <div class="userName">{{userInfo.user_name}}</div>
+                            <div class="userGroup">{{userGroupNameDict[userInfo.user_group]}}</div>
                         </div>
                     </div>
                 </div>
@@ -66,7 +130,7 @@ const menus = [
                     :default-active="router.currentRoute.value.path"
                     class="sideBarMenu"
                 >
-                    <el-menu-item v-for="item in menus" :index="item.path" @click="handleClick">
+                    <el-menu-item v-for="item in menus" :index="item.path" @click="menuItemClick">
                         <i class="fi" :class="item.icon"></i>
                         <span>{{item.title}}</span>
                     </el-menu-item>
@@ -169,6 +233,7 @@ const menus = [
     display: flex;
     align-items: center;
     flex-direction: row;
+    cursor: pointer;
 }
 
 .avatarHolder .avatar{
@@ -188,5 +253,9 @@ const menus = [
 .userInfoHolder{
     margin-top:7px;
     line-height: 18px;
+}
+
+.notVisible{
+    display: none !important;
 }
 </style>
