@@ -7,6 +7,7 @@ import router from "@/router";
 import axios from "axios";
 import {reactive, ref} from "vue";
 import UserInfoCard from "@/components/UserInfoCard.vue";
+import globalData from "@/global/global"
 
 changeTheme("#00bfa8")
 
@@ -44,7 +45,6 @@ const avatarClicked = () =>{
 
 const menus = [
     {"title":"首页","icon":"fi-rr-home","path":"/"},
-    {"title":"HH 就诊","icon":"fi-rr-hospital","path":"/consultation"},
     {"title":"HH 找药","icon":"fi-rr-capsules","path":"/medicine"},
     {"title":"收藏管理","icon":"fi-rr-followcollection","path":"/favourites"},
     {"title":"健康资讯","icon":"fi-rr-books","path":"/news"},
@@ -75,16 +75,28 @@ const isLogin = ref(false);
     if(response.data.errorCode!==200) return;
     let responseObj = response.data.data
     isLogin.value = responseObj.login;
+
     if(!responseObj.login) return;
-
+    globalData.login = true;
     userInfo.data = responseObj
-
+    globalData.userInfo = userInfo.data
 })()
 
 let userGroupNameDict = {
     "none": "点击登录",
     "normal": "普通用户",
     "doctor": "医生"
+}
+
+const getSidebarPath = () => {
+    let path = router.currentRoute.value.path.split("/")
+    if(path.length === 1){
+        return ""
+    }else{
+        return "/" + path[1];
+    }
+
+
 }
 
 </script>
@@ -113,12 +125,12 @@ let userGroupNameDict = {
         <div class="contentHolder">
             <div class="sideBar">
                 <div class="userInfoWrapper">
-                    <UserInfoCard :user-info="userInfo.data" showAvatarBorder></UserInfoCard>
+                    <UserInfoCard :user-info="userInfo.data" showAvatarBorder @click="avatarClicked"></UserInfoCard>
                 </div>
 
 
                 <el-menu
-                    :default-active="router.currentRoute.value.path"
+                    :default-active="getSidebarPath()"
                     class="sideBarMenu"
                 >
                     <el-menu-item v-for="item in menus" :index="item.path" @click="menuItemClick">

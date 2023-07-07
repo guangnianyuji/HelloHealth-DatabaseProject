@@ -3,6 +3,10 @@
 // position: sticky这个属性特别好玩，各位可以试一试
 import UserInfoCard from "@/components/UserInfoCard.vue";
 import FloorComment from "@/components/postView/FloorComment.vue";
+import {ref} from "vue";
+import ReplyBar from "@/components/postView/ReplyBar.vue";
+import globalData from "@/global/global";
+import {ElMessage} from "element-plus";
 
 const prop = defineProps({
     floorInfo:Object,
@@ -11,6 +15,42 @@ const prop = defineProps({
     bountyValue:Number,
     solution:Number
 })
+
+const emits = defineEmits(['replyClicked'])
+
+const comments = ref()
+
+const showReplyBar = ref(false)
+
+const closeAllReplyBar = () =>{
+    showReplyBar.value = false;
+    for(let [k,comment] of Object.entries(comments.value)){
+        comment.showComment = false;
+    }
+}
+
+defineExpose({
+    closeAllReplyBar,
+    // showReplyBar
+})
+
+const onCommentReplyClicked = ()=>{
+    emits('replyClicked')
+}
+
+const openReplyBar = () =>{
+    if(!globalData.login){
+        ElMessage.error('请先登录再参与讨论。')
+        return;
+    }
+    if(showReplyBar.value){
+        showReplyBar.value = false;
+        return
+    }
+    emits('replyClicked')
+    showReplyBar.value = true;
+}
+
 </script>
 
 <template>
@@ -41,12 +81,20 @@ const prop = defineProps({
                     {{floorInfo.post_time}}
                 </div>
                 <div class="rewards">
-                    点赞 投币 收藏 回复组件放这里
+                    点赞 投币 收藏 组件放这里
                     {{JSON.stringify(floorInfo.reward_count)}}
+
+                    <div class="replyButton" @click="openReplyBar" v-if="!title">
+                        评论放这里
+                    </div>
                 </div>
             </div>
-            <div class="commentsHolder">
-                <FloorComment v-for="item in floorInfo.comments" :comment-info="item"></FloorComment>
+            <div v-if="showReplyBar && !title">
+                <ReplyBar ></ReplyBar>
+            </div>
+
+            <div class="commentsHolder" v-if="!title">
+                <FloorComment ref="comments" v-for="item in floorInfo.comments" :comment-info="item" @replyClicked="onCommentReplyClicked"></FloorComment>
             </div>
         </div>
     </div>
@@ -126,6 +174,7 @@ const prop = defineProps({
 
 .content {
     line-height: 1.7em;
+    min-height: 200px;
 }
 
 .contentStatus {
@@ -133,6 +182,8 @@ const prop = defineProps({
     justify-content: space-between;
     margin:10px 0;
     color: #999;
+    font-size: 0.75em;
+
 }
 
 
