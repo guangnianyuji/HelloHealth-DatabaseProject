@@ -6,6 +6,8 @@ import {changeTheme} from "@/assets/changeTheme";
 import router from "@/router";
 import axios from "axios";
 import {reactive, ref} from "vue";
+import UserInfoCard from "@/components/UserInfoCard.vue";
+import globalData from "@/global/global"
 
 changeTheme("#00bfa8")
 
@@ -43,7 +45,6 @@ const avatarClicked = () =>{
 
 const menus = [
     {"title":"首页","icon":"fi-rr-home","path":"/"},
-    {"title":"HH 就诊","icon":"fi-rr-hospital","path":"/consultation"},
     {"title":"HH 找药","icon":"fi-rr-capsules","path":"/medicine"},
     {"title":"收藏管理","icon":"fi-rr-followcollection","path":"/favourites"},
     {"title":"健康资讯","icon":"fi-rr-books","path":"/news"},
@@ -54,12 +55,16 @@ const menus = [
 ];
 
 let userInfo = reactive({
-    user_phone:"",
-    user_name:"未登录",
-    user_id:123456,
-    user_group:"none",
-    avatar_url:"/src/assets/defaultAvatar.png",
-    unread_notification:true
+    data:{
+        user_phone:"",
+        user_name:"未登录",
+        user_id:123456,
+        user_group:"none",
+        avatar_url:"/src/assets/defaultAvatar.png",
+        unread_notification:true,
+        verified: false
+    }
+
 });
 
 const isLogin = ref(false);
@@ -67,27 +72,31 @@ const isLogin = ref(false);
 (async ()=>{
     let response = await axios.get("/api/UserInfo")
 
-    console.log(response.data)
     if(response.data.errorCode!==200) return;
     let responseObj = response.data.data
     isLogin.value = responseObj.login;
-    console.log(responseObj.login)
-    if(!responseObj.login) return;
-    userInfo.user_group = responseObj.user_group;
-    userInfo.user_phone = responseObj.user_phone;
-    userInfo.user_id = responseObj.user_id;
-    userInfo.user_group = responseObj.user_group;
-    userInfo.avatar_url = responseObj.avatar_url;
-    userInfo.user_name = responseObj.user_name;
-    userInfo.unread_notification = responseObj.unread_notification;
-    console.log(responseObj.unread_notification)
 
+    if(!responseObj.login) return;
+    globalData.login = true;
+    userInfo.data = responseObj
+    globalData.userInfo = userInfo.data
 })()
 
 let userGroupNameDict = {
     "none": "点击登录",
     "normal": "普通用户",
     "doctor": "医生"
+}
+
+const getSidebarPath = () => {
+    let path = router.currentRoute.value.path.split("/")
+    if(path.length === 1){
+        return ""
+    }else{
+        return "/" + path[1];
+    }
+
+
 }
 
 </script>
@@ -116,18 +125,12 @@ let userGroupNameDict = {
         <div class="contentHolder">
             <div class="sideBar">
                 <div class="userInfoWrapper">
-                    <div class="avatarHolder" @click="avatarClicked">
-                        <el-avatar class="avatar" :size="50" :src="userInfo.avatar_url" />
-                        <div class="userInfoHolder">
-                            <div class="userName">{{userInfo.user_name}}</div>
-                            <div class="userGroup">{{userGroupNameDict[userInfo.user_group]}}</div>
-                        </div>
-                    </div>
+                    <UserInfoCard :user-info="userInfo.data" showAvatarBorder @click="avatarClicked"></UserInfoCard>
                 </div>
 
 
                 <el-menu
-                    :default-active="router.currentRoute.value.path"
+                    :default-active="getSidebarPath()"
                     class="sideBarMenu"
                 >
                     <el-menu-item v-for="item in menus" :index="item.path" @click="menuItemClick">
@@ -148,7 +151,7 @@ let userGroupNameDict = {
 <style scoped>
 
 .headerHolder{
-    width: 100vw;
+    width: 100%;
     height: 60px;
     box-sizing: border-box;
     background-color: #00bfa8;
@@ -165,7 +168,8 @@ let userGroupNameDict = {
 
 .pageWrapper{
     height: 100vh;
-    width: 100vw;
+    width: 100%;
+    min-width: 1200px;
     max-height: 100vh;
     box-sizing: border-box;
     display: flex;
@@ -202,7 +206,7 @@ let userGroupNameDict = {
 
 
 .content{
-    overflow-y: scroll;
+    overflow-y: auto;
     background-color: var(--el-color-primary-light-9);
     flex: 1;
 }
@@ -226,33 +230,7 @@ let userGroupNameDict = {
 .userInfoWrapper{
     padding: 10px 20px;
     border-bottom: 1px #eee solid;
-}
-
-.avatarHolder{
-    width: 100%;
-    display: flex;
-    align-items: center;
-    flex-direction: row;
     cursor: pointer;
-}
-
-.avatarHolder .avatar{
-    border: 5px var(--el-color-primary-light-7) solid;
-    margin-right: 10px;
-}
-
-.avatarHolder .userName{
-    font-weight: bold;
-    font-size: 15px;
-}
-
-.avatarHolder .userGroup{
-    font-size: 10px;
-}
-
-.userInfoHolder{
-    margin-top:7px;
-    line-height: 18px;
 }
 
 .notVisible{
