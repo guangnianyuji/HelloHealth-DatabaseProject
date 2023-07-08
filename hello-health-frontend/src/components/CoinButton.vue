@@ -1,5 +1,6 @@
 <template>
     <div>
+    <el-tooltip class="box-item" placement="top" content="投币">
     <span
       style="text-align: left; margin-right: 8px"
       v-if="!is_coined">
@@ -12,7 +13,7 @@
         <i class="fi fi-sr-usd-circle" @click="coinIn"></i>
         
     </span>
-   
+    </el-tooltip>
     <span
      style="coin-number">
         {{coin_num}}
@@ -36,6 +37,7 @@ import { reactive } from 'vue';
 import { ElMessage } from 'element-plus'
 import { ElMessageBox } from 'element-plus'
 import axios from "axios";
+import globalData from "@/global/global"
     export default
     {
         props:["comment_id"],
@@ -44,8 +46,7 @@ import axios from "axios";
             is_coined: false,
              coin_num: 0,
             comment_id: 0,
-            //云端mock地址，可删
-            test_add: "https://mock.apifox.cn/m1/2961538-0-default"
+             
         }),
         watch:
         {
@@ -59,15 +60,23 @@ import axios from "axios";
             coinIn()
             {
                   
-                //此处要检测有没有登录
-                //没有的话要跳转去登录
+                if(!globalData.login)
+                {
+                    ElMessage.error('请先登录再参与讨论。')
+                    return;
+                }
+
                 this.changeCoin(1);
             },
             changeCoin(op)
             {//op为0，只查询；op为1 要操作
                             
-            //以后全局获取user_id
                 let user_id=-1;
+          
+                if(op==1)
+                {
+                    user_id=globalData.userInfo.user_id
+                }
  
                 let coinValue=0;//投币数
                 let coin_status=true;//如果投币，投币状态成功或失败
@@ -83,7 +92,7 @@ import axios from "axios";
                     })
                  .then(({ value }) => {
                     coinValue=value;
-                    axios.post(this.test_add+"/api/Comment/Coin",
+                    axios.post("/api/Comment/Coin",
                       reactive({
                         operate:op,
                         user_id:user_id,
@@ -125,7 +134,7 @@ import axios from "axios";
 
                  
 
-                axios.post(this.test_add+"/api/Comment/Coin",
+                axios.post("/api/Comment/Coin",
                       reactive({
                         operate:op,
                         user_id:user_id,
