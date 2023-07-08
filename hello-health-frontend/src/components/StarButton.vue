@@ -1,5 +1,6 @@
 <template>
     <div>
+    <el-tooltip class="box-item" placement="top" content="收藏">    
     <span
       style="text-align: left; margin-right: 8px"
       v-if="!is_stared">
@@ -12,12 +13,12 @@
         <i class="fi fi-sr-star" @click="star"></i>
         
     </span>
-   
+    </el-tooltip>
     <span
      style="star-number">
         {{star_num}}
      </span>
-
+     
     </div>
 
 
@@ -33,6 +34,7 @@
 <script>
 import { ElMessage } from 'element-plus'
 import { reactive } from 'vue';
+import globalData from "@/global/global"
 import axios from "axios";
     export default
     {
@@ -43,8 +45,7 @@ import axios from "axios";
             star_num: 0,
             post_id: 0,
 
-            //云端mock地址，可删
-            test_add: "https://mock.apifox.cn/m1/2961538-0-default"
+            
         }),
         watch:
         {
@@ -57,20 +58,27 @@ import axios from "axios";
         {
             star()
             {
-                //此处要检测有没有登录
-                //没有的话要跳转去登录
+                if(!globalData.login)
+            {
+                ElMessage.error('请先登录再参与讨论。')
+                return;
+            }
 
                 this.changeStar(1);
             },
             changeStar(op)
             {//op为0，只查询；op为1 要操作
-                            
+                         
             //以后全局获取user_id,没有登录就是-1
             
+                
                 let user_id=-1;
-
           
-                axios.post(this.test_add+"/api/Post/Star",
+                if(op==1)
+                {
+                    user_id=globalData.userInfo.user_id
+                }
+                axios.post("/api/Post/Star",
                     reactive({
                        operate:op,
                        user_id:user_id,
@@ -82,13 +90,13 @@ import axios from "axios";
                     }) ;
                 
            
- 
+                   
                 if(op==1)//操作//只会在登录情况下走进下面的语句
                 {
                   let message="";
                   if(this.is_stared==true)
                  {
-                         message="收藏成功！"
+                         message="收藏帖子成功！"
                  }
                  else
                 {

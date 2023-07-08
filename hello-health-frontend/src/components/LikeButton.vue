@@ -1,5 +1,6 @@
 <template>
     <div>
+    <el-tooltip class="box-item" placement="top" content="点赞">
     <span
       style="text-align: left; margin-right: 8px"
       v-if="!is_liked">
@@ -12,7 +13,7 @@
         <i class="fi fi-sr-thumbs-up" @click="like"></i>
         
     </span>
-   
+    </el-tooltip>
     <span
      style="like-number">
         {{like_num}}
@@ -34,6 +35,7 @@
 import { ElMessage } from 'element-plus'
 import { reactive } from 'vue';
 import axios from "axios";
+import globalData from "@/global/global"
     export default
     {
         props:["comment_id"],
@@ -43,8 +45,6 @@ import axios from "axios";
             like_num: 0,
             comment_id: 0,
 
-            //云端mock地址，可删
-            test_add: "https://mock.apifox.cn/m1/2961538-0-default"
         }),
         watch:
         {
@@ -57,8 +57,11 @@ import axios from "axios";
         {
             like()
             {
-                //此处要检测有没有登录
-                //没有的话要跳转去登录
+                if(!globalData.login)
+            {
+                ElMessage.error('请先登录再参与讨论。')
+                return;
+            }
             
                 this.changeLike(1);
             },
@@ -67,10 +70,14 @@ import axios from "axios";
                             
             //以后全局获取user_id,没有登录就是-1
             
-                let user_id=-1;
-
+            let user_id=-1;
           
-                axios.post(this.test_add+"/api/Comment/Like",
+                if(op==1)
+            {
+              user_id=globalData.userInfo.user_id
+            }
+          
+                axios.post("/api/Comment/Like",
                     reactive({
                        operate:op,
                        user_id:user_id,

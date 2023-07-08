@@ -39,12 +39,13 @@
       <section class="card_author">
         <el-row
           align="middle"
-          style="margin-left:5%;"
+          style="margin-left:4%;"
         >
         <el-col :span="2">
         <el-avatar :size="25" :src="post_info.author_portrait" ></el-avatar>
 
         </el-col>
+
         <el-col :span="8" style="text-align: left"> 
         <span class="card_author">
           {{ post_info.author_name }}

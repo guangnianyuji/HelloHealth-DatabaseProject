@@ -51,7 +51,7 @@ const router = createRouter({
             },{
                 path: "test",
                 name: "test",
-                component: () => import ("@/components/StarButton.vue")
+                component: () => import ("@/views/PostBoardView.vue")
             }
 
 
