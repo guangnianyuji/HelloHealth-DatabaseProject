@@ -36,21 +36,21 @@ import { reactive } from 'vue';
 import axios from "axios";
     export default
     {
-        props:["comment_id"],
+        props:["post_id"],
         data:()=>
         ({
             is_stared: false,
             star_num: 0,
-            comment_id: 0,
+            post_id: 0,
 
             //云端mock地址，可删
             test_add: "https://mock.apifox.cn/m1/2961538-0-default"
         }),
         watch:
         {
-            comment_id:function(newData)
+            post_id:function(newData)
              {
-                this.comment_id=newData;
+                this.post_id=newData;
              }
         },
         methods:
@@ -70,15 +70,15 @@ import axios from "axios";
                 let user_id=-1;
 
           
-                axios.post(this.test_add+"/api/Comment/Star",
+                axios.post(this.test_add+"/api/Post/Star",
                     reactive({
                        operate:op,
                        user_id:user_id,
-                       comment_id: this.comment_id
+                       post_id: this.post_id
                     }))
                     .then((res)=>{
                         this.is_stared=res.data.data.status;
-                         this.star_num=res.data.data.comment_star_num;
+                         this.star_num=res.data.data.post_star_num;
                     }) ;
                 
            
