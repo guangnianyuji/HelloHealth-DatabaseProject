@@ -1,4 +1,5 @@
 <template>
+
     <el-card class="card-wrapper"
              shadow="never">
         <img alt="" :src="post_info.post_pic" class="card_image"/>
