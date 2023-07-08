@@ -2,22 +2,18 @@
     <div>
     <el-tooltip class="box-item" placement="top" content="点赞">
     <span
-      style="text-align: left; margin-right: 8px"
-      v-if="!is_liked">
+        style="text-align: left; margin-right: 8px"
+        v-if="!is_liked">
         <i class="fi fi-rr-social-network" @click="like"></i>
     </span>
-    <span
-      style="text-align: left; margin-right: 8px"
-      v-else
-    >
+        <span
+            style="text-align: left; margin-right: 8px"
+            v-else
+        >
         <i class="fi fi-sr-thumbs-up" @click="like"></i>
         
     </span>
-    </el-tooltip>
-    <span
-     style="like-number">
-        {{like_num}}
-     </span>
+        <span>{{like_num}}</span>
 
     </div>
 
@@ -46,14 +42,7 @@ import globalData from "@/global/global"
             comment_id: 0,
 
         }),
-        watch:
-        {
-            comment_id:function(newData)
-             {
-                this.comment_id=newData;
-             }
-        },
-        methods:
+    methods:
         {
             like()
             {
@@ -99,18 +88,25 @@ import globalData from "@/global/global"
                  }
                  else
                 {
-                       message="取消点赞成功！"
-                }
+                    let message="";
+                    if(this.is_liked===true)
+                    {
+                        message="点赞成功！"
+                    }
+                    else
+                    {
+                        message="取消点赞成功！"
+                    }
                     ElMessage({
                         showClose: true,
                         message:message,
                         type: 'success',
-                     })
+                    })
                 }
             }
         },
-        created(){
-            this.changeLike(0);
-        }
+    created(){
+        this.changeLike(0);
     }
+}
 </script>
