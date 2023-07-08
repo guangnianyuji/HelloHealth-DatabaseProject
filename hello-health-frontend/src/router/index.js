@@ -48,6 +48,10 @@ const router = createRouter({
                 path: "forum/:postId",
                 name: "postView",
                 component: () => import ("@/views/PostView.vue")
+            },{
+                path: "test",
+                name: "test",
+                component: () => import ("@/components/StarButton.vue")
             }
 
 
