@@ -4,6 +4,8 @@ import {ref} from "vue";
 import ReplyBar from "@/components/postView/ReplyBar.vue";
 import globalData from "@/global/global"
 import {ElMessage} from "element-plus";
+import ReportButton from "@/components/postBoardView/ReportButton.vue";
+import LikeButton from "@/components/postBoardView/LikeButton.vue";
 
 const prop = defineProps({
     commentInfo: Object,
@@ -44,13 +46,18 @@ const showReplyBox = () =>{
             <div>
                 {{commentInfo.post_time}}
             </div>
-            <div>
-                {{JSON.stringify(commentInfo.reward_count)}}
-            </div>
+            <LikeButton :comment_id="commentInfo.comment_id"></LikeButton>
 
-            <div id="commentReplyButton" @click="showReplyBox">
+            <div class="replyButton" @click="showReplyBox">
                 回复
             </div>
+
+            <el-popover placement="top" :width="100" trigger="click">
+                <template #reference>
+                    <i class="fi fi-rr-menu-dots centerIcon replyButton"></i>
+                </template>
+                <ReportButton :comment_id="commentInfo.comment_id"></ReportButton>
+            </el-popover>
         </div>
     </div>
 
@@ -76,8 +83,21 @@ const showReplyBox = () =>{
 
 .reward_info{
     display: flex;
+    align-items: center;
     flex-direction: row;
-    font-size: 0.75em;
+    font-size: 0.9em;
     color:#999;
+}
+
+.reward_info>*{
+    margin-right: 10px;
+}
+
+.replyButton{
+    cursor: pointer;
+    user-select: none;
+}
+.replyButton:hover{
+    color: var(--el-color-primary);
 }
 </style>

@@ -21,7 +21,6 @@ export default{
     props:["comment_id"],
     data:()=>
     ({
-        comment_id:"",
 
     }),
     watch: 

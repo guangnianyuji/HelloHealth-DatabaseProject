@@ -1,34 +1,27 @@
 <template>
-    <div>
-    <el-tooltip class="box-item" placement="top" content="收藏">    
-    <span
-      style="text-align: left; margin-right: 8px"
-      v-if="!is_stared">
-        <i class="fi fi-rr-star" @click="star"></i>
-    </span>
-    <span
-      style="text-align: left; margin-right: 8px"
-      v-else
-    >
-        <i class="fi fi-sr-star" @click="star"></i>
-        
-    </span>
-    </el-tooltip>
-    <span
-     style="star-number">
-        {{star_num}}
-     </span>
-     
+    <div class="wrapper">
+        <el-tooltip class="box-item" placement="top" content="收藏">
+            <i v-if="!is_stared" class="fi fi-rr-star centerIcon" @click="star"></i>
+            <i v-else class="fi fi-sr-star centerIcon" @click="star"></i>
+        </el-tooltip>
+        <span>
+            {{star_num}}
+        </span>
     </div>
-
-
 </template>
 
 <style scoped>
-.star-number{
-    text-align:left;
+i {
+    cursor: pointer;
+}
+.wrapper{
+    display: flex;
+    align-items: center
 }
 
+.wrapper:hover{
+    color: var(--el-color-primary);
+}
 </style>
 
 <script>
@@ -43,9 +36,6 @@ import axios from "axios";
         ({
             is_stared: false,
             star_num: 0,
-            post_id: 0,
-
-            
         }),
         watch:
         {
@@ -74,8 +64,7 @@ import axios from "axios";
                 
                 let user_id=-1;
           
-                if(op==1)
-                {
+                if(op===1) {
                     user_id=globalData.userInfo.user_id
                 }
                 axios.post("/api/Post/Star",
@@ -91,10 +80,10 @@ import axios from "axios";
                 
            
                    
-                if(op==1)//操作//只会在登录情况下走进下面的语句
+                if(op===1)//操作//只会在登录情况下走进下面的语句
                 {
                   let message="";
-                  if(this.is_stared==true)
+                  if(this.is_stared===true)
                  {
                          message="收藏帖子成功！"
                  }
