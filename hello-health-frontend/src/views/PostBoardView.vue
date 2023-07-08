@@ -82,8 +82,7 @@ export default{
          
         post_list: [],
         
-        //云端mock地址，可删
-        test_add: "https://mock.apifox.cn/m1/2961538-0-default"
+         
     }),
     methods:
     {
@@ -97,7 +96,7 @@ export default{
       },
       sortBy(){   
         axios
-        .post(this.test_add+"/api/Post/SortBy", this.type_sort)
+        .post("/api/Post/SortBy", this.type_sort)
         .then((res)=> {
             this.post_list=[].concat(res.data.data.post_list);
         })
