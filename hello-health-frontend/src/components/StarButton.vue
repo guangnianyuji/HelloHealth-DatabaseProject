@@ -2,20 +2,20 @@
     <div>
     <span
       style="text-align: left; margin-right: 8px"
-      v-if="!is_liked">
-        <i class="fi fi-rr-social-network" @click="like"></i>
+      v-if="!is_stared">
+        <i class="fi fi-rr-star" @click="star"></i>
     </span>
     <span
       style="text-align: left; margin-right: 8px"
       v-else
     >
-        <i class="fi fi-sr-thumbs-up" @click="like"></i>
+        <i class="fi fi-sr-star" @click="star"></i>
         
     </span>
    
     <span
-     style="like-number">
-        {{like_num}}
+     style="star-number">
+        {{star_num}}
      </span>
 
     </div>
@@ -24,7 +24,7 @@
 </template>
 
 <style scoped>
-.like-number{
+.star-number{
     text-align:left;
 }
 
@@ -39,8 +39,8 @@ import axios from "axios";
         props:["comment_id"],
         data:()=>
         ({
-            is_liked: false,
-            like_num: 0,
+            is_stared: false,
+            star_num: 0,
             comment_id: 0,
 
             //云端mock地址，可删
@@ -55,14 +55,14 @@ import axios from "axios";
         },
         methods:
         {
-            like()
+            star()
             {
                 //此处要检测有没有登录
                 //没有的话要跳转去登录
-            
-                this.changeLike(1);
+
+                this.changeStar(1);
             },
-            changeLike(op)
+            changeStar(op)
             {//op为0，只查询；op为1 要操作
                             
             //以后全局获取user_id,没有登录就是-1
@@ -70,15 +70,15 @@ import axios from "axios";
                 let user_id=-1;
 
           
-                axios.post(this.test_add+"/api/Comment/Like",
+                axios.post(this.test_add+"/api/Comment/Star",
                     reactive({
                        operate:op,
                        user_id:user_id,
                        comment_id: this.comment_id
                     }))
                     .then((res)=>{
-                        this.is_liked=res.data.data.status;
-                         this.like_num=res.data.data.comment_like_num;
+                        this.is_stared=res.data.data.status;
+                         this.star_num=res.data.data.comment_star_num;
                     }) ;
                 
            
@@ -86,13 +86,13 @@ import axios from "axios";
                 if(op==1)//操作//只会在登录情况下走进下面的语句
                 {
                   let message="";
-                  if(this.is_liked==true)
+                  if(this.is_stared==true)
                  {
-                         message="点赞成功！"
+                         message="收藏成功！"
                  }
                  else
                 {
-                       message="取消点赞成功！"
+                       message="取消收藏成功！"
                 }
                     ElMessage({
                         showClose: true,
@@ -103,7 +103,7 @@ import axios from "axios";
             }
         },
         created(){
-            this.changeLike(0);
+            this.changeStar(0);
         }
     }
 </script>
