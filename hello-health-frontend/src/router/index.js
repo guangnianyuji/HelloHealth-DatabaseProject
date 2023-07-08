@@ -48,8 +48,11 @@ const router = createRouter({
                 path: "forum/:postId",
                 name: "postView",
                 component: () => import ("@/views/PostView.vue")
+            },{
+                path: "flash",
+                name: "healthFlashView",
+                component: () => import ("@/views/HealthFlashView.vue")
             }
-
 
             ]
         },
