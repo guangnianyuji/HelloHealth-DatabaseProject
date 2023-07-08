@@ -91,6 +91,7 @@ export default{
                 type: "Time",
             }) ,//之前选择的类型
 
+
             post_list: []
         }),
     methods:
