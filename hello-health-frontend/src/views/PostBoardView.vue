@@ -35,6 +35,23 @@
 
     </div>
 
+    <el-dialog
+        v-model="dialogVisible"
+        title="这是个编辑框~"
+        width="30%"
+    >
+        <span>编辑框放这里~</span>
+        <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="dialogVisible = false">
+          Confirm
+        </el-button>
+      </span>
+        </template>
+    </el-dialog>
+
+    <WritePostButton  @click="openPostEditor" v-if="gdata.login"></WritePostButton>
 </template>
 
 <style scoped>
@@ -76,13 +93,17 @@
 </style>
 
 <script>
-import PostCard from "../components/PostCard.vue"
+import PostCard from "../components/postBoardView/PostCard.vue"
 import axios from "axios";
 import {reactive} from 'vue'
+import WritePostButton from "@/components/postBoardView/WritePostButton.vue";
+import globalData from "@/global/global";
+import {ElMessage} from "element-plus";
 export default{
     components:
         {
-            PostCard
+            WritePostButton,
+            PostCard,
         },
 
     data:()=> (
@@ -90,9 +111,9 @@ export default{
             type_sort: reactive({
                 type: "Time",
             }) ,//之前选择的类型
-
-
-            post_list: []
+            dialogVisible: false,
+            post_list: [],
+            gdata: globalData
         }),
     methods:
         {
@@ -115,6 +136,13 @@ export default{
                         this.loading = false;
                     });
             },
+            openPostEditor() {
+                if(!globalData.login){
+                    ElMessage.error('请先登录再参与讨论。')
+                    return;
+                }
+                this.dialogVisible = true
+            }
         },
     created(){
         this.sortBy();

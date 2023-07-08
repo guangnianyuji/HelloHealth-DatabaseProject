@@ -2,7 +2,7 @@
 
     <el-card class="card-wrapper"
              shadow="never">
-        <img alt="" :src="post_info.post_pic" class="card_image"/>
+        <img alt="" :src="post_info.post_pic" class="card_image" @click="goDetail"/>
         <!--
        <img v-else
            src="../assets/loading.gif"
@@ -12,21 +12,21 @@
         <!--显示标签 -->
         <div style="padding: 14px">
             <div class="post-tag-bar">
-                    <el-tag type="success" size="small" v-for="tag in post_info.post_tag">{{ tag }}</el-tag>
+                <el-tag type="success" size="small" v-for="tag in post_info.post_tag">{{ tag }}</el-tag>
             </div>
         </div>
         <!--显示帖子名称-->
-        <div class="card_title click_title" >
-            <span @click="goDetail"  >{{PostTitleSummary(post_info.post_title)}}</span>
+        <div class="card_title" @click="goDetail">
+            <span>{{PostTitleSummary(post_info.post_title)}}</span>
         </div>
         <!--显示发帖人-->
         <section class="card_author">
             <el-row align="middle" style="margin-left:5%;">
-                <el-col :span="10">
-                    <el-avatar :size="25" :src="post_info.author_portrait" ></el-avatar>
+                <el-col :span="10" style="display: flex; align-items: center">
+                    <el-avatar :size="25" :src="post_info.author_portrait" style="margin-right: 5px"></el-avatar>
                     <span class="card_author">
-          {{ post_info.author_name }}
-        </span>
+                        {{ post_info.author_name }}
+                    </span>
                 </el-col>
                 <el-col :span="6">
                     <like-button :comment_id="post_info.post_id" />
@@ -46,13 +46,20 @@
     object-fit: cover;
     height: 100%;
     width: 100%;
+    cursor: pointer;
 }
 .card_title {
     font-size: x-large;
     text-align: center;
     margin-top: 15px;
     margin-bottom: 15px;
+    transition: 0.3s ease;
+    cursor: pointer;
 }
+.card_title:hover{
+    color: var(--el-color-primary)
+}
+
 .card_author{
     display:inline;
     text-align:center;
@@ -87,7 +94,7 @@
 
 <script>
 import LikeButton from "./LikeButton.vue";
-import CoinButton from "../components/CoinButton.vue";
+import CoinButton from "./CoinButton.vue";
 import { ElMessage } from "element-plus";
 import router from "@/router";
 export default
