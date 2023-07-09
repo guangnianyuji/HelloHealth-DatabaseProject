@@ -17,7 +17,8 @@ const prop = defineProps({
     title:String,
     isBounty:Boolean,
     bountyValue:Number,
-    solution:Number
+    solution:Number,
+    starInfo: Object
 })
 
 const emits = defineEmits(['replyClicked','firstFloorReplyClicked'])
@@ -96,9 +97,10 @@ const openReplyBar = () =>{
                         </template>
                         <ReportButton :comment_id="floorInfo.comment_id"></ReportButton>
                     </el-popover>
-                    <LikeButton :comment_id="floorInfo.comment_id"></LikeButton>
-                    <CoinButton :comment_id="floorInfo.comment_id"></CoinButton>
-                    <StarButton v-if="title" :comment_id="floorInfo.comment_id"></StarButton>
+                    <LikeButton :comment_id="floorInfo.comment_id" :like-info="floorInfo.reward.like"></LikeButton>
+                    <CoinButton :comment_id="floorInfo.comment_id" :coin-info="floorInfo.reward.coin">
+                    </CoinButton>
+                    <StarButton v-if="title" :comment_id="floorInfo.comment_id" :star-info="starInfo"></StarButton>
 
                     <div class="replyButton" @click="openReplyBar">
                         评论

@@ -1,8 +1,8 @@
 <template>
-    <div class="wrapper">
+    <div class="wrapper" @click="coinIn">
         <el-tooltip class="box-item" placement="top" content="投币">
-                <i class="fi fi-rr-usd-circle centerIcon" @click="coinIn" v-if="!is_coined"></i>
-                <i class="fi fi-sr-usd-circle centerIcon" @click="coinIn" v-else></i>
+            <i class="fi fi-rr-usd-circle centerIcon" v-if="!is_coined"></i>
+            <i class="fi fi-sr-usd-circle centerIcon" v-else></i>
         </el-tooltip>
         <span>
             {{coin_num}}
@@ -11,13 +11,11 @@
 </template>
 
 <style scoped>
-i {
-    cursor: pointer;
-}
-
 .wrapper{
     display: flex;
-    align-items: center
+    align-items: center;
+    user-select: none;
+    cursor: pointer;
 }
 
 .wrapper:hover{
@@ -32,7 +30,10 @@ import axios from "axios";
 
 import globalData from "@/global/global"
 export default {
-    props: ["comment_id"],
+    props:{
+        comment_id: Number,
+        coinInfo: Object
+    },
     data: () =>
         ({
             is_coined: false,
@@ -98,26 +99,26 @@ export default {
                             })
 
                         })
-                    return;
                 }
 
                 // op为0代表不操作，只重新获取硬币数
-                axios.post("/api/Comment/Coin", {
-                    operate: op,
-                    comment_id: this.comment_id,
-                    coin_value: coinValue
-                }).then((res) => {
-                    this.is_coined = res.data.data.status;
-                    this.coin_num = res.data.data.comment_coin_num;
-                    coin_status = res.data.data.coin_status;//投币是否成功
-                })
+                // axios.post("/api/Comment/Coin", {
+                //     operate: op,
+                //     comment_id: this.comment_id,
+                //     coin_value: coinValue
+                // }).then((res) => {
+                //     this.is_coined = res.data.data.status;
+                //     this.coin_num = res.data.data.comment_coin_num;
+                //     coin_status = res.data.data.coin_status;//投币是否成功
+                // })
 
 
             }
         },
 
     created() {
-        this.changeCoin(0);
+        this.is_coined = this.coinInfo.status;
+        this.coin_num = this.coinInfo.num;
     }
 
 }
