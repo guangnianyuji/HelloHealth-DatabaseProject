@@ -1,8 +1,8 @@
 <template>
-    <div class="wrapper">
+    <div class="wrapper" @click="like">
         <el-tooltip class="box-item" placement="top" content="点赞">
-            <i v-if="!is_liked" class="fi fi-rr-social-network centerIcon" @click="like"></i>
-            <i v-else class="fi fi-sr-thumbs-up centerIcon" @click="like"></i>
+            <i v-if="!is_liked" class="fi fi-rr-social-network centerIcon"></i>
+            <i v-else class="fi fi-sr-thumbs-up centerIcon"></i>
         </el-tooltip>
         <span>
             {{like_num}}
@@ -11,12 +11,11 @@
 </template>
 
 <style scoped>
-i {
-    cursor: pointer;
-}
 .wrapper{
     display: flex;
     align-items: center;
+    user-select: none;
+    cursor: pointer;
 }
 
 .wrapper:hover{
@@ -31,7 +30,7 @@ import axios from "axios";
 import globalData from "@/global/global"
 export default
 {
-    props:["comment_id"],
+    props:["comment_id","likeInfo"],
     data:()=>
         ({
             is_liked: false,
@@ -44,30 +43,20 @@ export default
                 return;
             }
 
-            this.changeLike(1);
+            this.changeLike();
         },
-        changeLike(op) {//op为0，只查询；op为1 要操作
+        changeLike() {//op为0，只查询；op为1 要操作
 
-            //以后全局获取user_id,没有登录就是-1
 
             axios.post("/api/Comment/Like",
                 reactive({
-                    operate: op,
+                    operate: 1,
                     comment_id: this.comment_id
                 }))
                 .then((res) => {
                     this.is_liked = res.data.data.status;
                     this.like_num = res.data.data.comment_like_num;
-                });
-
-
-            if (op === 1)//操作//只会在登录情况下走进下面的语句
-            {
-                let message = "";
-                if (this.is_liked === true) {
-                    message = "点赞成功！"
-                } else {
-                    let message = "";
+                    let message;
                     if (this.is_liked === true) {
                         message = "点赞成功！"
                     } else {
@@ -78,12 +67,12 @@ export default
                         message: message,
                         type: 'success',
                     })
-                }
-            }
+                });
         },
     },
     created(){
-        this.changeLike(0);
+        this.is_liked = this.likeInfo.status;
+        this.like_num = this.likeInfo.num;
     }
 }
 </script>

@@ -46,7 +46,7 @@ const showReplyBox = () =>{
             <div>
                 {{commentInfo.post_time}}
             </div>
-            <LikeButton :comment_id="commentInfo.comment_id"></LikeButton>
+            <LikeButton :comment_id="commentInfo.comment_id" :like-info="commentInfo.like"></LikeButton>
 
             <div class="replyButton" @click="showReplyBox">
                 回复

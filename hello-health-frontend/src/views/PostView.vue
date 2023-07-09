@@ -65,6 +65,7 @@ const closeAllFloorReplyBar = () =>{
                     :is-bounty="postInfo.data.is_bounty"
                     :bounty-value="postInfo.data.bounty_value"
                     :solution="postInfo.data.solution" @replyClicked="closeAllFloorReplyBar"
+                    :star-info="postInfo.data.star"
                     @firstFloorReplyClicked="openCommentEditor"></post-floor>
         <post-floor v-for="(floor,index) in floorsWithoutFirst" :floor-info="floor" ref="floors" @replyClicked="closeAllFloorReplyBar"></post-floor>
     </div>
