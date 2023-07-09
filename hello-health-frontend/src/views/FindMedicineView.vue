@@ -1,12 +1,7 @@
 <template>
     <div class="FM_body">
         <el-row class="FM_title">
-            <svg t="1688614393322" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
-                 p-id="2387" width="32" height="32">
-                <path d="M512 85.333c23.573 0 42.667 20.118 42.667 44.907v763.52c0 24.79-19.094 44.907-42.667 44.907s-42.667-20.118-42.667-44.907V130.24c0-24.79 19.094-44.907 42.667-44.907z"
-                      p-id="2388" fill="#6cb16a"></path>
-            </svg>
-            <div style="padding-top: 3px">HH找药</div>
+            <div style="padding-top: 3px; position: relative" class="title-with-line">HH找药</div>
         </el-row>
 
         <!--    筛选条件-->
@@ -75,16 +70,10 @@
 
         </div>
         <!--    药品列表-->
-        <el-row>
+        <el-row style="width: 80%; margin: 3px auto;">
             <el-col :span="18" >
                 <el-row class="FM_r_title">
-                    <svg t="1688614393322" class="icon" viewBox="0 0 1024 1024" version="1.1"
-                         xmlns="http://www.w3.org/2000/svg"
-                         p-id="2387" width="32" height="32">
-                        <path d="M512 85.333c23.573 0 42.667 20.118 42.667 44.907v763.52c0 24.79-19.094 44.907-42.667 44.907s-42.667-20.118-42.667-44.907V130.24c0-24.79 19.094-44.907 42.667-44.907z"
-                              p-id="2388" fill="#6cb16a"></path>
-                    </svg>
-                    <div style="padding-top: 3px">找药结果</div>
+                    <div style="padding-top: 3px" class="title-with-line">找药结果</div>
                 </el-row>
                 <el-row class="result_title">
                     <el-col >
@@ -243,10 +232,13 @@ export default {
     font-size: 20px;
     color: #000000;
     margin-left: 3.5%;
+    width: 80%;
     padding-top: 20px;
+    padding-left: 17px;
 }
 
 .FM_r_title {
+    padding-left: 17px;
     font-size: 20px;
     color: #000000;
     margin-left: 5%;
@@ -285,7 +277,11 @@ export default {
 }
 
 .result_title {
+<<<<<<< HEAD
     margin-left: 7%;
+=======
+
+>>>>>>> master
     margin-top: 1%;
 }
 
@@ -394,5 +390,18 @@ export default {
 .pagination{
     margin-left: 33%;
     margin-top: 20px;
+}
+
+.title-with-line:before{
+    content:"";
+    top:50%;
+    width: 1px;
+    height: 1.2em;
+    display: inline-block;
+    position: absolute;
+    background-color: var(--el-color-primary);
+    border: 1px solid var(--el-color-primary);
+    border-radius: 2px;
+    transform: translate(-16px , -50%);
 }
 </style>

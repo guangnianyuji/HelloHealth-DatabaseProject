@@ -7,3 +7,12 @@
     vertical-align: baseline;
     font-family: MiSans,MI Lan Pro,serif;
 }
+
+body{
+    overflow-y: hidden;
+}
+i.centerIcon{
+    line-height: 1em;
+    height: 1em;
+    margin-right: 5px;
+}

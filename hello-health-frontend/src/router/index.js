@@ -33,13 +33,25 @@ const router = createRouter({
                 name: "homeView",
                 component: ()=>import("@/views/TestView1.vue"),
             }, {
-                path: "consultation",
-                name: "consultationView",
+                path: "favourites",
+                name: "favouritesView",
                 component: ()=>import("@/views/TestView2.vue"),
             }, {
                 path: "medicine",
                 name: "medicineView",
                 component: ()=>import("@/views/FindMedicineView.vue"),
+            }, {
+                path: "forum",
+                name: "forumView",
+                component: () => import ("@/views/PostBoardView.vue")
+            }, {
+                path: "forum/:postId",
+                name: "postView",
+                component: () => import ("@/views/PostView.vue")
+            },{
+                path: "test",
+                name: "test",
+                component: () => import ("@/views/PostBoardView.vue")
             }
 
 
