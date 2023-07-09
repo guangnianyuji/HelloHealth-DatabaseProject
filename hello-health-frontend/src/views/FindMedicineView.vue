@@ -70,7 +70,7 @@
 
         </div>
         <!--    药品列表-->
-        <el-row style="width: 80%; margin: 3px auto;">
+        <el-row class="FM_title">
             <el-col :span="18" >
                 <el-row class="FM_r_title">
                     <div style="padding-top: 3px" class="title-with-line">找药结果</div>
@@ -238,10 +238,8 @@ export default {
 }
 
 .FM_r_title {
-    padding-left: 17px;
     font-size: 20px;
     color: #000000;
-    margin-left: 5%;
     margin-top: 20px;
 }
 
@@ -277,11 +275,6 @@ export default {
 }
 
 .result_title {
-<<<<<<< HEAD
-    margin-left: 7%;
-=======
-
->>>>>>> master
     margin-top: 1%;
 }
 
