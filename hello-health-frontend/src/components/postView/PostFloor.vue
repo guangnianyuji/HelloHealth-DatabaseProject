@@ -7,16 +7,21 @@ import {ref} from "vue";
 import ReplyBar from "@/components/postView/ReplyBar.vue";
 import globalData from "@/global/global";
 import {ElMessage} from "element-plus";
+import LikeButton from "@/components/postBoardView/LikeButton.vue";
+import CoinButton from "@/components/postBoardView/CoinButton.vue";
+import StarButton from "@/components/postBoardView/StarButton.vue";
+import ReportButton from "@/components/postBoardView/ReportButton.vue";
 
 const prop = defineProps({
     floorInfo:Object,
     title:String,
     isBounty:Boolean,
     bountyValue:Number,
-    solution:Number
+    solution:Number,
+    starInfo: Object
 })
 
-const emits = defineEmits(['replyClicked'])
+const emits = defineEmits(['replyClicked','firstFloorReplyClicked'])
 
 const comments = ref()
 
@@ -31,7 +36,6 @@ const closeAllReplyBar = () =>{
 
 defineExpose({
     closeAllReplyBar,
-    // showReplyBar
 })
 
 const onCommentReplyClicked = ()=>{
@@ -43,6 +47,12 @@ const openReplyBar = () =>{
         ElMessage.error('请先登录再参与讨论。')
         return;
     }
+
+    if(prop.title){
+        emits("firstFloorReplyClicked")
+        return
+    }
+
     if(showReplyBar.value){
         showReplyBar.value = false;
         return
@@ -81,11 +91,19 @@ const openReplyBar = () =>{
                     {{floorInfo.post_time}}
                 </div>
                 <div class="rewards">
-                    点赞 投币 收藏 组件放这里
-                    {{JSON.stringify(floorInfo.reward_count)}}
+                    <el-popover placement="top" :width="100" trigger="click">
+                        <template #reference>
+                            <i class="fi fi-rr-menu-dots centerIcon replyButton"></i>
+                        </template>
+                        <ReportButton :comment_id="floorInfo.comment_id"></ReportButton>
+                    </el-popover>
+                    <LikeButton :comment_id="floorInfo.comment_id" :like-info="floorInfo.reward.like"></LikeButton>
+                    <CoinButton :comment_id="floorInfo.comment_id" :coin-info="floorInfo.reward.coin">
+                    </CoinButton>
+                    <StarButton v-if="title" :comment_id="floorInfo.comment_id" :star-info="starInfo"></StarButton>
 
-                    <div class="replyButton" @click="openReplyBar" v-if="!title">
-                        评论放这里
+                    <div class="replyButton" @click="openReplyBar">
+                        评论
                     </div>
                 </div>
             </div>
@@ -191,6 +209,7 @@ const openReplyBar = () =>{
 .rewards{
     display: flex;
     flex-direction: row;
+    align-items: center;
 }
 
 .rewards>*{
@@ -202,6 +221,14 @@ const openReplyBar = () =>{
     padding: 5px 10px;
     box-sizing: content-box;
     margin-bottom: 10px;
+}
+
+.replyButton{
+    cursor: pointer;
+    user-select: none;
+}
+.replyButton:hover{
+    color: var(--el-color-primary);
 }
 
 </style>
