@@ -91,7 +91,7 @@
                         <el-input
                                 v-model="input"
                                 class="search-box"
-                                placeholder="Please Input"
+                                placeholder="更多关键词"
                                 :suffix-icon="Search"
                         />
                     </el-col>
@@ -106,7 +106,7 @@
         <el-tabs type="border-card" class="result_title result_box">
             <el-tab-pane label="综合排序">
                 <el-table :data="tableData" stripe style="width: 100%" height="350">
-                    <el-table-column prop="star" label="是否收藏" width="100">
+                    <el-table-column prop="star" label="收藏" width="60">
                         <label class="container">
                             <input type="checkbox">
                             <svg height="24px" id="Layer_1" version="1.2" viewBox="0 0 24 24" width="24px"
@@ -242,14 +242,14 @@ export default {
 .FM_title {
     font-size: 20px;
     color: #000000;
-    margin-left: 8.5%;
+    margin-left: 3.5%;
     padding-top: 20px;
 }
 
 .FM_r_title {
     font-size: 20px;
     color: #000000;
-    margin-left: 13%;
+    margin-left: 5%;
     margin-top: 20px;
 }
 
@@ -272,9 +272,9 @@ export default {
 }
 
 .box-card {
-    width: 80%;
-    margin-left: 10%;
-    margin-right: 10%;
+    width: 90%;
+    margin-left: 5%;
+    margin-right:5%;
     margin-top: 1.5%;
 }
 
@@ -285,14 +285,14 @@ export default {
 }
 
 .result_title {
-    margin-left: 15%;
+    margin-left: 7%;
     margin-top: 1%;
 }
 
 .result_box {
-    width: 80%;
-    margin-left: 10%;
-    margin-right: 10%;
+    width: 90%;
+    margin-left: 5%;
+    margin-right: 5%;
 }
 
 .search-box {
@@ -341,7 +341,7 @@ export default {
     padding: 0em;
     padding-left: 1em;
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 400;
     border-radius: 0.9em;
     border: none;
     letter-spacing: 0.05em;
@@ -392,7 +392,7 @@ export default {
     height: 130px;
 }
 .pagination{
-    margin-left: 40%;
+    margin-left: 33%;
     margin-top: 20px;
 }
 </style>
