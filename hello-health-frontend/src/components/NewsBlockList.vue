@@ -3,8 +3,7 @@
 作者：吴可非
 -->
 <template>
-  <div class="common-layout">
-    <el-container  class="news-container">
+  <el-container  class="news-container">
       <el-main>
         <!-- 三个 NewsBlock 组件 -->
         <NewsBlock
@@ -29,7 +28,6 @@
         />
       </el-footer>
     </el-container>
-  </div>
 </template>
 
 <script>
@@ -93,7 +91,10 @@ export default {
 
 <style scoped>
 .news-container {
+  padding:0%;
+  width: auto;
   display: flex;
   align-items: center;
+  margin: 0%;
 }
 </style>
