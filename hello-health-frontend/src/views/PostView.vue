@@ -1,4 +1,5 @@
 <script setup>
+import TipTapEditable from "@/components/postView/TipTapEditable.vue";
 import PostFloor from "@/components/postView/PostFloor.vue";
 import {computed, reactive, ref} from "vue";
 import axios from "axios";
@@ -55,6 +56,30 @@ const closeAllFloorReplyBar = () =>{
     }
 }
 
+const editor = ref();
+const submitNewComment = async() => {
+    if(editor.value.editor.state.doc.textContent.length < 15) {
+        ElMessage.error('请输入更多内容。');
+        return;
+    }
+    let response = await axios.post("/api/SendFloor",{
+        content:JSON.stringify(editor.value.editor.getJSON()),
+        post_id:postId
+    })
+    let responseObj = response.data;
+    if(responseObj.errorCode!==200) {
+        ElMessage.error('发送失败，错误码：' + responseObj.errorCode);
+        return;
+    }
+    if(responseObj.data.status!==true) {
+        ElMessage.error('发送失败：' + responseObj.data.msg);
+        return;
+    }
+    ElMessage.success('发送成功，请等待审核通过。');
+    dialogVisible.value = false;
+    editor.value.editor.commands.clearContent();
+}
+
 </script>
 
 <template>
@@ -72,20 +97,21 @@ const closeAllFloorReplyBar = () =>{
 
     <el-dialog
         v-model="dialogVisible"
-        title="这是个编辑框~"
-        width="30%"
+        class="editorDialog"
+        modal-class="editorDialogModal"
+        title="编写回复"
+        width="70%"
     >
-        <span>编辑框放这里~</span>
+        <TipTapEditable ref="editor"/>
         <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="dialogVisible.value = false">Cancel</el-button>
-        <el-button type="primary" @click="dialogVisible = false">
-          Confirm
-        </el-button>
-      </span>
+            <span class="dialog-footer">
+                <el-button type="primary" @click="submitNewComment">
+                    回复
+                </el-button>
+            </span>
         </template>
     </el-dialog>
-    <WritePostButton  @click="openCommentEditor" v-if="globalData.login"></WritePostButton>
+    <WritePostButton @click="openCommentEditor" v-if="globalData.login"></WritePostButton>
 </template>
 
 <style scoped>

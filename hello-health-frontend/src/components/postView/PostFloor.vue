@@ -11,6 +11,7 @@ import LikeButton from "@/components/postBoardView/LikeButton.vue";
 import CoinButton from "@/components/postBoardView/CoinButton.vue";
 import StarButton from "@/components/postBoardView/StarButton.vue";
 import ReportButton from "@/components/postBoardView/ReportButton.vue";
+import TipTapEditorReadonly from "@/components/postView/TipTapEditorReadonly.vue";
 
 const prop = defineProps({
     floorInfo:Object,
@@ -82,9 +83,8 @@ const openReplyBar = () =>{
             <div v-if="title" class="title">{{title}}</div>
             <el-tag v-if="title && isBounty && solution !== -1" class="bountyTag">赏金{{bountyValue}}杏仁币，点击查看最佳答案。</el-tag>
             <el-tag v-if="title && isBounty && solution === -1" class="bountyTag" type="warning">正在进行悬赏！赏金{{bountyValue}}杏仁币。</el-tag>
-            <!-- 这里得换成TipTap的readonly编辑器!，现在仅作展示-->
             <div class="content">
-                {{floorInfo.content}}
+                <TipTapEditorReadonly :content-json-string="floorInfo.content"></TipTapEditorReadonly>
             </div>
             <div class="contentStatus">
                 <div class="time">
