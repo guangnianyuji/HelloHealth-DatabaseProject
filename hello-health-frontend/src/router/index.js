@@ -48,14 +48,14 @@ const router = createRouter({
                 path: "forum/:postId",
                 name: "postView",
                 component: () => import ("@/views/PostView.vue")
-            },{
-                path: "test",
-                name: "test",
-                component: () => import ("@/views/PostBoardView.vue")
             }
 
 
             ]
+        },{
+            path: "/test",
+            name: "test",
+            component: () => import ("@/components/postView/TipTapEditable.vue")
         },
         { path: '/:pathMatch(.*)*', name: 'NotFound', component: ()=>import("@/pages/ErrorPage.vue") },
 

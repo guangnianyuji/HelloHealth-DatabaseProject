@@ -37,17 +37,52 @@
 
     <el-dialog
         v-model="dialogVisible"
-        title="这是个编辑框~"
-        width="30%"
+        class="editorDialog"
+        modal-class="editorDialogModal"
+        title="发布帖子"
+        width="70%"
+        top="0"
     >
-        <span>编辑框放这里~</span>
+        <el-form label-width="50px" label-position="left" :model="newPostInfo">
+            <el-form-item label="标题">
+                <el-input v-model="newPostInfo.title" />
+            </el-form-item>
+            <el-form-item label="悬赏">
+                <el-radio-group v-model="newPostInfo.is_bounty">
+                    <el-radio :label="true">是</el-radio>
+                    <el-radio :label="false">否</el-radio>
+                </el-radio-group>
+                <el-form-item label="赏金" class="bountyLabel" v-if="newPostInfo.is_bounty">
+                    <el-input v-model="newPostInfo.bounty_value" type="number" min="0" step="1"/>
+                </el-form-item>
+            </el-form-item>
+            <el-form-item label="标签">
+                <el-select
+                    class="tagSelector"
+                    v-model="newPostInfo.tags"
+                    multiple
+                    placeholder="选择2~4个标签"
+                    style="width: 240px"
+                    :allow-create="true"
+                    :filterable="true"
+                    :multiple-limit="4"
+                >
+                    <el-option
+                        v-for="item in tags"
+                        :key="item"
+                        :label="item"
+                        :value="item"
+                    />
+                </el-select>
+            </el-form-item>
+        </el-form>
+        <TipTapEditable ref="editor"/>
         <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="dialogVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="dialogVisible = false">
-          Confirm
-        </el-button>
-      </span>
+            <span class="dialog-footer">
+                <el-button type="primary" @click="submitNewPost">
+                    发布
+                </el-button>
+            </span>
         </template>
     </el-dialog>
 
@@ -90,18 +125,28 @@
     transform: translate(-16px , -50%);
 }
 
+.bountyLabel{
+    margin-left: 30px;
+}
+
+.tagSelector{
+    width: 100% !important;
+}
+
 </style>
 
 <script>
 import PostCard from "../components/postBoardView/PostCard.vue"
 import axios from "axios";
-import {reactive} from 'vue'
+import reactive from 'vue'
 import WritePostButton from "@/components/postBoardView/WritePostButton.vue";
 import globalData from "@/global/global";
 import {ElMessage} from "element-plus";
+import TipTapEditable from "@/components/postView/TipTapEditable.vue";
 export default{
     components:
         {
+            TipTapEditable,
             WritePostButton,
             PostCard,
         },
@@ -113,7 +158,15 @@ export default{
             }) ,//之前选择的类型
             dialogVisible: false,
             post_list: [],
-            gdata: globalData
+            gdata: globalData,
+            newPostInfo:{
+                title:"",
+                is_bounty: false,
+                bounty_value: 0,
+                content: "",
+                tags: []
+            },
+            tags:[],
         }),
     methods:
         {
@@ -130,6 +183,7 @@ export default{
                     .post("/api/Post/SortBy", this.type_sort)
                     .then((res)=> {
                         this.post_list= res.data.data.post_list;
+                        this.tags = res.data.data.tags;
                     })
                     .catch((errMsg) => {
                         console.log(errMsg);
@@ -142,6 +196,46 @@ export default{
                     return;
                 }
                 this.dialogVisible = true
+            },
+
+            async submitNewPost() {
+                if(this.$refs.editor.editor.state.doc.textContent.length < 15) {
+                    ElMessage.error('请输入更多内容。');
+                    return;
+                }
+                if(this.newPostInfo.title.length < 5) {
+                    ElMessage.error('请输入更长的标题。');
+                    return;
+                }
+                if(this.newPostInfo.tags.length < 2) {
+                    ElMessage.error('请选择更多标签。');
+                    return;
+                }
+                if(this.newPostInfo.is_bounty &&(parseInt(this.newPostInfo.bounty_value) <= 0 || Math.floor(parseFloat(this.newPostInfo.bounty_value))!==parseInt(this.newPostInfo.bounty_value))) {
+                    ElMessage.error('请输入正数整悬赏值。');
+                    return;
+                }
+                this.newPostInfo.content = JSON.stringify(this.$refs.editor.editor.getJSON())
+                let response = await axios.post("/api/SendPost",this.newPostInfo)
+                let responseObj = response.data;
+                if(responseObj.errorCode!==200) {
+                    ElMessage.error('发送失败，错误码：' + responseObj.errorCode);
+                    return;
+                }
+                if(responseObj.data.status!==true) {
+                    ElMessage.error('发送失败：' + responseObj.data.msg);
+                    return;
+                }
+                ElMessage.success('发送成功，请等待审核通过。');
+                this.dialogVisible = false;
+                this.$refs.editor.editor.commands.clearContent();
+                this.newPostInfo = {
+                    title:"",
+                    is_bounty: false,
+                    bounty_value: 0,
+                    content: "",
+                    tags: []
+                }
             }
         },
     created(){
