@@ -3,7 +3,7 @@
 作者：吴可非
 -->
 <template>
-  <el-card class="news-block-card">
+  <el-card shadow="hover" class="news-block-card">
     <el-container class="news-block">
       <el-aside width="120px">
         <!-- 新闻图片 -->
@@ -18,7 +18,7 @@
           <h1 @click="goFullContent"
               class="flash-title clickable"
               style="font-weight: bold;">{{ flash_title }}</h1>
-          <span class="flash_date">{{ flash_date }}</span>
+          <span class="flash-date">{{ flash_date }}</span>
         </el-header>
         <el-main class="flash-preview">
           <!-- 新闻预览内容 -->
@@ -26,7 +26,7 @@
         </el-main>
         <el-footer class="flash-tags">
           <!-- 新闻标签 -->
-          <el-tag class="mx-1" size="small"
+          <el-tag size="small"
                   v-for="tag in flash_tags_list"
                   :key="tag">{{ tag }}</el-tag>
         </el-footer>
@@ -61,8 +61,8 @@ export default {
   methods: {
     goFullContent() {
       this.$router.push({
-        name: 'newsFull',
-        params: {id: this.$props.flash_id}
+        name: 'detailedNews',
+        query: {flash_id: this.$props.flash_id}
       })
     },
   }
@@ -72,6 +72,7 @@ export default {
 <style scoped>
 .news-block-card {
   flex-wrap: wrap;
+  margin-bottom: 3px;
 }
 .news-block {
   height: 120px;
@@ -109,7 +110,7 @@ export default {
 .clickable {
   cursor: pointer;                  /* 设置鼠标样式为手型 */
 }
-.flash_date {
+.flash-date {
   width: 25%;          /* 日期宽度为 25% */
   text-align: right;   /* 日期右对齐 */
 }
@@ -118,5 +119,8 @@ export default {
 }
 .flash-tags {
   height: auto;
+}
+.el-tag {
+  margin-right: 5px;  /* 设置标签之间的左间距 */
 }
 </style>

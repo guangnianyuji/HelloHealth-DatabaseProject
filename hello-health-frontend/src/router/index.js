@@ -39,11 +39,12 @@ const router = createRouter({
             }, {
                 path: "news",
                 name: "newsView",
-                component: ()=>import("@/pages/newsPage.vue"),
-            }
-
-
-            ]
+                component: ()=>import("@/views/HealthFlashView.vue"),
+            }, {
+                path: "detailedNews",
+                name: "detailedNews",
+                component: ()=>import("@/pages/DetailedNewsPage.vue"),
+            }]
         },
         { path: '/:pathMatch(.*)*', name: 'NotFound', component: ()=>import("@/pages/ErrorPage.vue") },
 
