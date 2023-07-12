@@ -13,6 +13,7 @@ import StarButton from "@/components/postBoardView/StarButton.vue";
 import ReportButton from "@/components/postBoardView/ReportButton.vue";
 import TipTapEditorReadonly from "@/components/postView/TipTapEditorReadonly.vue";
 import axios from "axios";
+import SetSolutionButton from "@/components/postBoardView/SetSolutionButton.vue";
 
 const prop = defineProps({
     floorInfo:Object,
@@ -20,10 +21,14 @@ const prop = defineProps({
     isBounty:Boolean,
     bountyValue:Number,
     solution:Number,
-    starInfo: Object
+    starInfo: Object,
+    isSolution: Boolean,
+    canSetSolution: Boolean
 })
 
-const emits = defineEmits(['replyClicked','firstFloorReplyClicked'])
+const isSolutionReal = ref(prop.isSolution);
+
+const emits = defineEmits(['replyClicked','firstFloorReplyClicked','goToSolutionClicked','solutionSet'])
 
 const comments = ref()
 
@@ -114,8 +119,16 @@ const onReplySubmit = (content,handler) =>{
         </div>
         <div class="contentWrapper">
             <div v-if="title" class="title">{{title}}</div>
-            <el-tag v-if="title && isBounty && solution !== -1" class="bountyTag">赏金{{bountyValue}}杏仁币，点击查看最佳答案。</el-tag>
+            <el-tag v-if="title && isBounty && solution !== -1" class="bountyTag">
+                <span>赏金{{bountyValue}}杏仁币，</span>
+                <span @click="emits('goToSolutionClicked')" class="scrollToSolutionButton">点击查看最佳答案</span>
+            </el-tag>
             <el-tag v-if="title && isBounty && solution === -1" class="bountyTag" type="warning">正在进行悬赏！赏金{{bountyValue}}杏仁币。</el-tag>
+            <el-tag v-if="isSolutionReal" class="bountyTag">
+                <div style="display: flex; align-items: center;">
+                    <i class="fi fi-sr-badge centerIcon"></i><span>最佳答案</span>
+                </div>
+            </el-tag>
             <div class="content">
                 <TipTapEditorReadonly :content-json-string="floorInfo.content"></TipTapEditorReadonly>
             </div>
@@ -124,12 +137,18 @@ const onReplySubmit = (content,handler) =>{
                     {{floorInfo.post_time}}
                 </div>
                 <div class="rewards">
-                    <el-popover placement="top" :width="100" trigger="click">
+                    <el-popover placement="top" :width="'auto'" trigger="click">
                         <template #reference>
                             <i class="fi fi-rr-menu-dots centerIcon replyButton"></i>
                         </template>
                         <ReportButton :comment_id="floorInfo.comment_id"></ReportButton>
                     </el-popover>
+                    <SetSolutionButton
+                        :comment_id="floorInfo.comment_id"
+                        :comment_user_name="floorInfo.author.user_name"
+                        @solution-set="isSolutionReal=true;emits('solutionSet',floorInfo.comment_id)"
+                        v-if="canSetSolution">
+                    </SetSolutionButton>
                     <LikeButton :comment_id="floorInfo.comment_id" :like-info="floorInfo.reward.like"></LikeButton>
                     <CoinButton :comment_id="floorInfo.comment_id" :coin-info="floorInfo.reward.coin">
                     </CoinButton>
@@ -264,4 +283,8 @@ const onReplySubmit = (content,handler) =>{
     color: var(--el-color-primary);
 }
 
+.scrollToSolutionButton:hover{
+    cursor: pointer;
+    color: var(--el-color-primary-light-5);
+}
 </style>

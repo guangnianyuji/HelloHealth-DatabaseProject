@@ -42,6 +42,10 @@ axios.get("/api/PostInfo/"+ postId)
         //     alert("帖子加载失败："+ responseObj.data.errorType);
         //     return;
         // }
+        responseObj.data.is_bounty = true;
+        responseObj.data.floors[0].author.user_id = 2;
+        responseObj.data.floors[1].author.user_id = 1;
+
         postInfo.data = responseObj.data
     }
 ).catch((reason)=>{
@@ -79,6 +83,19 @@ const submitNewComment = async() => {
     editor.value.editor.commands.clearContent();
 }
 
+const onSolutionSet = (comment_id) => {
+    postInfo.data.solution = comment_id;
+    // 直接scroll好像不行，设个定时器~
+    setTimeout(()=>{
+        scrollToSolution();
+    },100)
+}
+
+
+const scrollToSolution = () => {
+    document.querySelector(".solutionFloor")?.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"})
+}
+
 </script>
 
 <template>
@@ -90,8 +107,21 @@ const submitNewComment = async() => {
                     :bounty-value="postInfo.data.bounty_value"
                     :solution="postInfo.data.solution" @replyClicked="closeAllFloorReplyBar"
                     :star-info="postInfo.data.star"
-                    @firstFloorReplyClicked="openCommentEditor"></post-floor>
-        <post-floor v-for="(floor,index) in floorsWithoutFirst" :floor-info="floor" ref="floors" @replyClicked="closeAllFloorReplyBar"></post-floor>
+                    @firstFloorReplyClicked="openCommentEditor"
+                    @goToSolutionClicked="scrollToSolution">
+        </post-floor>
+        <post-floor v-for="(floor,index) in floorsWithoutFirst"
+                    :floor-info="floor"
+                    ref="floors"
+                    @replyClicked="closeAllFloorReplyBar"
+                    @solution-set="onSolutionSet"
+                    :is-solution="postInfo.data.solution===floor.comment_id"
+                    :class="{solutionFloor:postInfo.data.solution===floor.comment_id}"
+                    :can-set-solution="postInfo.data.is_bounty &&
+                        postInfo.data.solution === -1 &&
+                        globalData.userInfo.user_id===postInfo.data.floors[0].author.user_id &&
+                        floor.author.user_id !== globalData.userInfo.user_id">
+        </post-floor>
     </div>
 
     <el-dialog
