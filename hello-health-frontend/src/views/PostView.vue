@@ -50,7 +50,6 @@ axios.get("/api/PostInfo/"+ postId)
 
 
 const closeAllFloorReplyBar = () =>{
-    console.log(floors.value)
     for(let floor of floors.value){
         floor.closeAllReplyBar()
     }

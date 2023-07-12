@@ -138,7 +138,7 @@
 <script>
 import PostCard from "../components/postBoardView/PostCard.vue"
 import axios from "axios";
-import reactive from 'vue'
+// import reactive from 'vue'
 import WritePostButton from "@/components/postBoardView/WritePostButton.vue";
 import globalData from "@/global/global";
 import {ElMessage} from "element-plus";
@@ -153,9 +153,9 @@ export default{
 
     data:()=> (
         {
-            type_sort: reactive({
+            type_sort: {
                 type: "Time",
-            }) ,//之前选择的类型
+            } ,//之前选择的类型
             dialogVisible: false,
             post_list: [],
             gdata: globalData,
