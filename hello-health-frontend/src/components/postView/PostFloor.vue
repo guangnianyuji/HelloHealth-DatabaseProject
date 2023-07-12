@@ -12,6 +12,7 @@ import CoinButton from "@/components/postBoardView/CoinButton.vue";
 import StarButton from "@/components/postBoardView/StarButton.vue";
 import ReportButton from "@/components/postBoardView/ReportButton.vue";
 import TipTapEditorReadonly from "@/components/postView/TipTapEditorReadonly.vue";
+import axios from "axios";
 
 const prop = defineProps({
     floorInfo:Object,
@@ -62,6 +63,38 @@ const openReplyBar = () =>{
     showReplyBar.value = true;
 }
 
+const onReplySubmit = (content,handler) =>{
+    if(content.length < 5){
+        ElMessage.error("请输入更多内容。");
+        return;
+    }
+    axios.post("/api/CommentFloor", {
+        content: content.value,
+        reply_floor_id: prop.floorInfo.comment_id,
+        reply_user_id: -1
+    })
+        .then((res)=> {
+            let responseObj = res.data;
+            if(responseObj.errorCode!==200) {
+                ElMessage.error('发送失败，错误码：' + responseObj.errorCode);
+                return;
+            }
+            if(responseObj.data.status!==true) {
+                ElMessage.error('发送失败：' + responseObj.data.msg);
+                return;
+            }
+            ElMessage.success('发送成功，请等待审核通过。');
+            handler()
+            emits("replyClicked");
+        })
+        .catch((errMsg) => {
+            console.log(errMsg);
+            ElMessage.error(errMsg);
+        });
+
+}
+
+
 </script>
 
 <template>
@@ -108,11 +141,11 @@ const openReplyBar = () =>{
                 </div>
             </div>
             <div v-if="showReplyBar && !title">
-                <ReplyBar ></ReplyBar>
+                <ReplyBar @replySubmit="onReplySubmit"></ReplyBar>
             </div>
 
             <div class="commentsHolder" v-if="!title">
-                <FloorComment ref="comments" v-for="item in floorInfo.comments" :comment-info="item" @replyClicked="onCommentReplyClicked"></FloorComment>
+                <FloorComment ref="comments" v-for="item in floorInfo.comments" :comment-info="item" :floor_id="floorInfo.comment_id" @replyClicked="onCommentReplyClicked"></FloorComment>
             </div>
         </div>
     </div>
