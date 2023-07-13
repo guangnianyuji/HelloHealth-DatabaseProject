@@ -90,8 +90,7 @@ export default {
 </script>
 
 <style scoped>
-.news-container {
-  padding:0%;
+.news-carousel-item {
   width: auto;
   display: flex;
   align-items: center;
