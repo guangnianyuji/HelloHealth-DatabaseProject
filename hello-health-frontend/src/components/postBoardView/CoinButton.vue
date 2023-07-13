@@ -91,14 +91,7 @@ export default {
                                 }
                             }
 
-                        })
-                        .catch(() => {
-                            ElMessage({
-                                type: 'error',
-                                message: '取消投币',
-                            })
-
-                        })
+                        }).catch(()=>{})
                 }
 
                 // op为0代表不操作，只重新获取硬币数

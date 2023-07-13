@@ -19,17 +19,6 @@ import axios from "axios";
 import globalData from "@/global/global"
 export default{
     props:["comment_id"],
-    data:()=>
-    ({
-
-    }),
-    watch: 
-    {
-        comment_id:function(newData)
-        {
-            this.comment_id=newData;
-        }
-    },
     methods:
     {
         report()
@@ -67,14 +56,7 @@ export default{
                          }
                       }) 
                     }
-                )
-                .catch(() => {
-                    ElMessage({
-                    type: 'error',
-                    message: '取消举报',
-                    })
-                 })
-                ;
+                ).catch(()=>{})
         }
     }
 }
