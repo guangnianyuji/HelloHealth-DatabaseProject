@@ -48,7 +48,7 @@ export default
                 axios.post("/api/Post/Star",{
                     operate: 1,
                     post_id: this.post_id
-                })
+                },{doNotShowLoadingScreen: true})
                     .then((res)=>{
                         this.is_stared=res.data.data.status;
                         this.star_num=res.data.data.post_star_num;

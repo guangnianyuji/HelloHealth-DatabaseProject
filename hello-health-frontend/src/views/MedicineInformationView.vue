@@ -1,7 +1,6 @@
 <template>
     <div class="MedicineInformationView">
         <BackButton />
-        <WebLoading />
         <MedicineCard />
     </div>
 </template>

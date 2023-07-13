@@ -169,7 +169,7 @@
         const medicineId = this.$route.query.medicine_id;
         if (medicineId) {
           axios//https://mock.apifox.cn/m1/2961538-0-default/api/medicineCard?medicine_id=
-            .get(`https://mock.apifox.cn/m1/2961538-0-default/api/medicineCard?medicine_id=${medicineId}`)
+            .get(`/api/medicineCard?medicine_id=${medicineId}`)
             .then((res) => {
               const response = res.data;
               if (response.errorCode === 200) {
@@ -254,7 +254,7 @@
     content: '';
     width: 8rem;
     height: 8rem;
-    left: 0rem;
+    left: 0;
     top: 35%;
     transform: translate(-50%);
     background-color: var(--bc-al);
