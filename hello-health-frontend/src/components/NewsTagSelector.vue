@@ -79,14 +79,15 @@ export default {
 }
 /*设置按钮的样式*/
 .buttonStyle{
-  margin-bottom: 5px;
+  margin-bottom: 10px;
   margin-top: 2px;
   background-color:white;
   color:black;
   height:25px;
   width:100px;
   font-size:13px;
-  border: 0.1em solid #989ba0;
+  margin-right:25px;
+  border-color: white;
 }
 /*设置按钮的选中效果*/
 .buttonStyle.active{
