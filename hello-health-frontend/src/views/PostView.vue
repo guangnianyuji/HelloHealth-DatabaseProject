@@ -1,4 +1,5 @@
 <script setup>
+import TipTapEditable from "@/components/postView/TipTapEditable.vue";
 import PostFloor from "@/components/postView/PostFloor.vue";
 import {computed, reactive, ref} from "vue";
 import axios from "axios";
@@ -41,6 +42,10 @@ axios.get("/api/PostInfo/"+ postId)
         //     alert("帖子加载失败："+ responseObj.data.errorType);
         //     return;
         // }
+        responseObj.data.is_bounty = true;
+        responseObj.data.floors[0].author.user_id = 2;
+        responseObj.data.floors[1].author.user_id = 1;
+
         postInfo.data = responseObj.data
     }
 ).catch((reason)=>{
@@ -49,10 +54,46 @@ axios.get("/api/PostInfo/"+ postId)
 
 
 const closeAllFloorReplyBar = () =>{
-    console.log(floors.value)
     for(let floor of floors.value){
         floor.closeAllReplyBar()
     }
+}
+
+const editor = ref();
+const submitNewComment = async() => {
+    if(editor.value.editor.state.doc.textContent.length < 15) {
+        ElMessage.error('请输入更多内容。');
+        return;
+    }
+    let response = await axios.post("/api/SendFloor",{
+        content:JSON.stringify(editor.value.editor.getJSON()),
+        post_id:postId
+    })
+    let responseObj = response.data;
+    if(responseObj.errorCode!==200) {
+        ElMessage.error('发送失败，错误码：' + responseObj.errorCode);
+        return;
+    }
+    if(responseObj.data.status!==true) {
+        ElMessage.error('发送失败：' + responseObj.data.msg);
+        return;
+    }
+    ElMessage.success('发送成功，请等待审核通过。');
+    dialogVisible.value = false;
+    editor.value.editor.commands.clearContent();
+}
+
+const onSolutionSet = (comment_id) => {
+    postInfo.data.solution = comment_id;
+    // 直接scroll好像不行，设个定时器~
+    setTimeout(()=>{
+        scrollToSolution();
+    },100)
+}
+
+
+const scrollToSolution = () => {
+    document.querySelector(".solutionFloor")?.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"})
 }
 
 </script>
@@ -66,26 +107,40 @@ const closeAllFloorReplyBar = () =>{
                     :bounty-value="postInfo.data.bounty_value"
                     :solution="postInfo.data.solution" @replyClicked="closeAllFloorReplyBar"
                     :star-info="postInfo.data.star"
-                    @firstFloorReplyClicked="openCommentEditor"></post-floor>
-        <post-floor v-for="(floor,index) in floorsWithoutFirst" :floor-info="floor" ref="floors" @replyClicked="closeAllFloorReplyBar"></post-floor>
+                    @firstFloorReplyClicked="openCommentEditor"
+                    @goToSolutionClicked="scrollToSolution">
+        </post-floor>
+        <post-floor v-for="(floor,index) in floorsWithoutFirst"
+                    :floor-info="floor"
+                    ref="floors"
+                    @replyClicked="closeAllFloorReplyBar"
+                    @solution-set="onSolutionSet"
+                    :is-solution="postInfo.data.solution===floor.comment_id"
+                    :class="{solutionFloor:postInfo.data.solution===floor.comment_id}"
+                    :can-set-solution="postInfo.data.is_bounty &&
+                        postInfo.data.solution === -1 &&
+                        globalData.userInfo.user_id===postInfo.data.floors[0].author.user_id &&
+                        floor.author.user_id !== globalData.userInfo.user_id">
+        </post-floor>
     </div>
 
     <el-dialog
         v-model="dialogVisible"
-        title="这是个编辑框~"
-        width="30%"
+        class="editorDialog"
+        modal-class="editorDialogModal"
+        title="编写回复"
+        width="70%"
     >
-        <span>编辑框放这里~</span>
+        <TipTapEditable ref="editor"/>
         <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="dialogVisible.value = false">Cancel</el-button>
-        <el-button type="primary" @click="dialogVisible = false">
-          Confirm
-        </el-button>
-      </span>
+            <span class="dialog-footer">
+                <el-button type="primary" @click="submitNewComment">
+                    回复
+                </el-button>
+            </span>
         </template>
     </el-dialog>
-    <WritePostButton  @click="openCommentEditor" v-if="globalData.login"></WritePostButton>
+    <WritePostButton @click="openCommentEditor" v-if="globalData.login"></WritePostButton>
 </template>
 
 <style scoped>
