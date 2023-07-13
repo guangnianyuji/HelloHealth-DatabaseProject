@@ -13,7 +13,8 @@ axios.defaults.baseURL = 'http://127.0.0.1:4523/m1/2961538-0-default'
 
 //发送请求时自动显示加载界面
 axios.interceptors.request.use((config) => {
-    loadingScreen.startLoading()
+    if(!config.doNotShowLoadingScreen)
+        loadingScreen.startLoading()
     return config;
 },);
 //请求错误或者返回时自动清除加载界面
