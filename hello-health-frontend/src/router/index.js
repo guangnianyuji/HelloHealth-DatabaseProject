@@ -41,6 +41,10 @@ const router = createRouter({
                 name: "medicineView",
                 component: ()=>import("@/views/FindMedicineView.vue"),
             }, {
+                path: 'medicineCard',
+                name: 'medicineCardView',
+                component: ()=>import("@/views/MedicineInformationView.vue"),
+            },{
                 path: "forum",
                 name: "forumView",
                 component: () => import ("@/views/PostBoardView.vue")
@@ -48,6 +52,14 @@ const router = createRouter({
                 path: "forum/:postId",
                 name: "postView",
                 component: () => import ("@/views/PostView.vue")
+            },{
+                path: "calendar",
+                name: "calendarView",
+                component: () => import ("@/views/HealthCalendarView.vue")
+            },{
+                path: "test",
+                name: "test",
+                component: () => import ("@/views/PostBoardView.vue")
             }
 
 
