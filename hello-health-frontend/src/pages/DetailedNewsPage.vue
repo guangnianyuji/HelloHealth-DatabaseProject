@@ -6,31 +6,18 @@
   <div class="common-layout">
     <el-container>
       <!--大容器，包括一个侧边容器和一个主容器-->
-      <el-aside width="400px" class="asideField">
-        <el-affix :offset="1" target=".asideField">
-          <div class="logoField">
-            <div class="logoField">
-              <div class="label">发布单位</div>
-              <div class="logo">
-                <img src="@/assets/logo.png" style="height: 90px" />
-              </div>
-            </div>
-          </div>
-        </el-affix>
-      </el-aside>
-
-      <el-main>
+      <el-aside  class="asideField" style="overflow-x:hidden;">
         <div class="contentField">
           <div class=“common-layout”>
             <el-container>
-              <el-aside width="75%">
-                <div class="content_header">
-                  <p class="title">
+              <el-aside width="100%">
+                <div>
+                  <p class="title" style="margin-bottom:20px;">
                     {{this.news_detail.title}}
                   </p>
                   <el-row gutter="10" justify="center" style="width:100%">
                     <el-col span="1" v-for="tag in news_detail.tags" :key="tag">
-                      <el-tag class="ml-2" type="warning" size="large">{{
+                      <el-tag class="ml-2" type="warning" size="large" style="font-size:16px">{{
                           tag
                         }}</el-tag>
                     </el-col>
@@ -44,6 +31,20 @@
             <p v-html="this.news_detail.content"></p>
           </div>
         </div>
+      </el-aside>
+
+      <el-main>
+        <el-affix :offset="1" target=".asideField">
+          <div class="logoField">
+            <div class="logoField">
+              <div class="label">发布单位</div>
+              <div class="logo" style="position: relative;">
+                <hr style="position: absolute; top: -10px; width: 83%; border:none;border-top:2px solid #e88585;margin-left: 30px;" />
+                <img src="@/assets/logo.png" style=" margin-top: 10px;width:250px;margin-left:40px" />
+              </div>
+            </div>
+          </div>
+        </el-affix>
       </el-main>
     </el-container>
   </div>
@@ -80,54 +81,42 @@ export default {
 <style scoped>
 /*侧边容器栏的设置*/
 .asideField{
-  margin-bottom:40px;
+  width:1100px;
+  max-width:100%;
 }
-/*侧边容器中的Logo部分的文字*/
-.logoField .text{
-  font-size: x-large;
-  color: #409eff;
+/* “发布单位”的字样式 */
+.label{
   font-family: SimSun;
   font-weight: bolder;
-  margin-top: 20px;
-  padding-bottom: 5px;
-  border-bottom: #5c2705 solid;
-  width: 250px;
-  margin-left: 75px;
-}
-/*侧边容器的图片设置*/
-.logoField .pic{
-  margin-top: 15px;
-}
-/*侧边新闻卡片部分的样式*/
-.cardField{
-  margin-top: 20px;
-}
-/*新闻卡片内容的样式设置*/
-.card{
-  margin-bottom: 10px;
-  margin-left: 25px;
+  font-size:25px;
+  color: black;
+  text-align:center;
+  margin-top:30px;
+  margin-bottom:20px;
 }
 /*新闻信息版块的样式*/
 .contentField{
   background-color: white;
-  min-height: 760px;
-  border-radius:10px;
+  min-height: 800px;
 }
 /*新闻文字内容部分的样式*/
 .contentMain{
-  width:80%;
-  margin-left: 10%;
+  width:100%;
+  margin-left: 5%;
   text-align:left;
   padding-bottom: 50px;
   white-space: pre-line;
+  font-size: 20px;
+  font-family: 宋体;
 }
 /*新闻信息大标题的样式*/
 .title{
-  font-size:xx-large;
-  color:#409eff;
-  font-family:SimSun;
+  font-size:35px;
+  color:black;
+  font-family: 黑体;
   font-weight:bolder;;
-  margin-bottom:15px;
+  margin-top:20px;
+  text-align: center;
 }
 /*最外层的侧边容器的样式设置*/
 .asideField{
