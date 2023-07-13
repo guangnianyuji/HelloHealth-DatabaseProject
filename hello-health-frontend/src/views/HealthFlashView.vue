@@ -4,6 +4,10 @@
 -->
 <template>
   <div class="HF_body">
+    <div class="margin">
+    </div>
+    <!-- 新闻轮播器 -->
+    <NewsCarousel/>
     <el-row class="HF_title">
       <svg t="1688614393322" class="icon" viewBox="0 0 1024 1024" version="1.1"
            xmlns="http://www.w3.org/2000/svg"
@@ -30,12 +34,13 @@
 </template>
 
 <script>
+import NewsCarousel from "../components/NewsCarousel.vue";
 import NewsBlockList from "../components/NewsBlockList.vue";
 import NewsTagSelector from "../components/NewsTagSelector.vue";
 
 export default {
   name: "HealthFlashView",
-  components: {NewsTagSelector, NewsBlockList},
+  components: {NewsCarousel,NewsTagSelector, NewsBlockList},
   methods: {
     handleTagSelected(tagId) {
       this.selectedTagId = tagId; /* 将选中的 tagId 传递给 NewsBlockList 组件作为 prop */
@@ -54,12 +59,14 @@ export default {
   background-color: RGB(232, 246, 246);
   z-index: 999;
 }
-
+.margin{
+  height:30px;
+}
 .HF_title {
   font-size: 20px;
   color: #000000;
-  margin-left: 4%;
-  padding-top: 20px;
+  margin-left: 2%;
+  padding-top: 0px;
 }
 
 .news_content{
@@ -69,7 +76,8 @@ export default {
 
 .left{
   width:auto;
-  padding-left: 100px;
+  padding-left: 50px;
+  padding-top: 20px;
 }
 .middle{
   width: auto;
