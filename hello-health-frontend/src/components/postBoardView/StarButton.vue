@@ -68,7 +68,6 @@ export default
             }
         },
     created(){
-        console.log(this.starInfo)
         this.is_stared = this.starInfo.status;
         this.star_num = this.starInfo.num;
     }
