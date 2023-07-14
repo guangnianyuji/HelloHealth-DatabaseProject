@@ -67,6 +67,7 @@ export default {
             }).then(response => {
                 if(response.data.errorCode!==200 || response.data.data.status!==true){
                     ElMessage.error("图片上传失败，请联系管理员！")
+                    this.$refs.fileInput.value = '';
                     return
                 }
                 this.editor.chain().focus().setImage({src: response.data.data.url}).run()
