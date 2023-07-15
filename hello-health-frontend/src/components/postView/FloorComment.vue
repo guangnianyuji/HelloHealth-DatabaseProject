@@ -12,7 +12,7 @@ const prop = defineProps({
     commentInfo: Object,
     floor_id: Number
 })
-const emits = defineEmits(["replyClicked"])
+const emits = defineEmits(["replyClicked","replySent"])
 
 const showComment = ref(false)
 
@@ -33,35 +33,8 @@ const showReplyBox = () =>{
     showComment.value = true;
 }
 
-const onReplySubmit = (content,handler) =>{
-    if(content.length < 5){
-        ElMessage.error("请输入更多内容。");
-        return;
-    }
-    axios.post("/api/CommentFloor", {
-        content: content.value,
-        reply_floor_id: prop.floor_id,
-        reply_user_id: prop.commentInfo.author.user_id
-    })
-        .then((res)=> {
-            let responseObj = res.data;
-            if(responseObj.errorCode!==200) {
-                ElMessage.error('发送失败，错误码：' + responseObj.errorCode);
-                return;
-            }
-            if(responseObj.data.status!==true) {
-                ElMessage.error('发送失败：' + responseObj.data.msg);
-                return;
-            }
-            ElMessage.success('发送成功，请等待审核通过。');
-            handler()
-            emits("replyClicked");
-        })
-        .catch((errMsg) => {
-            console.log(errMsg);
-            ElMessage.error(errMsg);
-        });
-
+const onReplySubmit = (content,_,handler) =>{
+    emits("replySent",content,prop.commentInfo.author,handler);
 }
 
 </script>
