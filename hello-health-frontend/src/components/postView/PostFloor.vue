@@ -7,16 +7,28 @@ import {ref} from "vue";
 import ReplyBar from "@/components/postView/ReplyBar.vue";
 import globalData from "@/global/global";
 import {ElMessage} from "element-plus";
+import LikeButton from "@/components/postBoardView/LikeButton.vue";
+import CoinButton from "@/components/postBoardView/CoinButton.vue";
+import StarButton from "@/components/postBoardView/StarButton.vue";
+import ReportButton from "@/components/postBoardView/ReportButton.vue";
+import TipTapEditorReadonly from "@/components/postView/TipTapEditorReadonly.vue";
+import axios from "axios";
+import SetSolutionButton from "@/components/postBoardView/SetSolutionButton.vue";
 
 const prop = defineProps({
     floorInfo:Object,
     title:String,
     isBounty:Boolean,
     bountyValue:Number,
-    solution:Number
+    solution:Number,
+    starInfo: Object,
+    isSolution: Boolean,
+    canSetSolution: Boolean
 })
 
-const emits = defineEmits(['replyClicked'])
+const isSolutionReal = ref(prop.isSolution);
+
+const emits = defineEmits(['replyClicked','firstFloorReplyClicked','goToSolutionClicked','solutionSet'])
 
 const comments = ref()
 
@@ -31,7 +43,6 @@ const closeAllReplyBar = () =>{
 
 defineExpose({
     closeAllReplyBar,
-    // showReplyBar
 })
 
 const onCommentReplyClicked = ()=>{
@@ -43,6 +54,12 @@ const openReplyBar = () =>{
         ElMessage.error('请先登录再参与讨论。')
         return;
     }
+
+    if(prop.title){
+        emits("firstFloorReplyClicked")
+        return
+    }
+
     if(showReplyBar.value){
         showReplyBar.value = false;
         return
@@ -50,6 +67,38 @@ const openReplyBar = () =>{
     emits('replyClicked')
     showReplyBar.value = true;
 }
+
+const onReplySubmit = (content,handler) =>{
+    if(content.length < 5){
+        ElMessage.error("请输入更多内容。");
+        return;
+    }
+    axios.post("/api/CommentFloor", {
+        content: content.value,
+        reply_floor_id: prop.floorInfo.comment_id,
+        reply_user_id: -1
+    })
+        .then((res)=> {
+            let responseObj = res.data;
+            if(responseObj.errorCode!==200) {
+                ElMessage.error('发送失败，错误码：' + responseObj.errorCode);
+                return;
+            }
+            if(responseObj.data.status!==true) {
+                ElMessage.error('发送失败：' + responseObj.data.msg);
+                return;
+            }
+            ElMessage.success('发送成功，请等待审核通过。');
+            handler()
+            emits("replyClicked");
+        })
+        .catch((errMsg) => {
+            console.log(errMsg);
+            ElMessage.error(errMsg);
+        });
+
+}
+
 
 </script>
 
@@ -70,31 +119,52 @@ const openReplyBar = () =>{
         </div>
         <div class="contentWrapper">
             <div v-if="title" class="title">{{title}}</div>
-            <el-tag v-if="title && isBounty && solution !== -1" class="bountyTag">赏金{{bountyValue}}杏仁币，点击查看最佳答案。</el-tag>
+            <el-tag v-if="title && isBounty && solution !== -1" class="bountyTag">
+                <span>赏金{{bountyValue}}杏仁币，</span>
+                <span @click="emits('goToSolutionClicked')" class="scrollToSolutionButton">点击查看最佳答案</span>
+            </el-tag>
             <el-tag v-if="title && isBounty && solution === -1" class="bountyTag" type="warning">正在进行悬赏！赏金{{bountyValue}}杏仁币。</el-tag>
-            <!-- 这里得换成TipTap的readonly编辑器!，现在仅作展示-->
+            <el-tag v-if="isSolutionReal" class="bountyTag">
+                <div style="display: flex; align-items: center;">
+                    <i class="fi fi-sr-badge centerIcon"></i><span>最佳答案</span>
+                </div>
+            </el-tag>
             <div class="content">
-                {{floorInfo.content}}
+                <TipTapEditorReadonly :content-json-string="floorInfo.content"></TipTapEditorReadonly>
             </div>
             <div class="contentStatus">
                 <div class="time">
                     {{floorInfo.post_time}}
                 </div>
                 <div class="rewards">
-                    点赞 投币 收藏 组件放这里
-                    {{JSON.stringify(floorInfo.reward_count)}}
+                    <el-popover placement="top" :width="'auto'" trigger="click">
+                        <template #reference>
+                            <i class="fi fi-rr-menu-dots centerIcon replyButton"></i>
+                        </template>
+                        <ReportButton :comment_id="floorInfo.comment_id"></ReportButton>
+                    </el-popover>
+                    <SetSolutionButton
+                        :comment_id="floorInfo.comment_id"
+                        :comment_user_name="floorInfo.author.user_name"
+                        @solution-set="isSolutionReal=true;emits('solutionSet',floorInfo.comment_id)"
+                        v-if="canSetSolution">
+                    </SetSolutionButton>
+                    <LikeButton :comment_id="floorInfo.comment_id" :like-info="floorInfo.reward.like"></LikeButton>
+                    <CoinButton :comment_id="floorInfo.comment_id" :coin-info="floorInfo.reward.coin">
+                    </CoinButton>
+                    <StarButton v-if="title" :comment_id="floorInfo.comment_id" :star-info="starInfo"></StarButton>
 
-                    <div class="replyButton" @click="openReplyBar" v-if="!title">
-                        评论放这里
+                    <div class="replyButton" @click="openReplyBar">
+                        评论
                     </div>
                 </div>
             </div>
             <div v-if="showReplyBar && !title">
-                <ReplyBar ></ReplyBar>
+                <ReplyBar @replySubmit="onReplySubmit"></ReplyBar>
             </div>
 
             <div class="commentsHolder" v-if="!title">
-                <FloorComment ref="comments" v-for="item in floorInfo.comments" :comment-info="item" @replyClicked="onCommentReplyClicked"></FloorComment>
+                <FloorComment ref="comments" v-for="item in floorInfo.comments" :comment-info="item" :floor_id="floorInfo.comment_id" @replyClicked="onCommentReplyClicked"></FloorComment>
             </div>
         </div>
     </div>
@@ -191,6 +261,7 @@ const openReplyBar = () =>{
 .rewards{
     display: flex;
     flex-direction: row;
+    align-items: center;
 }
 
 .rewards>*{
@@ -204,4 +275,16 @@ const openReplyBar = () =>{
     margin-bottom: 10px;
 }
 
+.replyButton{
+    cursor: pointer;
+    user-select: none;
+}
+.replyButton:hover{
+    color: var(--el-color-primary);
+}
+
+.scrollToSolutionButton:hover{
+    cursor: pointer;
+    color: var(--el-color-primary-light-5);
+}
 </style>

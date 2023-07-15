@@ -41,6 +41,22 @@ const router = createRouter({
                 name: "newsView",
                 component: ()=>import("@/views/HealthFlashView.vue"),
             }, {
+                path: 'medicineCard',
+                name: 'medicineCardView',
+                component: ()=>import("@/views/MedicineInformationView.vue"),
+            },{
+                path: "forum",
+                name: "forumView",
+                component: () => import ("@/views/PostBoardView.vue")
+            }, {
+                path: "forum/:postId",
+                name: "postView",
+                component: () => import ("@/views/PostView.vue")
+            },{
+                path: "calendar",
+                name: "calendarView",
+                component: () => import ("@/views/HealthCalendarView.vue")
+            }, {
                 path: "detailedNews",
                 name: "detailedNews",
                 component: ()=>import("@/pages/DetailedNewsPage.vue"),
@@ -62,6 +78,10 @@ const router = createRouter({
                     component: ()=>import("@/pages/UseragreementPage.vue"),
                 }
             ]
+        },{
+            path: "/test",
+            name: "test",
+            component: () => import ("@/components/postView/TipTapEditable.vue")
         },
         { path: '/:pathMatch(.*)*', name: 'NotFound', component: ()=>import("@/pages/ErrorPage.vue") },
 

@@ -49,7 +49,7 @@ const menus = [
     {"title":"收藏管理","icon":"fi-rr-followcollection","path":"/favourites"},
     {"title":"健康资讯","icon":"fi-rr-books","path":"/news"},
     {"title":"HH 论坛","icon":"fi-rr-user-md-chat","path":"/forum"},
-    {"title":"健康日程档案","icon":"fi-rr-calendar-clock","path":"/calender"},
+    {"title":"健康日程档案","icon":"fi-rr-calendar-clock","path":"/calendar"},
     {"title":"个人信息管理","icon":"fi-rr-user-gear","path":"/settings"},
     {"title":"客服中心","icon":"fi-rr-headset","path":"/customer_service"},
 ];
@@ -108,7 +108,7 @@ const getSidebarPath = () => {
                 <img alt="" src="../assets/logo.png">
                 <SearchBox @searchStart="searchStart"></SearchBox>
             </div>
-            <div class="rightTitle" :class="{notVisible: !isLogin}">
+            <div class="rightTitle" v-if="isLogin">
                 <img alt="" src="../assets/titleImg1.png">
                 <LinkButtonWithIcon font-color="#fff" text="消息通知" icon="fi-rr-bell" :has-notification="userInfo.unread_notification" @click="notificationButtonClicked"></LinkButtonWithIcon>
                 <LinkButtonWithIcon font-color="#fff" text="联系客服" icon="fi-rr-headset"></LinkButtonWithIcon>
@@ -116,7 +116,7 @@ const getSidebarPath = () => {
                 </div>
                 <LinkButtonWithIcon font-color="#fff" text="退出" icon="" @click="exitButtonClicked"></LinkButtonWithIcon>
             </div>
-            <div class="rightTitle" :class="{notVisible: isLogin}">
+            <div class="rightTitle" v-if="!isLogin">
                 <img alt="" src="../assets/titleImg1.png">
 
                 <LinkButtonWithIcon font-color="#fff" text="点击登录" icon="" @click="loginButtonClicked"></LinkButtonWithIcon>
@@ -154,7 +154,7 @@ const getSidebarPath = () => {
     width: 100%;
     height: 60px;
     box-sizing: border-box;
-    background-color: #00bfa8;
+    background-color: var(--el-color-primary);
     display: flex;
     justify-content: space-between;
     max-height: 60px;
@@ -231,9 +231,5 @@ const getSidebarPath = () => {
     padding: 10px 20px;
     border-bottom: 1px #eee solid;
     cursor: pointer;
-}
-
-.notVisible{
-    display: none !important;
 }
 </style>
