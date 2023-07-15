@@ -68,7 +68,7 @@ const openReplyBar = () =>{
     showReplyBar.value = true;
 }
 
-const onReplySubmit = (content,handler) =>{
+const onReplySubmit = (content,reply_user_info,handler) =>{
     if(content.length < 5){
         ElMessage.error("请输入更多内容。");
         return;
@@ -76,7 +76,7 @@ const onReplySubmit = (content,handler) =>{
     axios.post("/api/CommentFloor", {
         content: content.value,
         reply_floor_id: prop.floorInfo.comment_id,
-        reply_user_id: -1
+        reply_user_id: reply_user_info ? reply_user_info.user_id: -1
     })
         .then((res)=> {
             let responseObj = res.data;
@@ -88,7 +88,20 @@ const onReplySubmit = (content,handler) =>{
                 ElMessage.error('发送失败：' + responseObj.data.msg);
                 return;
             }
-            ElMessage.success('发送成功，请等待审核通过。');
+            ElMessage.success('发送成功。');
+            newComments.value.push({
+                content: content.value,
+                comment_id: responseObj.data.comment_id,
+                like: {
+                    status: false,
+                    num: 0
+                },
+                author: globalData.userInfo,
+                comment_user_id: reply_user_info ? reply_user_info.user_id : -1,
+                comment_user_name: reply_user_info ? reply_user_info.user_name : '',
+                post_time: responseObj.data.post_time
+
+            })
             handler()
             emits("replyClicked");
         })
@@ -99,6 +112,7 @@ const onReplySubmit = (content,handler) =>{
 
 }
 
+const newComments = ref([])
 
 </script>
 
@@ -164,7 +178,8 @@ const onReplySubmit = (content,handler) =>{
             </div>
 
             <div class="commentsHolder" v-if="!title">
-                <FloorComment ref="comments" v-for="item in floorInfo.comments" :comment-info="item" :floor_id="floorInfo.comment_id" @replyClicked="onCommentReplyClicked"></FloorComment>
+                <FloorComment ref="comments" v-for="item in floorInfo.comments" :comment-info="item" :floor_id="floorInfo.comment_id" @replyClicked="onCommentReplyClicked" @replySent="onReplySubmit"></FloorComment>
+                <FloorComment ref="comments" v-for="item in newComments" :comment-info="item" :floor_id="floorInfo.comment_id" @replyClicked="onCommentReplyClicked" @replySent="onReplySubmit"></FloorComment>
             </div>
         </div>
     </div>

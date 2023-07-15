@@ -9,7 +9,8 @@ const props = defineProps({
 let userGroupNameDict = {
     "none": "点击登录",
     "normal": "普通用户",
-    "doctor": "医生"
+    "doctor": "医生",
+    "admin": "管理员"
 }
 
 </script>

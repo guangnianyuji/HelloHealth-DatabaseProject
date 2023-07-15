@@ -82,12 +82,6 @@ const isLogin = ref(false);
     globalData.userInfo = userInfo.data
 })()
 
-let userGroupNameDict = {
-    "none": "点击登录",
-    "normal": "普通用户",
-    "doctor": "医生"
-}
-
 const getSidebarPath = () => {
     let path = router.currentRoute.value.path.split("/")
     if(path.length === 1){
