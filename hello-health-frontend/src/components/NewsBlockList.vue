@@ -3,7 +3,7 @@
 作者：吴可非
 -->
 <template>
-  <el-container  class="news-container">
+  <el-container class="news-container">
       <el-main>
         <!-- 三个 NewsBlock 组件 -->
         <NewsBlock
@@ -46,7 +46,7 @@ export default {
     return {
       newsList: [],  // 全部新闻列表
       page: 1,       // 当前页码
-      pageSize: 3,   // 每页新闻数
+      pageSize: 4,   // 每页新闻数
       total: 0       // 总新闻数
     }
   },
@@ -90,10 +90,9 @@ export default {
 </script>
 
 <style scoped>
-.news-carousel-item {
+.news-container {
   width: auto;
   display: flex;
   align-items: center;
-  margin: 0%;
 }
 </style>
