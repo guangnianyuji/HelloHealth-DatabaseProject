@@ -4,8 +4,6 @@
 -->
 <template>
   <div class="HF_body">
-    <div class="margin">
-    </div>
     <!-- 新闻轮播器 -->
     <NewsCarousel/>
     <el-row class="HF_title">
@@ -56,12 +54,10 @@ export default {
 
 <style>
 .HF_body {
-  background-color: RGB(232, 246, 246);
-  z-index: 999;
+    margin: 30px auto 0 auto;
+    width: 85%;
 }
-.margin{
-  height:30px;
-}
+
 .HF_title {
   font-size: 20px;
   color: #000000;

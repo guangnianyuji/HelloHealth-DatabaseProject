@@ -41,6 +41,14 @@ const router = createRouter({
                 name: "newsView",
                 component: ()=>import("@/views/HealthFlashView.vue"),
             }, {
+                path: "news/:flash_id",
+                name: "detailedNews",
+                component: ()=>import("@/views/DetailedNewsView.vue"),
+            }, {
+                path: "medicine",
+                name: "medicineView",
+                component: () => import("@/views/FindMedicineView.vue")
+            }, {
                 path: 'medicineCard',
                 name: 'medicineCardView',
                 component: ()=>import("@/views/MedicineInformationView.vue"),
@@ -57,31 +65,30 @@ const router = createRouter({
                 name: "calendarView",
                 component: () => import ("@/views/HealthCalendarView.vue")
             }, {
-                path: "detailedNews",
-                name: "detailedNews",
-                component: ()=>import("@/pages/DetailedNewsPage.vue"),
+                path: "my",
+                name: "myView",
+                component: () => import("@/views/UserInfoView.vue")
             }]
         },
         {
-            path: '/',
+            path: '/coin',
             name: 'coin',
-            //component: ()=>import("@/pages/HomePage.vue"),
             children:[
                 {
-                    path: "coin",
-                    name: "coinview",
+                    path: "detail",
+                    name: "coinView",
                     component: ()=>import("@/components/CoinView.vue"),
                 },
                 {
                     path: "UserAgreement",
                     name: "UserAgreement",
-                    component: ()=>import("@/pages/UseragreementPage.vue"),
+                    component: ()=>import("@/pages/UserAgreementPage.vue"),
                 }
             ]
         },{
             path: "/test",
             name: "test",
-            component: () => import ("@/components/postView/TipTapEditable.vue")
+            component: () => import ("@/views/DetailedNewsPage.vue")
         },
         { path: '/:pathMatch(.*)*', name: 'NotFound', component: ()=>import("@/pages/ErrorPage.vue") },
 

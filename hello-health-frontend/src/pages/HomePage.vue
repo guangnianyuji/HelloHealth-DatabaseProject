@@ -50,7 +50,7 @@ const menus = [
     {"title":"健康资讯","icon":"fi-rr-books","path":"/news"},
     {"title":"HH 论坛","icon":"fi-rr-user-md-chat","path":"/forum"},
     {"title":"健康日程档案","icon":"fi-rr-calendar-clock","path":"/calendar"},
-    {"title":"个人信息管理","icon":"fi-rr-user-gear","path":"/settings"},
+    {"title":"个人信息管理","icon":"fi-rr-user-gear","path":"/my"},
     {"title":"客服中心","icon":"fi-rr-headset","path":"/customer_service"},
 ];
 
