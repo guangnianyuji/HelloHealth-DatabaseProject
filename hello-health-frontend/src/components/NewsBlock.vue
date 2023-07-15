@@ -17,12 +17,12 @@
           <!-- 新闻标题 -->
           <h1 @click="goFullContent"
               class="flash-title clickable"
-              style="font-weight: bold;">{{ flash_title }}</h1>
+              style="font-weight: bold;">{{ truncatedTitle }}</h1>
           <span class="flash-date">{{ flash_date }}</span>
         </el-header>
         <el-main class="flash-preview">
           <!-- 新闻预览内容 -->
-          <p>{{ flash_content }}</p>
+          <p>{{ truncatedContent }}</p>
         </el-main>
         <el-footer class="flash-tags">
           <!-- 新闻标签 -->
@@ -56,6 +56,24 @@ export default {
     },
     flash_tags_list: {
       type: Array
+    }
+  },
+  computed: {
+    truncatedTitle: function() {
+      const limit = 5; /* title最大字符数 */
+      if (this.flash_title.length > limit) {
+        return this.flash_title.substring(0, limit) + '...';
+      } else {
+        return this.flash_title;
+      }
+    },
+    truncatedContent: function() {
+      const limit = 10; /* preview最大字符数 */
+      if (this.flash_content.length > limit) {
+        return this.flash_content.substring(0, limit) + '...';
+      } else {
+        return this.flash_content;
+      }
     }
   },
   methods: {

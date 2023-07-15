@@ -11,18 +11,24 @@
       <!--放置标签按钮-->
       <el-main class="bottomBox">
         <!--根据后端获取的标签输出标签-->
-        <!--<div class="buttonContainer">-->
         <el-row class="buttonContainer" :gutter="10">
-          <el-col :span="12" v-for="tag in tagList" :key="tag.tag_id">
-            <el-button
-                class="buttonStyle"
-                :class="['buttonStyle',tag.tag_id === selectedTagId ? 'active' : '']"
-                @click="clickTag(tag.tag_id)"
-            >
-              {{tag.tag_name}}
-            </el-button>
-            <!--</div>-->
-          </el-col>
+          <!-- 第一层循环，遍历所有的 group -->
+          <div v-for="group in tagList" :key="group.group_id">
+            <h1 class="parent-tag">
+              {{ group.group_name }}:</h1> <!-- 显示 group 的名字 -->
+            <!-- 第二层循环，遍历当前 group 下的所有 tag -->
+            <el-row :gutter="5">
+              <el-col :span="12" v-for="tag in group.tags" :key="tag.tag_id">
+                <button
+                    class="buttonStyle"
+                    :class="['buttonStyle',tag.tag_id === selectedTagId ? 'active' : '']"
+                    @click="clickTag(tag.tag_id)"
+                >
+                  {{tag.tag_name}}
+                </button>
+              </el-col>
+            </el-row>
+          </div>
         </el-row>
       </el-main>
     </el-container>
@@ -47,13 +53,9 @@ export default {
     },
   },
   mounted() { // mounted 时获取全部标签列表
-    axios.get('https://mock.apifox.cn/m1/2961538-0-default/api/tagList?tag_id=&tag_name=')
+    axios.get("https://mock.apifox.cn/m1/2961538-0-default/api/tagList?tag_id=&tag_name=")
         .then(response => {
-          const responseData = response.data.data.tagList;
-          this.tagList = responseData.map(tagData => ({
-            tag_id: tagData.tag_id,
-            tag_name: tagData.tag_name
-          }))
+          this.tagList = response.data.data.tagList;
         })
         .catch(error => {
           console.error(error)
@@ -73,9 +75,10 @@ export default {
 }
 /*Mainer部分容器的样式设置*/
 .bottomBox{
+  background-color: white;
   border:2px solid #00bfa8;
   border-radius: 10px;
-  width:270px;
+  width: 270px;
 }
 /*设置按钮的样式*/
 .buttonStyle{
@@ -83,24 +86,27 @@ export default {
   margin-top: 2px;
   background-color:white;
   color:black;
-  height:25px;
+  height:20px;
   width:100px;
   font-size:13px;
   margin-right:25px;
   border-color: white;
+  text-align: start;
 }
 /*设置按钮的选中效果*/
 .buttonStyle.active{
   background-color: white;
   color: #00bfa8;
-  /*border: 0.1em solid #989ba0 ;*/
 }
 /*按钮容器，设置按钮的排列样式*/
 .buttonContainer{
   display:flex;
   flex-wrap:wrap;
-  justify-content: flex-start ;
-  align-items: flex-start;
+  padding-left: 10px;
+}
+.parent-tag{
+  font-weight: bold;
+  padding-bottom: 8px;
 }
 </style>
 
