@@ -33,13 +33,13 @@ const router = createRouter({
                 name: "homeView",
                 component: ()=>import("@/views/TestView1.vue"),
             }, {
-                path: "favourites",
-                name: "favouritesView",
+                path: "consultation",
+                name: "consultationView",
                 component: ()=>import("@/views/TestView2.vue"),
             }, {
-                path: "medicine",
-                name: "medicineView",
-                component: ()=>import("@/views/FindMedicineView.vue"),
+                path: "news",
+                name: "newsView",
+                component: ()=>import("@/views/HealthFlashView.vue"),
             }, {
                 path: 'medicineCard',
                 name: 'medicineCardView',
@@ -56,13 +56,27 @@ const router = createRouter({
                 path: "calendar",
                 name: "calendarView",
                 component: () => import ("@/views/HealthCalendarView.vue")
-            },{
-                path: "test",
-                name: "test",
-                component: () => import ("@/views/PostBoardView.vue")
-            }
-
-
+            }, {
+                path: "detailedNews",
+                name: "detailedNews",
+                component: ()=>import("@/pages/DetailedNewsPage.vue"),
+            }]
+        },
+        {
+            path: '/',
+            name: 'coin',
+            //component: ()=>import("@/pages/HomePage.vue"),
+            children:[
+                {
+                    path: "coin",
+                    name: "coinview",
+                    component: ()=>import("@/components/CoinView.vue"),
+                },
+                {
+                    path: "UserAgreement",
+                    name: "UserAgreement",
+                    component: ()=>import("@/pages/UseragreementPage.vue"),
+                }
             ]
         },{
             path: "/test",
