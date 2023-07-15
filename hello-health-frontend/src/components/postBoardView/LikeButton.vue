@@ -25,7 +25,6 @@
 
 <script>
 import { ElMessage } from 'element-plus'
-import { reactive } from 'vue';
 import axios from "axios";
 import globalData from "@/global/global"
 export default
@@ -49,10 +48,10 @@ export default
 
 
             axios.post("/api/Comment/Like",
-                reactive({
+                {
                     operate: 1,
                     comment_id: this.comment_id
-                }))
+                },{doNotShowLoadingScreen: true})
                 .then((res) => {
                     this.is_liked = res.data.data.status;
                     this.like_num = res.data.data.comment_like_num;

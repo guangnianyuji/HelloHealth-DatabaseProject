@@ -35,16 +35,13 @@ axios.get("/api/PostInfo/"+ postId)
 .then((res) => {
         let responseObj = res.data;
         if(responseObj.errorCode!==200){
-            alert("错误代码："+ responseObj.errorCode);
+            ElMessage.error("错误代码："+ responseObj.errorCode);
             return;
         }
-        // if(!responseObj.data.status){
-        //     alert("帖子加载失败："+ responseObj.data.errorType);
-        //     return;
-        // }
-        responseObj.data.is_bounty = true;
-        responseObj.data.floors[0].author.user_id = 2;
-        responseObj.data.floors[1].author.user_id = 1;
+        if(!responseObj.data.status){
+            ElMessage.error("帖子加载失败："+ responseObj.data.errorType);
+            return;
+        }
 
         postInfo.data = responseObj.data
     }
