@@ -18,17 +18,20 @@
         <div class="editorButton" @click="editor.chain().focus().toggleBlockquote().run()" :class="{ 'is-active': editor.isActive('blockquote') }">
             <i class="fi fi-rr-quote-right centerIcon"></i>
         </div>
-        <div class="editorButton" @click="addImage">
+        <label class="editorButton" for="imgUploadInput">
             <i class="fi fi-rr-picture centerIcon"></i>
-        </div>
+        </label>
     </div>
     <editor-content :editor="editor" class="writableEditor" />
+    <input style="display: none" type="file" ref="fileInput" id="imgUploadInput" @change="uploadImage" accept="image/png, image/gif, image/jpeg">
 </template>
 
 <script>
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image'
 import { Editor, EditorContent } from '@tiptap/vue-3'
+import axios from "axios";
+import {ElMessage} from "element-plus";
 
 export default {
     components: {
@@ -51,12 +54,28 @@ export default {
         })
     },
     methods: {
-        addImage() {
-            const url = window.prompt('URL')
+        uploadImage() {
+            const formData = new FormData();
+            if (this.$refs.fileInput.files.length === 0) return;
 
-            if (url) {
-                this.editor.chain().focus().setImage({src: url}).run()
-            }
+            formData.append('image', this.$refs.fileInput.files[0]);
+
+            axios.post('/ImgUpload', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }).then(response => {
+                if(response.data.errorCode!==200 || response.data.data.status!==true){
+                    ElMessage.error("图片上传失败，请联系管理员！")
+                    this.$refs.fileInput.value = '';
+                    return
+                }
+                this.editor.chain().focus().setImage({src: response.data.data.url}).run()
+                this.$refs.fileInput.value = '';
+                ElMessage.success("图片上传成功，请等待图片加载。")
+            }).catch(()=>{
+                this.$refs.fileInput.value = '';
+            })
         }
     },
 

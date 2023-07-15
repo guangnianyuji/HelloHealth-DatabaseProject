@@ -1,6 +1,6 @@
 <template>
-    <button class="back-button">
-        <span class="button-content" @click="goBack">返回</span>
+    <button class="back-button" @click="goBack">
+        <span class="button-content">返回</span>
     </button>
 </template>
   

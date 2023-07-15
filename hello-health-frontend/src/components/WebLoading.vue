@@ -1,6 +1,6 @@
 <template>
-    <div class="loading">
-        <svg v-if="loading" class="pl" width="240" height="240" viewBox="0 0 240 240">
+    <div class="loading" v-if="isLoading" :class="{isDisappearing:isDisappearing}">
+        <svg class="pl" width="240" height="240" viewBox="0 0 240 240">
             <circle class="pl__ring pl__ring--a" cx="120" cy="120" r="105" fill="none" stroke="#000" stroke-width="20"
                 stroke-dasharray="0 660" stroke-dashoffset="-330" stroke-linecap="round"></circle>
             <circle class="pl__ring pl__ring--b" cx="120" cy="120" r="35" fill="none" stroke="#000" stroke-width="20"
@@ -12,30 +12,47 @@
         </svg>
     </div>
 </template>
-  
-<script>
-//TODO 修改背景
-export default {
-    name: "WebLoading",
-    data() {
-        return {
-            loading: true, // 控制 Loader 的显示和隐藏
-        };
-    },
-    mounted() {
-        // 模拟加载过程
+
+<script setup>
+import loading from '@/global/loading'
+import {ref, watch} from "vue";
+
+const isLoading = ref(false);
+const isDisappearing = ref(false)
+watch(loading._showLoading_DO_NOT_USE,(newLoading ,oldLoading)=>{
+    if (newLoading) {
+        isDisappearing.value = false;
+        isLoading.value = true;
+    } else {
+        isDisappearing.value = true;
         setTimeout(() => {
-            this.loading = false; // 加载完成后隐藏 Loader
-        }, 3000); // 设置适当的延迟时间
-    },
-};
+            isLoading.value = newLoading;
+            isDisappearing.value = false;
+        }, 300)
+    }
+})
 </script>
   
 <style scoped>
+
+.loading{
+    opacity: 1;
+    transition: 0.3s ease;
+}
+
+.loading.isDisappearing{
+    opacity: 0;
+}
+
 .loading {
-    width: border-box;
-    height: border-box;
+    box-sizing: border-box;
+    height: 100vh;
+    width: 100vw;
     background: rgba(255, 255, 255, 0.8);
+    position: fixed;
+    top:0;
+    left:0;
+    z-index: 9999;
 }
 
 .pl {
