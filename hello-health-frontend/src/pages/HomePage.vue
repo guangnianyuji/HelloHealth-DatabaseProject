@@ -5,9 +5,10 @@ import LinkButtonWithIcon from "@/components/LinkButtonWithIcon.vue";
 import {changeTheme} from "@/assets/changeTheme";
 import router from "@/router";
 import axios from "axios";
-import {reactive, ref} from "vue";
+import {onMounted, reactive, ref} from "vue";
 import UserInfoCard from "@/components/UserInfoCard.vue";
 import globalData from "@/global/global"
+import {ElMenuItem, ElSubMenu} from "element-plus";
 
 changeTheme("#00bfa8")
 
@@ -46,7 +47,12 @@ const avatarClicked = () =>{
 const menus = [
     {"title":"首页","icon":"fi-rr-home","path":"/"},
     {"title":"HH 找药","icon":"fi-rr-capsules","path":"/medicine"},
-    {"title":"收藏管理","icon":"fi-rr-followcollection","path":"/collection"},
+    {"title":"收藏管理","icon":"fi-rr-followcollection","path":"collection",
+        "children":[
+            {"title":"药品收藏","icon":"fi-rr-capsules","path":"/medicineCollection"},
+            {"title":"帖子收藏","icon":"fi-rr-memo","path":"/postCollection"},
+        ]
+    },
     {"title":"健康资讯","icon":"fi-rr-books","path":"/news"},
     {"title":"HH 论坛","icon":"fi-rr-user-md-chat","path":"/forum"},
     {"title":"健康日程档案","icon":"fi-rr-calendar-clock","path":"/calendar"},
@@ -93,6 +99,21 @@ const getSidebarPath = () => {
 
 }
 
+const menu = ref();
+onMounted(()=>{
+    (()=>{
+        let menuItemNow = getSidebarPath();
+        for(let item of menus){
+            if(!item.children) continue;
+            for(let child of item.children){
+                if(child.path===menuItemNow){
+                    menu.value.open(item.path);
+                }
+            }
+        }
+    })()
+})
+
 </script>
 
 <template>
@@ -123,14 +144,17 @@ const getSidebarPath = () => {
                 </div>
 
 
-                <el-menu
-                    :default-active="getSidebarPath()"
-                    class="sideBarMenu"
-                >
-                    <el-menu-item v-for="item in menus" :index="item.path" @click="menuItemClick">
-                        <i class="fi" :class="item.icon"></i>
-                        <span>{{item.title}}</span>
-                    </el-menu-item>
+                <el-menu :default-active="getSidebarPath()" class="sideBarMenu" ref="menu">
+                    <component v-for="item in menus" :is="item.children ? ElSubMenu : ElMenuItem" :index="item.path" v-on="item.children ? {}: {click: menuItemClick}">
+                        <template #title>
+                            <i class="fi" :class="item.icon"></i>
+                            <span>{{item.title}}</span>
+                        </template>
+                        <el-menu-item v-if="item.children" v-for="child in item.children" :index="child.path" @click="menuItemClick">
+                            <i class="fi" :class="child.icon"></i>
+                            <span>{{child.title}}</span>
+                        </el-menu-item>
+                    </component>
                 </el-menu>
             </div>
 

@@ -121,8 +121,11 @@ const newComments = ref([])
         <div class="userInfoWrapper">
             <div class="header">
                 <UserInfoCard :user-info="floorInfo.author"></UserInfoCard>
-                <el-button type="primary">
-                    <i class="fi fi-rr-plus addIcon"></i><span> 关注</span>
+                <el-button type="primary" v-if="floorInfo.author.followed">
+                    <i class="fi fi-rr-plus addIcon"></i><span>关注</span>
+                </el-button>
+                <el-button type="info" plain v-else>
+                    <i class="fi fi-rr-minus addIcon"></i><span>已关注</span>
                 </el-button>
             </div>
             <div class="info">
@@ -132,6 +135,7 @@ const newComments = ref([])
 
         </div>
         <div class="contentWrapper">
+            <div class="floorNumberIndicator">#{{floorInfo.floor_number}}</div>
             <div v-if="title" class="title">{{title}}</div>
             <el-tag v-if="title && isBounty && solution !== -1" class="bountyTag">
                 <span>赏金{{bountyValue}}杏仁币，</span>
@@ -247,6 +251,15 @@ const newComments = ref([])
     flex:3;
     padding: 20px;
     box-sizing: border-box;
+    position: relative;
+}
+
+.floorWrapper.bgTransition .contentWrapper{
+    transition: background-color 1.5s linear;
+}
+
+.floorWrapper.kiraKira .contentWrapper{
+    background-color: #ffff99 !important;
 }
 
 .title{
@@ -301,5 +314,13 @@ const newComments = ref([])
 .scrollToSolutionButton:hover{
     cursor: pointer;
     color: var(--el-color-primary-light-5);
+}
+
+.floorNumberIndicator{
+    position: absolute;
+    top:20px;
+    right: 20px;
+    color: #ccc;
+    font-size: 0.8em;
 }
 </style>
