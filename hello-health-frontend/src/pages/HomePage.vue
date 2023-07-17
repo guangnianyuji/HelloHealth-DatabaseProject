@@ -46,7 +46,7 @@ const avatarClicked = () =>{
 const menus = [
     {"title":"首页","icon":"fi-rr-home","path":"/"},
     {"title":"HH 找药","icon":"fi-rr-capsules","path":"/medicine"},
-    {"title":"收藏管理","icon":"fi-rr-followcollection","path":"/favourites"},
+    {"title":"收藏管理","icon":"fi-rr-followcollection","path":"/collection"},
     {"title":"健康资讯","icon":"fi-rr-books","path":"/news"},
     {"title":"HH 论坛","icon":"fi-rr-user-md-chat","path":"/forum"},
     {"title":"健康日程档案","icon":"fi-rr-calendar-clock","path":"/calendar"},

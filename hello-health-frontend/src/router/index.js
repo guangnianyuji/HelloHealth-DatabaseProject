@@ -41,6 +41,10 @@ const router = createRouter({
                 name: "newsView",
                 component: ()=>import("@/views/HealthFlashView.vue"),
             }, {
+                path: 'medicine',
+                name: 'findMedicineView',
+                component: ()=>import("@/views/FindMedicineView.vue"),
+            },{
                 path: 'medicineCard',
                 name: 'medicineCardView',
                 component: ()=>import("@/views/MedicineInformationView.vue"),
@@ -60,7 +64,12 @@ const router = createRouter({
                 path: "detailedNews",
                 name: "detailedNews",
                 component: ()=>import("@/pages/DetailedNewsPage.vue"),
-            }]
+            }, {
+                path: 'collection/medicineCollection',
+                name: 'medicineCollectionView',
+                component: ()=>import("@/views/MedicineCollectionView.vue"),
+            },
+            ]
         },
         {
             path: '/',
