@@ -1,7 +1,7 @@
 <script setup>
 import TipTapEditable from "@/components/postView/TipTapEditable.vue";
 import PostFloor from "@/components/postView/PostFloor.vue";
-import {computed, reactive, ref} from "vue";
+import {computed, nextTick, onMounted, reactive, ref} from "vue";
 import axios from "axios";
 import {useRoute} from "vue-router";
 import globalData from "@/global/global";
@@ -43,7 +43,8 @@ axios.get("/api/PostInfo/"+ postId)
             return;
         }
 
-        postInfo.data = responseObj.data
+        postInfo.data = responseObj.data;
+        nextTick(gotoSpecificFloor);
     }
 ).catch((reason)=>{
     alert(reason)
@@ -93,6 +94,30 @@ const scrollToSolution = () => {
     document.querySelector(".solutionFloor")?.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"})
 }
 
+const gotoSpecificFloor = ()=>{
+    let floor = new URLSearchParams(window.location.search).get("floor");
+    if(!floor) return;
+    let floorDom = document.querySelector(`[floor="${floor}"]`);
+    if(!floorDom){
+        ElMessage.error("指定的楼层不存在。");
+        return;
+    }
+    floorDom.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"})
+
+    setTimeout(()=>{
+        floorDom.classList.add("kiraKira")
+        setTimeout(()=>{
+            floorDom.classList.add("bgTransition")
+        },10)
+        setTimeout(()=>{
+            floorDom.classList.remove("kiraKira");
+        },20)
+        setTimeout(()=>{
+            floorDom.classList.remove("bgTransition");
+        },2000)
+    },400);
+}
+
 </script>
 
 <template>
@@ -105,7 +130,8 @@ const scrollToSolution = () => {
                     :solution="postInfo.data.solution" @replyClicked="closeAllFloorReplyBar"
                     :star-info="postInfo.data.star"
                     @firstFloorReplyClicked="openCommentEditor"
-                    @goToSolutionClicked="scrollToSolution">
+                    @goToSolutionClicked="scrollToSolution"
+                    floor="1">
         </post-floor>
         <post-floor v-for="(floor,index) in floorsWithoutFirst"
                     :floor-info="floor"
@@ -117,7 +143,8 @@ const scrollToSolution = () => {
                     :can-set-solution="postInfo.data.is_bounty &&
                         postInfo.data.solution === -1 &&
                         globalData.userInfo.user_id===postInfo.data.floors[0].author.user_id &&
-                        floor.author.user_id !== globalData.userInfo.user_id">
+                        floor.author.user_id !== globalData.userInfo.user_id"
+                    :floor="floor.floor_number">
         </post-floor>
     </div>
 
@@ -137,7 +164,7 @@ const scrollToSolution = () => {
             </span>
         </template>
     </el-dialog>
-    <WritePostButton @click="openCommentEditor" v-if="globalData.login"></WritePostButton>
+    <WritePostButton @click="openCommentEditor" v-if="globalData.login && (!postInfo.data.is_bounty || globalData.userInfo.verified)"></WritePostButton>
 </template>
 
 <style scoped>

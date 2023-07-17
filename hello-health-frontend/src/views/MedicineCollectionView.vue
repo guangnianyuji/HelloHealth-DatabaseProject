@@ -157,7 +157,6 @@
         insurance,
         recipe,
         input,
-        Search,
         tableData: [], // 初始化为空数组
         medicine: [
           {
@@ -311,6 +310,9 @@
       },
     },
     computed: {
+        Search() {
+            return Search
+        },
       filteredTableData() {
         if(this.tableData) {
           const filteredData = this.tableData.filter((item) => {
@@ -484,7 +486,7 @@
   }
   
   .card:hover .card__content {
-    transform: translate(-50%, -50%) rotate(-45deg);
+    //transform: translate(-50%, -50%) rotate(-45deg);
     opacity: 0;
   }
   
