@@ -1,3 +1,8 @@
+<!--
+药品详情页面
+作者：张恺瑞
+-->
+
 <template>
     <div class="MedicineInformationView">
         <BackButton />
