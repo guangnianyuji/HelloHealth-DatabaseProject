@@ -9,7 +9,14 @@
     <div class="circle-2"></div>
     <div class="circle-3">
       <div class="add-favorite-wrapper">
-        <AddCollection @addCollection="handleAddCollection" @removeCollection="handleRemoveCollection" />
+        <span class="AddCollection">
+          <i v-if="!is_Collected" class="fi fi-rr-star" style="color: white;" @click="collect">
+            {{ items.find((item) => item.id ==="medicine_collection_num").content }}
+          </i>
+          <i v-else class="fi fi-sr-star" style="color: white;" @click="unCollect">
+            {{ items.find((item) => item.id ==="medicine_collection_num").content }}
+          </i>
+        </span>
       </div>
     </div>
     <div class="card">
@@ -31,16 +38,15 @@
   </div>
 </template>
 
-
 <script>
-import AddCollection from "@/components/AddCollection.vue";
 import axios from "axios";
-import {onMounted, reactive, ref} from "vue";
+import { onMounted, reactive, ref } from "vue";
+import { useRouter } from "vue-router";
+
 export default {
   name: "MedicineCard",
-  components: {AddCollection},
 
-  setup(){
+  setup() {
     const items = reactive([
       {
         id: "medicine_id",
@@ -170,10 +176,90 @@ export default {
       },
     ]);
 
+    const medicineId = ref(null); // 使用 ref 来包装 medicineId
+    const collectionNum = ref(null); // 使用 ref 来包装 collectionNum
+    medicineId.value = items.find((item) => item.id ==="medicine_id").content
+    collectionNum.value = items.find((item) => item.id ==="medicine_collection_num").content
+
     const isLogin = ref(false);
     const userInfo = reactive({
       user_id: 123456,
     });
+
+    const router = useRouter();
+
+    const collect = () => {
+      //判断是否登录
+      if (!isLogin.value) {
+        //若未登录
+        ElMessage({
+          message: "请先登录",
+          type: "warning",
+          showClose: true,
+          duration: 2000,
+        });
+        // TODO 之后此处需记录当前页面路径，以便于登陆完成后跳转
+        this.$router.push({
+          path: "/login",
+          query: { redirect: router.currentRoute.value.fullPath },
+        });
+      } else {
+        axios
+          .post(
+            `https://mock.apifox.cn/m1/2961538-0-default/api/medicine/medicineCollection/addCollection?user_id=${userInfo.user_id}&medicine_id=${medicineId.value}`
+          )
+          .then((res) => {
+            console.log(res);
+            if (res.data.errorCode === 200) {
+              is_Collected.value = res.data.data.status;
+              collectionNum.value = res.data.data.medicine_collection_num;
+              // 收藏添加成功
+              console.log("收藏添加成功！");
+              items.find((item) => item.id === "medicine_collection_num").content += 1; // 增加收藏总数
+              updateCollectionData(); // 更新后台数据
+              is_Collected.value = true; // 设置收藏状态为已收藏
+            } else {
+              console.log("收藏添加失败...");
+            }
+          })
+          .catch((errMsg) => {
+            alert(
+              "对id为" +
+              medicineId.value +
+              "的药品收藏,相关API此时未完成"
+            );
+            console.log(errMsg);
+          });
+      }
+    };
+
+    const unCollect = () => {
+      axios
+      .post(
+            `https://mock.apifox.cn/m1/2961538-0-default/api/medicine/medicineCollection/removeCollection?user_id=${userInfo.user_id}&medicine_id=${medicineId.value}`
+          )
+        .then((res) => {
+          if (res.data.errorCode === 200) {
+            is_Collected.value = res.data.data.status;
+            collectionNum.value = res.data.data.medicine_collection_num;
+            // 收藏移除成功
+            console.log("收藏移除成功！");
+            items.find((item) => item.id === "medicine_collection_num").content -= 1; // 减少收藏总数
+            updateCollectionData(); // 更新后台数据
+            is_Collected.value = false; // 设置收藏状态为已收藏
+          } else {
+            console.log("收藏移除失败...");
+          }
+        })
+        .catch((errMsg) => {
+          alert(
+            "取消对id为" +
+            medicineId +
+            "的药品收藏,相关API此时未完成"
+          );
+          console.log(errMsg);
+        });
+    };
 
     onMounted(() => {
       (async () => {
@@ -190,61 +276,68 @@ export default {
     });
     const is_Collected = ref(false);
 
+    // 添加药品收藏
     const handleAddCollection = (value) => {
       if (value && !is_Collected.value) {
         // 收藏添加成功
+        console.log("收藏添加成功！");
         items.find((item) => item.id === "medicine_collection_num").content += 1; // 增加收藏总数
         updateCollectionData(); // 更新后台数据
         is_Collected.value = true; // 设置收藏状态为已收藏
       } else {
-        // 收藏添加失败
+        console.log("收藏添加失败...");
         // 更新相关操作
       }
     };
 
+    // 移除药品收藏
     const handleRemoveCollection = (value) => {
       if (value && is_Collected.value) {
         // 收藏移除成功
+        console.log("收藏移除成功！");
         items.find((item) => item.id === "medicine_collection_num").content -= 1; // 减少收藏总数
         updateCollectionData(); // 更新后台数据
         is_Collected.value = false; // 设置收藏状态为已收藏
       } else {
-        // 收藏移除失败
+        console.log("收藏移除失败...");
         // 更新相关操作
       }
     };
 
+    // 药品收藏数据更新
     const updateCollectionData = () => {
-      const medicineId = items.find((item) => item.id === "medicine_id").content; // 获取 medicine_id
-      const collectionNum = items.find((item) => item.id === "medicine_collection_num").content; // 获取收藏总数
-
       // 构建请求参数
       const params = new URLSearchParams();
       params.append("user_id", userInfo.user_id);
-      params.append("medicine_id", medicineId);
-      params.append("medicine_collection_num", collectionNum);
+      params.append("medicine_id", medicineId.value);
+      params.append("medicine_collection_num", collectionNum.value);
 
       axios
-          .post(
-              "https://mock.apifox.cn/m1/2961538-0-default/api/medicine/medicineCollection/updateCollection",
-              params
-          )
-          .then((response) => {
-            // 更新成功的处理逻辑
-            console.log("收藏数据更新成功");
-          })
-          .catch((error) => {
-            // 更新失败的处理逻辑
-            console.error("收藏数据更新失败", error);
-          });
+        .post(
+          "https://mock.apifox.cn/m1/2961538-0-default/api/medicine/medicineCollection/updateCollection",
+          params
+        )
+        .then((response) => {
+          // 更新成功的处理逻辑
+          console.log("收藏数据更新成功");
+        })
+        .catch((error) => {
+          // 更新失败的处理逻辑
+          console.error("收藏数据更新失败", error);
+        });
     }
 
     return {
       items,
+      medicineId,
+      collectionNum,
       userInfo,
+      is_Collected,
       updateCollectionData,
       handleAddCollection,
       handleRemoveCollection,
+      collect,
+      unCollect,
     };
   },
   created() {
@@ -252,10 +345,10 @@ export default {
   },
   methods: {
     getMedicineCard() {
-      const medicineId = this.$route.query.medicine_id;
-      if (medicineId) {
-        axios//https://mock.apifox.cn/m1/2961538-0-default/api/medicineCard?medicine_id=
-          .get(`https://mock.apifox.cn/m1/2961538-0-default/api/medicineCard?medicine_id=${medicineId}`)
+      const medicine_Id = this.$route.query.medicine_id;
+      if (medicine_Id) {
+        axios
+          .get(`https://mock.apifox.cn/m1/2961538-0-default/api/medicineCard?medicine_id=${medicine_Id}`)
           .then((res) => {
             const response = res.data;
             if (response.errorCode === 200) {
@@ -286,8 +379,10 @@ export default {
   --white: #e3e3e3;
   --bc: rgba(15, 70, 115, 0.6);
   --bc-al: rgba(12, 133, 119, 0.62);
-  left: 50%; /* 将左侧位置设置为 50% */
-  transform: translate(-50%); /* 使用 transform 将元素水平和垂直居中 */
+  left: 50%;
+  /* 将左侧位置设置为 50% */
+  transform: translate(-50%);
+  /* 使用 transform 将元素水平和垂直居中 */
   width: 100%;
   max-width: 60%;
   border-collapse: collapse;
@@ -304,8 +399,10 @@ export default {
 }
 
 .card {
-  width: 100%; /* 修改为适当的宽度 */
-  margin: 0 auto; /* 添加此行 */
+  width: 100%;
+  /* 修改为适当的宽度 */
+  margin: 0 auto;
+  /* 添加此行 */
   padding: 1rem 0;
   display: grid;
   grid-template-areas: "top" "bottom";
@@ -362,7 +459,8 @@ export default {
 }
 
 .properties {
-  width: 100%; /* 添加此行 */
+  width: 100%;
+  /* 添加此行 */
   display: flex;
   flex-direction: column;
   padding: .5rem 0;
@@ -381,11 +479,9 @@ export default {
 }
 
 .property:hover {
-  background: linear-gradient(
-      82.3deg,
+  background: linear-gradient(82.3deg,
       rgb(0, 190, 168) 10.8%,
-      rgba(35, 137, 220, 0.8) 94.3%
-  );
+      rgba(35, 137, 220, 0.8) 94.3%);
 }
 
 .property:nth-last-child(1) {
@@ -417,5 +513,4 @@ export default {
   font-size: 1.5rem;
   font-weight: 700;
   font-style: normal;
-}
-</style>
+}</style>
