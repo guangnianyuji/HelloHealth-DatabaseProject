@@ -1,3 +1,8 @@
+<!--
+描述：HH找药
+作者：陈雨彤、张恺瑞
+-->
+
 <script>
 import { ref } from 'vue'
 import { Search } from '@element-plus/icons-vue'
