@@ -9,6 +9,7 @@ import {onMounted, reactive, ref} from "vue";
 import UserInfoCard from "@/components/UserInfoCard.vue";
 import globalData from "@/global/global"
 import {ElMenuItem, ElSubMenu} from "element-plus";
+import NotificationPopup from "@/components/NotificationPopup.vue";
 
 changeTheme("#00bfa8")
 
@@ -30,9 +31,13 @@ const exitButtonClicked = async ()=>{
     window.location.href ="/";
 }
 
+const notificationBox = ref();
 const notificationButtonClicked = () => {
-    // TODO 不知道要干什么，先写个切换小红点的代码
-    userInfo.unread_notification = !userInfo.unread_notification
+    userInfo.data.unread_notification = false;
+}
+
+const updateNotifications = () =>{
+    notificationBox.value.getNotification();
 }
 
 const avatarClicked = () =>{
@@ -67,7 +72,7 @@ let userInfo = reactive({
         user_id:123456,
         user_group:"none",
         avatar_url:"/src/assets/defaultAvatar.png",
-        unread_notification:true,
+        unread_notification:false,
         verified: false
     }
 
@@ -125,7 +130,20 @@ onMounted(()=>{
             </div>
             <div class="rightTitle" v-if="isLogin">
                 <img alt="" src="../assets/titleImg1.png">
-                <LinkButtonWithIcon font-color="#fff" text="消息通知" icon="fi-rr-bell" :has-notification="userInfo.unread_notification" @click="notificationButtonClicked"></LinkButtonWithIcon>
+                <el-popover
+                    :width="360"
+                    popper-style="box-shadow: 0 5px 20px hsla(0,0%,7%,.1);padding: 0; transition: opacity 0.3s;"
+                    trigger="click"
+                    @before-enter="updateNotifications"
+                >
+                    <template #reference>
+                        <LinkButtonWithIcon font-color="#fff" text="消息通知" icon="fi-rr-bell" :has-notification="userInfo.data.unread_notification" @click="notificationButtonClicked"></LinkButtonWithIcon>
+                    </template>
+                    <template #default>
+                        <NotificationPopup ref="notificationBox"></NotificationPopup>
+                    </template>
+                </el-popover>
+
                 <LinkButtonWithIcon font-color="#fff" text="联系客服" icon="fi-rr-headset"></LinkButtonWithIcon>
                 <div class="line">
                 </div>
