@@ -1,7 +1,7 @@
 <script setup>
 import TipTapEditable from "@/components/postView/TipTapEditable.vue";
 import PostFloor from "@/components/postView/PostFloor.vue";
-import {computed, nextTick, onMounted, reactive, ref} from "vue";
+import {computed, nextTick, reactive, ref, watch} from "vue";
 import axios from "axios";
 import {useRoute} from "vue-router";
 import globalData from "@/global/global";
@@ -10,7 +10,10 @@ import WritePostButton from "@/components/postBoardView/WritePostButton.vue";
 const router = useRoute()
 
 let postId = router.params.postId;
-
+watch(router,(old,newRoute)=>{
+    postId = newRoute.params.postId;
+    reloadPost();
+})
 const postInfo = reactive({
     data:{}
 })
@@ -31,24 +34,28 @@ const openCommentEditor = () =>{
     dialogVisible.value = true
 }
 
-axios.get("/api/PostInfo/"+ postId)
-.then((res) => {
-        let responseObj = res.data;
-        if(responseObj.errorCode!==200){
-            ElMessage.error("错误代码："+ responseObj.errorCode);
-            return;
-        }
-        if(!responseObj.data.status){
-            ElMessage.error("帖子加载失败："+ responseObj.data.errorType);
-            return;
-        }
+const reloadPost = ()=>{
+    axios.get("/api/PostInfo/"+ postId)
+        .then((res) => {
+                let responseObj = res.data;
+                if(responseObj.errorCode!==200){
+                    ElMessage.error("错误代码："+ responseObj.errorCode);
+                    return;
+                }
+                if(!responseObj.data.status){
+                    ElMessage.error("帖子加载失败："+ responseObj.data.errorType);
+                    return;
+                }
 
-        postInfo.data = responseObj.data;
-        nextTick(gotoSpecificFloor);
-    }
-).catch((reason)=>{
-    alert(reason)
-})
+                postInfo.data = responseObj.data;
+                nextTick(gotoSpecificFloor);
+            }
+        ).catch((reason)=>{
+        alert(reason)
+    })
+}
+reloadPost();
+
 
 
 const closeAllFloorReplyBar = () =>{
