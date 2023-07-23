@@ -330,8 +330,13 @@ export default {
   },
   mounted() {
     // 从后端API获取医师认证信息
-      //TODO 这个地方应该用团队里面的api
-    axios.get('http://127.0.0.1:4523/m2/2961538-0-default/95495428')
+      let userIdNum = parseInt(this.$route.params.userId ? this.$route.params.userId: 0);
+      console.log(userIdNum)
+      if(isNaN(userIdNum)){
+          this.$router.replace("/error");
+          return;
+      }
+    axios.post('/api/UserInfo/Details',{user_id: userIdNum})
         .then(response => {
           const responseData = response.data.data.userInfo;
           this.userInfo = responseData
@@ -412,7 +417,7 @@ export default {
     save(){
       // 将修改后的用户信息保存到数据库
       axios
-          .put('http://127.0.0.1:4523/m2/2961538-0-default/95495428', {
+          .put('/api/UserInfo/Details', {
             userInfo: this.userInfo,
           })
           .then(response => {

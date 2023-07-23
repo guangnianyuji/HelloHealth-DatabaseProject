@@ -69,8 +69,12 @@ const router = createRouter({
                 name: 'medicineCollectionView',
                 component: ()=>import("@/views/MedicineCollectionView.vue"),
             },{
-                path: "my",
+                path: "user",
                 name: "myView",
+                component: () => import("@/views/UserInfoView.vue")
+            },{
+                path: "user/:userId",
+                name: "otherView",
                 component: () => import("@/views/UserInfoView.vue")
             }]
         },
@@ -89,10 +93,6 @@ const router = createRouter({
                     component: ()=>import("@/pages/UserAgreementPage.vue"),
                 }
             ]
-        },{
-            path: "/test",
-            name: "test",
-            component: () => import ("@/views/DetailedNewsPage.vue")
         },
         { path: '/:pathMatch(.*)*', name: 'NotFound', component: ()=>import("@/pages/ErrorPage.vue") },
 

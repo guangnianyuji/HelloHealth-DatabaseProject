@@ -25,7 +25,7 @@
     },
     methods: {
       getNewsList() {
-        const apiUrl = "https://mock.apifox.cn/m1/2961538-0-default/api/hotnews";
+        const apiUrl = "/api/hotnews";
         axios.get(apiUrl)
             .then(res => {
               this.newsList = res.data.data.newsList;    // 获取全部新闻列表

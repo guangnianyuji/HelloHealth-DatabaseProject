@@ -206,7 +206,7 @@ export default {
       } else {
         axios
           .post(
-            `https://mock.apifox.cn/m1/2961538-0-default/api/medicine/medicineCollection/addCollection?user_id=${userInfo.user_id}&medicine_id=${medicineId.value}`
+            `/api/medicine/medicineCollection/addCollection?user_id=${userInfo.user_id}&medicine_id=${medicineId.value}`
           )
           .then((res) => {
             console.log(res);
@@ -236,7 +236,7 @@ export default {
     const unCollect = () => {
       axios
       .post(
-            `https://mock.apifox.cn/m1/2961538-0-default/api/medicine/medicineCollection/removeCollection?user_id=${userInfo.user_id}&medicine_id=${medicineId.value}`
+            `/api/medicine/medicineCollection/removeCollection?user_id=${userInfo.user_id}&medicine_id=${medicineId.value}`
           )
         .then((res) => {
           if (res.data.errorCode === 200) {
@@ -314,7 +314,7 @@ export default {
 
       axios
         .post(
-          "https://mock.apifox.cn/m1/2961538-0-default/api/medicine/medicineCollection/updateCollection",
+          "/api/medicine/medicineCollection/updateCollection",
           params
         )
         .then((response) => {
@@ -348,7 +348,7 @@ export default {
       const medicine_Id = this.$route.query.medicine_id;
       if (medicine_Id) {
         axios
-          .get(`https://mock.apifox.cn/m1/2961538-0-default/api/medicineCard?medicine_id=${medicine_Id}`)
+          .get(`/api/medicineCard?medicine_id=${medicine_Id}`)
           .then((res) => {
             const response = res.data;
             if (response.errorCode === 200) {
