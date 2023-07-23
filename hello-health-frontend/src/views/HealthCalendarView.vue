@@ -1,6 +1,7 @@
 <template>
     <div class="calendarContainer">
         <div class="calendar">
+            <CalendarToggle />
             <CalendarBase />
         </div>
         <div class="todo">
@@ -11,12 +12,14 @@
 
 
 <script>
+import CalendarToggle from '@components/CalendarToggle.vue';
 import CalendarBase from '@/components/CalendarBase.vue';
 import TodoMenu from '@/components/TodoMenu.vue';
 
 export default {
     name: "HealthCalendarView",
     components: {
+        CalendarToggle,
         CalendarBase,
         TodoMenu,
     }
