@@ -209,7 +209,7 @@ export default
             },
             getCoinRecord()
             {
-                const apiUrl = "https://mock.apifox.cn/m1/2961538-0-default/api/coinRecord";
+                const apiUrl = "/api/coinRecord";
                 axios.get(apiUrl)
                 .then(res => {
                 this.CoinRecordList = res.data.data.coinRecordList;    // 获取全部硬币记录列表

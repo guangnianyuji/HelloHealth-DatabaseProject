@@ -53,7 +53,7 @@ export default {
     },
   },
   mounted() { // mounted 时获取全部标签列表
-    axios.get("https://mock.apifox.cn/m1/2961538-0-default/api/tagList?tag_id=&tag_name=")
+    axios.get("/api/tagList?tag_id=&tag_name=")
         .then(response => {
           this.tagList = response.data.data.tagList;
         })

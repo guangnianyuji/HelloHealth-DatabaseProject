@@ -9,9 +9,8 @@ import loadingScreen from '@/global/loading'
 import App from './App.vue'
 import router from './router'
 import axios from "axios";
-// axios.defaults.baseURL = 'http://124.222.75.198:6001'
-axios.defaults.baseURL = 'http://127.0.0.1:4523/m1/2961538-0-default'
 
+axios.defaults.baseURL = 'http://127.0.0.1:4523/m1/2961538-0-default'
 //发送请求时自动显示加载界面
 axios.interceptors.request.use((config) => {
     if(!config.doNotShowLoadingScreen)
