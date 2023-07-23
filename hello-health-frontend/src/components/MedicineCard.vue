@@ -352,7 +352,7 @@ export default {
           .then((res) => {
             const response = res.data;
             if (response.errorCode === 200) {
-              const medicineData = response.medicine_data;
+              const medicineData = response.data;
               this.items.forEach((item) => {
                 item.content = medicineData[item.id] || "-";
               });

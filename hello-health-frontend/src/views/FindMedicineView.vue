@@ -156,7 +156,7 @@ export default {
     },
     // TODO 增加api
     mounted() {
-        axios.get('/api/medicineList?type_array=')
+        axios.get('https://mock.apifox.cn/m1/2961538-0-default/api/Medicine/medicineList')
             .then(response => {
                 if (response.data.errorCode === 200) {
                     this.tableData = response.data.data.medicine_list; // Assuming the response contains the medicine data

@@ -7,9 +7,9 @@
         <div class="back-forword">
             <div class="Arrows">
                 <div class="IconButton">
-                    <div class="IconButtonBase">
+                    <div class="leftButtonBase">
                         <div class="Icon">
-                            <div class="Vector"></div>
+                            <i class="fi fi-rr-angle-small-left"></i>
                         </div>
                     </div>
                 </div>
@@ -19,9 +19,9 @@
                     </div>
                 </div>
                 <div class="IconButton">
-                    <div class="IconButtonBase">
+                    <div class="rightButtonBase">
                         <div class="Icon">
-                            <div class="Vector"></div>
+                            <i class="fi fi-rr-angle-small-right"></i>
                         </div>
                     </div>
                 </div>
@@ -29,32 +29,68 @@
         </div>
         <div class="day-month-year">
             <label class="radio">
-                <input type="radio" name="radio" checked="">
+                <input type="radio" name="radio" checked="" @click="isMonthSelected = false">
                 <span class="name">Day</span>
             </label>
             <label class="radio">
-                <input type="radio" name="radio">
-                <span class="name">Month</span>
+                <input type="radio" name="radio" @click="isMonthSelected = false">
+                <span class="name">Week</span>
             </label>
 
             <label class="radio">
-                <input type="radio" name="radio">
-                <span class="name">Year</span>
+                <input type="radio" name="radio" @click="isMonthSelected = true">
+                <span class="name">Month</span>
             </label>
         </div>
     </div>
+    <div class="monthCalendar" v-if="isMonthSelected">
+        <el-calendar v-model="value">
+        </el-calendar>
+    </div>
+    <!-- 代办任务  日程表 -->
+
 </template>
 
 <script>
+import FullCalendar from '@fullcalendar/vue3'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import timeGridPlugin from '@fullcalendar/timegrid'
+import interactionPlugin from '@fullcalendar/interaction'
+import zhCnLocale from '@fullcalendar/core/locales/zh-cn'
+
+export default {
+    name: "CalendarToggle",
+    data() {
+        return {
+            value: new Date(),
+            isMonthSelected: false // 添加 isMonthSelected 属性
+        }
+    },
+
+}
+
+
 </script>
 
 <style scoped>
 .Head {
-    width: 920px;
-    height: 52.50px; 
-    justify-content: flex-start; 
-    align-items: flex-start; 
-    display: inline-flex"
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* 修改为 space-between */
+}
+
+.back-forword {
+    display: flex;
+    align-items: center;
+    margin: 10px;
+}
+
+.day-month-year {
+    display: flex;
+    align-items: center;
+    margin: 10px;
 }
 
 .Arrows {
@@ -78,11 +114,22 @@
     display: flex;
 }
 
-.IconButtonBase {
+.leftButtonBase {
     padding: 4px;
-    background: #F4F4F5;
+    background: #ffffff;
     border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    display: flex;
+}
+
+.rightButtonBase {
+    padding: 4px;
+    background: #ffffff;
     border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
     justify-content: center;
     align-items: center;
     gap: 8px;
@@ -94,7 +141,7 @@
     padding-right: 16px;
     padding-top: 6px;
     padding-bottom: 6px;
-    background: #F4F4F5;
+    background: #ffffff;
     justify-content: center;
     align-items: center;
     gap: 8px;
@@ -113,17 +160,7 @@
 .Icon {
     width: 20px;
     height: 20px;
-    position: relative"
-
-}
-
-.Vector {
-    width: 6px;
-    height: 9.99px;
-    left: 7px;
-    top: 5.01px;
-    position: absolute;
-    background: #18181B;
+    position: relative;
 }
 
 .day-month-year {
@@ -131,17 +168,18 @@
     display: flex;
     flex-wrap: wrap;
     border-radius: 0.5rem;
-    background-color: #EEE;
+    background-color: #ffffff;
     box-sizing: border-box;
     box-shadow: 0 0 0px 1px rgba(0, 0, 0, 0.06);
-    padding: 0.25rem;
-    width: 300px;
-    font-size: 14px;
+    padding: 0.1rem;
+    width: 240px;
+    font-size: 10px;
 }
 
 .day-month-year .radio {
     flex: 1 1 auto;
     text-align: center;
+    padding: 0.25rem;
 }
 
 .day-month-year .radio input {
@@ -161,6 +199,8 @@
 }
 
 .day-month-year .radio input:checked+.name {
-    background-color: #fff;
+    background-color: rgba(0, 191, 168, 0.6);
+    color: #ffffff;
     font-weight: 600;
-}</style>
+}
+</style>
