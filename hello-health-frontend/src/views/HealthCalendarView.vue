@@ -12,7 +12,7 @@
 
 
 <script>
-import CalendarToggle from '@components/CalendarToggle.vue';
+import CalendarToggle from '@/components/CalendarToggle.vue';
 import CalendarBase from '@/components/CalendarBase.vue';
 import TodoMenu from '@/components/TodoMenu.vue';
 
