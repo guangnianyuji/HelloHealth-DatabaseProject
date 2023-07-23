@@ -6,7 +6,7 @@
   <div class="common-layout">
     <el-container>
       <!--大容器，包括一个侧边容器和一个主容器-->
-      <el-aside  class="asideField" style="overflow-x:hidden;">
+      <el-main  class="asideField" style="overflow-x:hidden;">
         <div class="contentField">
           <div class=“common-layout”>
             <el-container>
@@ -15,13 +15,11 @@
                   <p class="title" style="margin-bottom:20px;">
                     {{this.news_detail.title}}
                   </p>
-                  <el-row gutter="10" justify="center" style="width:100%">
-                    <el-col span="1" v-for="tag in news_detail.tags" :key="tag">
-                      <el-tag class="ml-2" type="warning" size="large" style="font-size:16px">{{
-                          tag
-                        }}</el-tag>
-                    </el-col>
-                  </el-row>
+                  <div class="tagWrapper">
+                      <el-tag v-for="tag in news_detail.tags" :key="tag" class="ml-2" type="warning" size="large">
+                          {{tag}}
+                      </el-tag>
+                  </div>
                 </div>
               </el-aside>
             </el-container>
@@ -31,21 +29,21 @@
             <p v-html="this.news_detail.content"></p>
           </div>
         </div>
-      </el-aside>
+      </el-main>
 
-      <el-main>
+      <el-aside>
         <el-affix :offset="1" target=".asideField">
           <div class="logoField">
             <div class="logoField">
               <div class="label">发布单位</div>
               <div class="logo" style="position: relative;">
                 <hr style="position: absolute; top: -10px; width: 83%; border:none;border-top:2px solid #e88585;margin-left: 30px;" />
-                <img src="@/assets/logo.png" style=" margin-top: 10px;width:250px;margin-left:40px" />
+                <img src="../assets/logo.png" style=" margin-top: 10px;width:250px;margin-left:40px" />
               </div>
             </div>
           </div>
         </el-affix>
-      </el-main>
+      </el-aside>
     </el-container>
   </div>
 </template>
@@ -63,9 +61,9 @@ export default {
   },
   methods:{
     getParams() {
-      this.flash_id = this.$route.query.flash_id;
+      this.flash_id = this.$route.params.flash_id;
 
-      const apiUrl = `https://mock.apifox.cn/m1/2961538-0-default/api/getNewsById?flash_id=${this.flash_id}`;
+      const apiUrl = `/api/getNewsById?flash_id=${this.flash_id}`;
       axios.get(apiUrl)
           .then(res => {
             this.news_detail = res.data.data;
@@ -86,7 +84,7 @@ export default {
 }
 /* “发布单位”的字样式 */
 .label{
-  font-family: SimSun;
+  /* font-family: SimSun; */
   font-weight: bolder;
   font-size:25px;
   color: black;
@@ -107,13 +105,13 @@ export default {
   padding-bottom: 50px;
   white-space: pre-line;
   font-size: 20px;
-  font-family: 宋体;
+  /* font-family: 宋体;*/
 }
 /*新闻信息大标题的样式*/
 .title{
   font-size:35px;
   color:black;
-  font-family: 黑体;
+  /*font-family: 黑体;*/
   font-weight:bolder;;
   margin-top:20px;
   text-align: center;
@@ -121,6 +119,25 @@ export default {
 /*最外层的侧边容器的样式设置*/
 .asideField{
   margin-bottom: 40px;
+}
+
+.common-layout{
+    width: 85%;
+    margin: 0 auto;
+    position: relative;
+}
+
+.tagWrapper{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+}
+
+.ml-2{
+    font-size:16px;
+    margin:5px;
 }
 </style>
 
