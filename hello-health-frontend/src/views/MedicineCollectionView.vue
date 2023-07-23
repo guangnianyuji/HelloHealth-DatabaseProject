@@ -5,8 +5,6 @@
 
 <template>
     <div class="Medicine-Collection">
-      <BackButton />
-      <WebLoading />
       <div class="FM_body">
         <el-row class="FM_title">
           <svg t="1688614393322" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
@@ -157,7 +155,6 @@
         insurance,
         recipe,
         input,
-        Search,
         tableData: [], // 初始化为空数组
         medicine: [
           {
@@ -311,6 +308,9 @@
       },
     },
     computed: {
+        Search() {
+            return Search
+        },
       filteredTableData() {
         if(this.tableData) {
           const filteredData = this.tableData.filter((item) => {
@@ -484,7 +484,7 @@
   }
   
   .card:hover .card__content {
-    transform: translate(-50%, -50%) rotate(-45deg);
+    //transform: translate(-50%, -50%) rotate(-45deg);
     opacity: 0;
   }
   

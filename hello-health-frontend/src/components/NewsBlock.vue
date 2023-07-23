@@ -78,10 +78,7 @@ export default {
   },
   methods: {
     goFullContent() {
-      this.$router.push({
-        name: 'detailedNews',
-        query: {flash_id: this.$props.flash_id}
-      })
+      this.$router.push("/news/"+this.$props.flash_id);
     },
   }
 }
