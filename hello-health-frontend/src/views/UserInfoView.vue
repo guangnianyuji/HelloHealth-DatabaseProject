@@ -40,9 +40,9 @@
               <div>
                 <span>{{ authenInfo }}</span>
                 <template v-if="isLogin">
-                  <span v-if="isCurrentUser && !isCertified">{{ '未认证' }}</span>
-                  <span v-else-if="isCertified">{{ certification.professionTitle }}</span>
-                  <el-button v-else-if="isCurrentUser && !isCertified" type="primary" class="certificated-button" @click="showCertificationDialog">去认证</el-button>
+                  <span v-if="isCurrentUser && !userInfo.isCertified">{{ '未认证' }}</span>
+                  <span v-else-if="userInfo.isCertified">{{ certification.professionTitle }}</span>
+                  <el-button v-else-if="isCurrentUser && !userInfo.isCertified" type="primary" class="certificated-button" @click="showCertificationDialog">去认证</el-button>
                   <span v-else>{{ '未认证' }}</span>
                   <el-dialog v-model="dialogVisible" title="医师认证" width="50%">
                     <div style="text-align: center;">
@@ -74,11 +74,11 @@
       <el-card class="cardStyle" v-if="isLogin">
         <el-button class="coinButton" v-if="isLogin && isCurrentUser" link @click="goToCoinDetail">
           我的杏仁币：
-          {{ numOfCoin }}
+          {{ userInfo.numOfCoin }}
         </el-button>
         <span v-if="isLogin && !isCurrentUser">
-      我的杏仁币：
-      {{ numOfCoin }}
+      杏仁币数量：
+      {{ userInfo.numOfCoin }}
     </span>
       </el-card>
     </div>
@@ -98,6 +98,15 @@
             <el-button type="primary" v-if="isEdit" @click="save">保存</el-button>
           </template>
           <template>
+            <el-descriptions-item>
+              <template #label>
+                <div class="cell-item">
+                  用户ID：
+                </div>
+              </template>
+              <!--从数据库获取用户ID-->
+              <el-input v-model="userInfo.userID" :disabled="!isEdit"></el-input>
+            </el-descriptions-item>
             <el-descriptions-item>
               <template #label>
                 <div class="cell-item">
@@ -179,7 +188,7 @@
       </el-card>
     </div>
     <!--展示信息的分栏，分栏4：如果用户是医师的话，展示医师信息，否则无-->
-    <div v-if="isCertified && isLogin && isCurrentUser">
+    <div v-if="userInfo.isCertified && isLogin && isCurrentUser">
       <el-card class="cardStyle">
         <el-descriptions
             class="margin-top"
@@ -240,15 +249,19 @@
             <!--从后端获取认证时间-->
             {{certification.date}}
           </el-descriptions-item>
+          <!--把医生就职的医院注释了
           <el-descriptions-item>
             <template #label>
               <div class="cell-item">
                 （曾）就职医院：
               </div>
             </template>
+            -->
             <!--从数据库获取就职医院信息-->
+          <!--
             {{certification.hospital}}
           </el-descriptions-item>
+          -->
         </el-descriptions>
       </el-card>
     </div>
@@ -257,7 +270,7 @@
       <el-card class="cardStyle">
         <el-descriptions
             class="margin-top"
-            title="我的发布"
+            :title="isCurrentUser ? '我的发布' : 'ta的发布'"
             :column="3"
             :size="size"
             border
@@ -282,23 +295,24 @@ export default {
   components: {NewsBlockList, PostCard},
   data(){
     return{
-      //用户医师认证信息
-      isCertified: true, //初始状态为未认证
+      //从数据库获取的数据
       certification:{},   //认证信息
-      userInfo:{},     //用户基本信息
-      isLogin :true,    //初始状态未登录
-      numOfCoin: 0,    //杏仁币数量，初始为0
+      userInfo:{},     //用户基本信息，包含numOfCoin,isCertified等信息
+      userPosts: [],   // 用户上传的帖子
+      isLogin:true ,    //判断正在操控的用户是否处于登陆状态
+
+      //本页面需要的一些变量，不用从数据库获取
       isEdit:false, //是否允许编辑信息
       dialogVisible:false,    //对话框是否可见
       size:'small',
+
+      //用户上传的，要传给数据库的一些数据
       file:null, //上传的文件对象
       photoUpload:false,   //头像上传，初始为false
-      userPosts: [],   // 用户上传的帖子
-      currentID:0    //当前用户的ID
     }
   },
+  //从数据库获取所需的用户信息
   mounted() {
-    // 从后端API获取医师认证信息
     let userIdNum = parseInt(this.$route.params.userId ? this.$route.params.userId: 0);
     console.log(userIdNum)
     if(isNaN(userIdNum)){
@@ -317,17 +331,23 @@ export default {
           }
           const responseData2 = response.data.data.certification;
           this.certification = responseData2
+          this.isLogin = responseData.data.data.isLogin; // 获取用户登录状态
         })
         .catch(error => {
           console.error(error)
         });
     /* 获取用户发布的帖子 */
     this.fetchUserPosts(this.userInfo.userID);
+    //在控制台打印被查看信息的用户的ID
   },
+
+  //进行一些必要的计算工作
   computed: {
+    //判断输出文字
     authenInfo() {
       return this.isLogin ? '认证信息：' : '未登录';
     },
+    //根据操控页面的用户的登陆状态来判断是显示要查看的用户信息还是“未登录”字样
     displayName() {
       if(this.isLogin) {
         return this.userInfo.userName;
@@ -335,9 +355,9 @@ export default {
         return '未登录';
       }
     },
-    //计算是否是本人
+    //判断是否是本人在查看信息页面，来判断该用户是否可对信息进行修改
     isCurrentUser() {
-      return this.currentID === this.userInfo.userID;
+      return this.userInfo.userID === 0;
     }
   },
   methods:{
