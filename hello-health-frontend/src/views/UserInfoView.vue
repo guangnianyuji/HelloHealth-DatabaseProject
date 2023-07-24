@@ -101,15 +101,6 @@
             <el-descriptions-item>
               <template #label>
                 <div class="cell-item">
-                  用户ID：
-                </div>
-              </template>
-              <!--从数据库获取用户ID-->
-              <el-input v-model="userInfo.userID" :disabled="!isEdit"></el-input>
-            </el-descriptions-item>
-            <el-descriptions-item>
-              <template #label>
-                <div class="cell-item">
                   用户名：
                 </div>
               </template>
@@ -219,18 +210,6 @@
               </div>
             </el-dialog>
           </template>
-          <!--把医师姓名注释掉了-->
-          <!--
-          <el-descriptions-item>
-            <template #label>
-              <div class="cell-item">
-                姓名：
-              </div>
-            </template>-->
-            <!--从数据库获取姓名-->
-            <!--{{certification.name}}
-          </el-descriptions-item>
-          -->
           <el-descriptions-item>
             <template #label>
               <div class="cell-item">
@@ -249,19 +228,6 @@
             <!--从后端获取认证时间-->
             {{certification.date}}
           </el-descriptions-item>
-          <!--把医生就职的医院注释了
-          <el-descriptions-item>
-            <template #label>
-              <div class="cell-item">
-                （曾）就职医院：
-              </div>
-            </template>
-            -->
-            <!--从数据库获取就职医院信息-->
-          <!--
-            {{certification.hospital}}
-          </el-descriptions-item>
-          -->
         </el-descriptions>
       </el-card>
     </div>
@@ -314,7 +280,6 @@ export default {
   //从数据库获取所需的用户信息
   mounted() {
     let userIdNum = parseInt(this.$route.params.userId ? this.$route.params.userId: 0);
-    console.log(userIdNum)
     if(isNaN(userIdNum)){
       this.$router.replace("/error");
       return;
@@ -357,7 +322,7 @@ export default {
     },
     //判断是否是本人在查看信息页面，来判断该用户是否可对信息进行修改
     isCurrentUser() {
-      return this.userInfo.userID === 0;
+      return !this.$route.params.userId;
     }
   },
   methods:{
