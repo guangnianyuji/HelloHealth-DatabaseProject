@@ -256,6 +256,7 @@
 import axios from "axios"
 import PostCard from "@/components/postBoardView/PostCard.vue";
 import NewsBlockList from "@/components/NewsBlockList.vue";
+import { ElMessage } from "element-plus";
 export default {
   name: "UserInfoPage",
   components: {NewsBlockList, PostCard},
@@ -347,10 +348,7 @@ export default {
     },
     save(){
       // 将修改后的用户信息保存到数据库
-      axios
-          .put('/api/UserInfo/Details', {
-            userInfo: this.userInfo,
-          })
+      axios.put('/api/modifyUserInfo')
           .then(response => {
             // 保存成功后将isEdit变量设置为false，禁用编辑模式
             this.isEdit = false;
@@ -358,6 +356,30 @@ export default {
             this.userInfo.gender = this.userInfo.gender;
             // 将下拉框选中的值保存到userInfo.birthday中
             this.userInfo.birthday=this.userInfo.birthday;
+            let user_info={
+              name :this.UserInfo.userName,
+              email:this.UserInfo.email,
+              description:this.UserInfo.description,
+              gender: this.gender == "男" ? "m" : "f",
+              birthday: this.birthday == "暂未填写" ? null : this.UserInfo.birthday,
+              telephone:this.UserInfo.telephone,
+            };
+            if(response.data.data.status == true){
+              ElMessage({
+                type: "success",
+                message: "修改成功！",
+                duration: 2000,
+                showClose: true,
+              });
+              //store.commit("changePersonInfo", user_info);
+            } else {
+              ElMessage({
+                type: "error",
+                message: "修改失败！",
+                duration: 2000,
+                showClose: true,
+              });
+            }
           })
           .catch((error) => {
             this.isEdit = false;
