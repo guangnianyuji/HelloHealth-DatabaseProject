@@ -106,31 +106,41 @@ let total = ref(100);
 
 const handleSizeChange = (newSize) => {
   pageSize.value = newSize;
-  updatePostCollectionList;
+  updatePostCollectionList();
 };
 
 const handleCurrentChange = (newPage) => {
   currentPage.value = newPage;
-  updatePostCollectionList;
+  updatePostCollectionList();
 };
 
-const updatePostCollectionList = async () => {
-    const requestPostCollection = {
-        currentPage: currentPage,
-        pageSize: pageSize
-    }
-
-    let response = await axios.get('/api/PostCollection', requestPostCollection)
-    let responseObj = response.data
-    if (responseObj.errorCode !== 200) {
-      alert('错误代码' + responseObj.errorCode);
-      return;
-    }
-    list = responseObj.list;
+async function updatePostCollectionList() {
+  const requestPostCollection = {
+    currentPage: currentPage,
+    pageSize: pageSize
+  };
+  let response = await axios.get('/api/PostCollection', requestPostCollection);
+  let responseObj = response.data;
+  if (responseObj.errorCode !== 200) {
+    alert('错误代码' + responseObj.errorCode);
+    return;
+  }
+  list = responseObj.list;
 }
 
-function cancelStar(id) {
+async function cancelStar(id) {
   console.log('取消了帖子'+ id + '的收藏');
+  const requestCancelPostStar = {
+    postID: id
+  }
+  let response = await axios.post('/api/cancelPostStar', requestCancelPostStar)
+  let responseObj = response.data
+  if (responseObj.errorCode !== 200) {
+    alert('错误代码' + responseObj.errorCode);
+    return;
+  }
+  alert("已取消收藏！");
+  location.reload();
 };
 
 </script>
