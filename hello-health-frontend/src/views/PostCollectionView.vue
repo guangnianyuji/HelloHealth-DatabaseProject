@@ -64,6 +64,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
+import { ElMessage } from 'element-plus'
 import axios from "axios";
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs';
 const locale = zhCn;
@@ -102,16 +103,23 @@ async function updatePostCollectionList() {
 async function cancelStar(id) {
   //console.log('取消了帖子'+ id + '的收藏');
   const requestCancelPostStar = {
-    postID: id
+    operate: 1,
+    post_id: id
   }
-  let response = await axios.post('/api/cancelPostStar', requestCancelPostStar)
+  let response = await axios.post('/api/Post/Star', requestCancelPostStar)
   let responseObj = response.data
   if (responseObj.errorCode !== 200) {
     alert('错误代码' + responseObj.errorCode);
     return;
   }
-  alert("已取消收藏！");
-  location.reload();
+  ElMessage({
+    showClose: true,
+    message: '取消收藏成功！',
+    type: 'success',
+  })
+  setTimeout(() => {
+    location.reload();
+  }, 1000);
 };
 
 onMounted(() => {
