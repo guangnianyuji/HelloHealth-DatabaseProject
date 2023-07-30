@@ -44,25 +44,6 @@
           </el-col>
         </el-row>
 
-        <!-- <el-table :data="list">
-          <el-table-column prop="title" label="标题">
-            <template #default="{ row }">
-              <a :href="'/forum/' + row.id">{{ row.title }}</a>
-            </template>
-          </el-table-column>
-          <el-table-column prop="author" label="楼主" width='200px'></el-table-column>
-          <el-table-column prop="updateTime" label="最后更新时间" width='150px'></el-table-column>
-          <el-table-column label="取消收藏" width="80px">
-            <template #default="{ row }">
-              <div class="cancelButtonContainer">
-                <el-icon class="cancelButton" @click="cancelStar(row)">
-                  <svg t="1690052159982" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="14050" width="200" height="200"><path d="M512 768l-249.941333 131.413333a28.444444 28.444444 0 0 1-41.244445-30.008889l47.701334-278.300444-202.183112-197.091556a28.444444 28.444444 0 0 1 15.758223-48.526222l279.438222-40.590222 124.956444-253.212444a28.444444 28.444444 0 0 1 51.029334 0l124.956444 253.212444 279.438222 40.590222a28.444444 28.444444 0 0 1 15.758223 48.526222l-202.183112 197.12 47.729778 278.272a28.444444 28.444444 0 0 1-41.272889 29.980445L512 768z" fill="#FFC500" p-id="14051"></path><path d="M512 768l-249.941333 131.413333a28.444444 28.444444 0 0 1-41.244445-30.008889l47.701334-278.300444c36.124444-190.805333 67.128889-286.208 93.013333-286.208 38.826667 0 393.955556 261.774222 393.955555 286.208 0 16.298667-81.180444 75.264-243.484444 176.896z" fill="#FED902" p-id="14052"></path></svg>
-                </el-icon>
-              </div>
-            </template>
-          </el-table-column>
-        </el-table> -->
-
         <div class="pagination">
           <el-config-provider :locale="locale">
             <el-pagination
@@ -87,18 +68,7 @@ import axios from "axios";
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs';
 const locale = zhCn;
 
-const list = ref([
-  { imgUrl: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png', title: '长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长标题', author: '楼主用户名', updateTime: '时间', id: '01'},
-  { imgUrl: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png', title: '标题', author: '楼主用户名', updateTime: '时间', id: '02'},
-  { imgUrl: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png', title: '标题', author: '楼主用户名', updateTime: '时间', id: '03'},
-  { imgUrl: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png', title: '标题', author: '楼主用户名', updateTime: '时间', id: '04'},
-  { imgUrl: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png', title: '标题', author: '楼主用户名', updateTime: '时间', id: '05'},
-  { imgUrl: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png', title: '标题', author: '楼主用户名', updateTime: '时间', id: '06'},
-  { imgUrl: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png', title: '标题', author: '楼主用户名', updateTime: '时间', id: '07'},
-  { imgUrl: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png', title: '标题', author: '楼主用户名', updateTime: '时间', id: '08'},
-  { imgUrl: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png', title: '标题', author: '楼主用户名', updateTime: '时间', id: '09'},
-  { imgUrl: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png', title: '标题', author: '楼主用户名', updateTime: '时间', id: '10'},
-]);
+const list = ref([]);
 
 let currentPage = ref(1);
 let pageSize = ref(10);
@@ -130,7 +100,7 @@ async function updatePostCollectionList() {
 }
 
 async function cancelStar(id) {
-  console.log('取消了帖子'+ id + '的收藏');
+  //console.log('取消了帖子'+ id + '的收藏');
   const requestCancelPostStar = {
     postID: id
   }
