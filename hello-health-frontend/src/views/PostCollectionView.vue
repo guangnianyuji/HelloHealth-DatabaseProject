@@ -82,7 +82,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import axios from "axios";
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs';
 const locale = zhCn;
@@ -102,7 +102,7 @@ const list = ref([
 
 let currentPage = ref(1);
 let pageSize = ref(10);
-let total = ref(100);
+let total = ref(0);
 
 const handleSizeChange = (newSize) => {
   pageSize.value = newSize;
@@ -116,8 +116,8 @@ const handleCurrentChange = (newPage) => {
 
 async function updatePostCollectionList() {
   const requestPostCollection = {
-    currentPage: currentPage,
-    pageSize: pageSize
+    currentPage: currentPage.value,
+    pageSize: pageSize.value
   };
   let response = await axios.get('/api/PostCollection', requestPostCollection);
   let responseObj = response.data;
@@ -125,7 +125,8 @@ async function updatePostCollectionList() {
     alert('错误代码' + responseObj.errorCode);
     return;
   }
-  list = responseObj.list;
+  list.value = responseObj.data.list;
+  total.value = parseInt(responseObj.data.total);
 }
 
 async function cancelStar(id) {
@@ -143,15 +144,18 @@ async function cancelStar(id) {
   location.reload();
 };
 
+onMounted(() => {
+  updatePostCollectionList();
+});
 </script>
 
 <style scoped>
-  .postCollection{
+  .postCollection {
     position: relative;
   }
 
-  .body{
-    padding-top:20px;
+  .body {
+    padding-top:10px;
   }
 
   .title {
@@ -171,8 +175,8 @@ async function cancelStar(id) {
     display: flex; 
     justify-content: center;
     align-items: center;
-    margin-top: 20px;
-    margin-bottom: 20px;
+    margin-top: 10px;
+    margin-bottom: 30px;
   }
 
   .cancelButton {
@@ -221,7 +225,7 @@ async function cancelStar(id) {
   .postUpdateTime {
     position: absolute;
     top: 120px;
-    right: 20%;
+    right: 3%;
     /* font-size: 22px;
     font-weight: 500; */
     color: gray;
