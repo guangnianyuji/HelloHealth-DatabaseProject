@@ -1,0 +1,232 @@
+<template>
+  <div class="postCollection">
+    <div class="body">
+      <el-row class="title">
+        <svg t="1688614393322" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2387" width="32" height="32">
+            <path d="M512 85.333c23.573 0 42.667 20.118 42.667 44.907v763.52c0 24.79-19.094 44.907-42.667 44.907s-42.667-20.118-42.667-44.907V130.24c0-24.79 19.094-44.907 42.667-44.907z" p-id="2388" fill="#6cb16a"></path>
+        </svg>
+        <div style="padding-top: 3px">帖子收藏</div>
+      </el-row>
+
+      <div class="postList">
+        <el-row :gutter="20">
+          <el-col :span="12" v-for="item in list" :key="item.id" style="margin-bottom: 20px;">
+            <el-card class="card" :body-style="{ padding: '0px' }">
+              <div style="display: flex; flex-direction: row;">
+                <div>
+                  <img
+                    :src="item.imgUrl"
+                    class="image"
+                  />
+                </div>
+                <div style="flex-grow: 1;">
+                  <div style="display: flex; flex-direction: column;">
+                    <div style="display: inline-block;">
+                      <a class="postTitle" :href="'/forum/' + item.id">{{ item.title }}</a>
+                    </div>
+                    <div style="display: flex; flex-direction: row;">
+                      <div>
+                        <div class="postAuthor">{{ item.author }}</div>
+                      </div>
+                      <div>
+                        <div class="postUpdateTime">{{ item.updateTime }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <el-icon class="cancelButton" @click="cancelStar(item.id)">
+                    <svg t="1690052159982" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="14050" width="200" height="200"><path d="M512 768l-249.941333 131.413333a28.444444 28.444444 0 0 1-41.244445-30.008889l47.701334-278.300444-202.183112-197.091556a28.444444 28.444444 0 0 1 15.758223-48.526222l279.438222-40.590222 124.956444-253.212444a28.444444 28.444444 0 0 1 51.029334 0l124.956444 253.212444 279.438222 40.590222a28.444444 28.444444 0 0 1 15.758223 48.526222l-202.183112 197.12 47.729778 278.272a28.444444 28.444444 0 0 1-41.272889 29.980445L512 768z" fill="#FFC500" p-id="14051"></path><path d="M512 768l-249.941333 131.413333a28.444444 28.444444 0 0 1-41.244445-30.008889l47.701334-278.300444c36.124444-190.805333 67.128889-286.208 93.013333-286.208 38.826667 0 393.955556 261.774222 393.955555 286.208 0 16.298667-81.180444 75.264-243.484444 176.896z" fill="#FED902" p-id="14052"></path></svg>
+                  </el-icon>
+                </div>
+              </div>
+            </el-card>
+          </el-col>
+        </el-row>
+
+        <!-- <el-table :data="list">
+          <el-table-column prop="title" label="标题">
+            <template #default="{ row }">
+              <a :href="'/forum/' + row.id">{{ row.title }}</a>
+            </template>
+          </el-table-column>
+          <el-table-column prop="author" label="楼主" width='200px'></el-table-column>
+          <el-table-column prop="updateTime" label="最后更新时间" width='150px'></el-table-column>
+          <el-table-column label="取消收藏" width="80px">
+            <template #default="{ row }">
+              <div class="cancelButtonContainer">
+                <el-icon class="cancelButton" @click="cancelStar(row)">
+                  <svg t="1690052159982" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="14050" width="200" height="200"><path d="M512 768l-249.941333 131.413333a28.444444 28.444444 0 0 1-41.244445-30.008889l47.701334-278.300444-202.183112-197.091556a28.444444 28.444444 0 0 1 15.758223-48.526222l279.438222-40.590222 124.956444-253.212444a28.444444 28.444444 0 0 1 51.029334 0l124.956444 253.212444 279.438222 40.590222a28.444444 28.444444 0 0 1 15.758223 48.526222l-202.183112 197.12 47.729778 278.272a28.444444 28.444444 0 0 1-41.272889 29.980445L512 768z" fill="#FFC500" p-id="14051"></path><path d="M512 768l-249.941333 131.413333a28.444444 28.444444 0 0 1-41.244445-30.008889l47.701334-278.300444c36.124444-190.805333 67.128889-286.208 93.013333-286.208 38.826667 0 393.955556 261.774222 393.955555 286.208 0 16.298667-81.180444 75.264-243.484444 176.896z" fill="#FED902" p-id="14052"></path></svg>
+                </el-icon>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table> -->
+
+        <div class="pagination">
+          <el-config-provider :locale="locale">
+            <el-pagination
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page="currentPage"
+              :page-sizes="[10, 20, 50]"
+              :page-size="pageSize"
+              :total="total"
+              layout="total, sizes, prev, pager, next, jumper"
+            ></el-pagination>
+          </el-config-provider>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref } from "vue";
+import axios from "axios";
+import zhCn from 'element-plus/dist/locale/zh-cn.mjs';
+const locale = zhCn;
+
+const list = ref([
+  { imgUrl: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png', title: '长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长标题', author: '楼主用户名', updateTime: '时间', id: '01'},
+  { imgUrl: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png', title: '标题', author: '楼主用户名', updateTime: '时间', id: '02'},
+  { imgUrl: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png', title: '标题', author: '楼主用户名', updateTime: '时间', id: '03'},
+  { imgUrl: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png', title: '标题', author: '楼主用户名', updateTime: '时间', id: '04'},
+  { imgUrl: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png', title: '标题', author: '楼主用户名', updateTime: '时间', id: '05'},
+  { imgUrl: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png', title: '标题', author: '楼主用户名', updateTime: '时间', id: '06'},
+  { imgUrl: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png', title: '标题', author: '楼主用户名', updateTime: '时间', id: '07'},
+  { imgUrl: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png', title: '标题', author: '楼主用户名', updateTime: '时间', id: '08'},
+  { imgUrl: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png', title: '标题', author: '楼主用户名', updateTime: '时间', id: '09'},
+  { imgUrl: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png', title: '标题', author: '楼主用户名', updateTime: '时间', id: '10'},
+]);
+
+let currentPage = ref(1);
+let pageSize = ref(10);
+let total = ref(100);
+
+const handleSizeChange = (newSize) => {
+  pageSize.value = newSize;
+  updatePostCollectionList;
+};
+
+const handleCurrentChange = (newPage) => {
+  currentPage.value = newPage;
+  updatePostCollectionList;
+};
+
+const updatePostCollectionList = async () => {
+    const requestPostCollection = {
+        currentPage: currentPage,
+        pageSize: pageSize
+    }
+
+    let response = await axios.get('/api/PostCollection', requestPostCollection)
+    let responseObj = response.data
+    if (responseObj.errorCode !== 200) {
+      alert('错误代码' + responseObj.errorCode);
+      return;
+    }
+    list = responseObj.list;
+}
+
+function cancelStar(id) {
+  console.log('取消了帖子'+ id + '的收藏');
+};
+
+</script>
+
+<style scoped>
+  .postCollection{
+    position: relative;
+  }
+
+  .body{
+    padding-top:20px;
+  }
+
+  .title {
+    font-size: 20px;
+    color: #000000;
+    margin-left: 4%;
+    padding-top: 20px;
+  }
+
+  .postList {
+    margin-top: 10px;
+    margin-left: 5%;
+    width: 90%;
+  }
+
+  .pagination {
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  .cancelButton {
+    height: 30px;
+    width: 30px;
+    cursor: pointer;
+  }
+
+  .cancelButton:hover {
+    filter: brightness(90%);
+  }
+
+  .cancelButtonContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+
+  .card {
+    border-radius: 10px;
+    height: 150px;
+    position: relative;
+  }
+
+  .image {
+    border-radius: 5px;
+    margin-right: 10px;
+    height: 150px;
+  }
+
+  .postTitle {
+    margin-top: 7px;
+    font-size: 22px;
+    font-weight: 500;
+  }
+
+  .postAuthor {
+    position: absolute;
+    top:120px;
+    /* font-size: 22px;
+    font-weight: 500; */
+    color: gray;
+  }
+
+  .postUpdateTime {
+    position: absolute;
+    top: 120px;
+    right: 20%;
+    /* font-size: 22px;
+    font-weight: 500; */
+    color: gray;
+  }
+
+  a {
+    color: black;
+    text-decoration: none;
+    pointer-events: auto;
+    display: inline-block;
+    padding-right: 4px;
+  }
+
+  a:visited {
+    color: black;
+  }
+  
+</style>
