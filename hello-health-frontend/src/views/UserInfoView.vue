@@ -30,8 +30,8 @@
                       <el-button type="primary" @click="submitPhoto">确 定</el-button>
                     </div>
                   </el-dialog>
-                  <el-dialog title="我的关注" v-model="this.myFollowVisible">
-                    <el-card class="user-card" v-for="user in followList" :key="user.userID">
+                  <el-dialog title="我的关注" v-model="this.myFollowVisible" @close="search">
+                    <el-card class="user-card" v-for="user in followList" :key="user.userID" @click="goUserPage(user.userID)">
                       <div class="user-info">
                         <div class="avatar">
                           <el-avatar :src="user.avatarUrl"></el-avatar>
@@ -348,6 +348,7 @@ export default {
           this.certification = responseData2
           this.isLogin = !globalData.isLogin; // 获取用户登录状态
           this.followList = response.data.data.followList;
+          this.isFollowed = response.data.data.isFollowed;
 
           console.log(this.followList)
 
@@ -384,13 +385,38 @@ export default {
     }
   },
   methods:{
+    goUserPage(userId){
+      this.$router.push("/user/"+userId)
+    },
+    search(){
+      let userIdNum = parseInt(this.$route.params.userId ? this.$route.params.userId: 0);
+      if(isNaN(userIdNum)){
+        this.$router.replace("/error");
+        return;
+      }
+      axios.post('/api/UserInfo/Details',{user_id: userIdNum})
+          .then(response => {
+
+            this.isLogin = !globalData.isLogin; // 获取用户登录状态
+            this.followList = response.data.data.followList;
+            this.isFollowed = response.data.data.isFollowed;
+
+            console.log(this.followList)
+
+            this.followList.forEach(user => {
+              this.followMap.set(user.userID, false)
+            })
+
+          })
+          .catch(error => {
+            console.error(error)
+          });
+    },
     onFollowBtnClick(userId) {
 
       let isFollowed = this.followMap.get(userId)
 
-      console.log(isFollowed)
-
-      if (isFollowed) {
+      if (this.isFollowed || isFollowed) {
         this.unfollow(userId)
       } else {
         this.followUser(userId)
