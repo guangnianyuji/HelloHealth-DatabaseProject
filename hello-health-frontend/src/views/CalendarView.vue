@@ -55,6 +55,7 @@ export default defineComponent({
                 eventRemove:
                 */
             },
+            canUserEdit: false,
             currentEvents: [],
         }
     },
@@ -79,6 +80,7 @@ export default defineComponent({
             }
         },
         handleEventClick(clickInfo) {
+            if (!this.canUserEdit) return;
             if (confirm(`请确认是否删除事项 '${clickInfo.event.title}'`)) {
                 clickInfo.event.remove()
             }
@@ -99,6 +101,9 @@ export default defineComponent({
                 start: '2023-7-28',
             });
         },
+        toggleEdit() {
+            this.canUserEdit = !this.canUserEdit;
+        },
     }
 })
 
@@ -113,6 +118,11 @@ export default defineComponent({
                     <i>{{ arg.event.title }}</i>
                 </template>
             </FullCalendar>
+            <br>
+            <el-button class='modeChange' type="primary" @click="toggleEdit">
+                模式: {{ canUserEdit ? '修改' : '查看' }}
+            </el-button>
+
         </div>
 
         <div class='sidebar'>
@@ -132,6 +142,7 @@ export default defineComponent({
                     </div>
                 </div>
             </div>
+
             <div class='sidebar-section'>
                 <h2>说明</h2>
                 <ul>
