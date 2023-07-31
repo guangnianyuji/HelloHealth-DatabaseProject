@@ -30,12 +30,39 @@
                       <el-button type="primary" @click="submitPhoto">确 定</el-button>
                     </div>
                   </el-dialog>
+                  <el-dialog title="我的关注" v-model="this.myFollowVisible">
+                    <el-card class="user-card" v-for="user in followList" :key="user.userID">
+                      <div class="user-info">
+                        <div class="avatar">
+                          <el-avatar :src="user.avatarUrl"></el-avatar>
+                        </div>
+                        <div class="name">{{user.userName}}</div>
+                        <el-button
+                            :type="followMap.get(user.userId) ? 'primary' : 'default'"
+                            @click="onFollowBtnClick(user.userID)"
+                        >
+                          {{ followMap.get(user.userId) ? '+ 关注' : '已关注' }}
+                        </el-button>
+                      </div>
+                      <div class="description">
+                        {{user.description}}
+                      </div>
+                    </el-card>
+                  </el-dialog>
                 </template>
               </div>
             </el-aside>
             <el-main>
               <span class="userName">{{ displayName }}</span>
               <el-button v-if="!isLogin" class="login-button" type="primary" @click="goToLoginPage">请登录</el-button>
+              <el-button
+                  v-if="isLogin && !isCurrentUser"
+                  :type="isFollowed ? 'default' : 'primary'"
+                  @click="onFollowBtnClick"
+              >
+                {{ isFollowed ? '已关注' : '+ 关注' }}
+              </el-button>
+              <el-button v-else-if="isLogin && isCurrentUser" type="primary" @click="this.myFollowVisible = true">我的关注</el-button>
               <br><br><br>
               <div>
                 <span>{{ authenInfo }}</span>
@@ -105,7 +132,11 @@
                 </div>
               </template>
               <!--从数据库获取用户名-->
-              <el-input v-model="userInfo.userName" :disabled="!isEdit"></el-input>
+              <div class="input-container">
+                <input type="text" name="text" class="input" placeholder="请输入用户名"
+                       v-model="userInfo.userName" :disabled="!isEdit">
+                <div class="highlight"></div>
+              </div>
             </el-descriptions-item>
             <el-descriptions-item>
               <template #label>
@@ -154,7 +185,11 @@
                 </div>
               </template>
               <!--从数据库获取联系电话-->
-              <el-input v-model="userInfo.telephone" :disabled="!isEdit"></el-input>
+              <div class="input-container">
+                <input type="text" name="text" class="input" placeholder="请输入联系电话"
+                       v-model="userInfo.telephone" :disabled="!isEdit">
+                <div class="highlight"></div>
+              </div>
             </el-descriptions-item>
             <el-descriptions-item>
               <template #label>
@@ -163,7 +198,11 @@
                 </div>
               </template>
               <!--从数据库获取邮箱地址-->
-              <el-input v-model="userInfo.email" :disabled="!isEdit"></el-input>
+              <div class="input-container">
+                <input type="text" name="text" class="input" placeholder="请输入邮箱"
+                       v-model="userInfo.email" :disabled="!isEdit">
+                <div class="highlight"></div>
+              </div>
             </el-descriptions-item>
             <el-descriptions-item>
               <template #label>
@@ -172,7 +211,11 @@
                 </div>
               </template>
               <!--从数据库获取个人简介-->
-              <el-input v-model="userInfo.description" :disabled="!isEdit"></el-input>
+              <div class="input-container">
+                <input type="text" name="text" class="input" placeholder="请输入简介"
+                       v-model="userInfo.description" :disabled="!isEdit">
+                <div class="highlight"></div>
+              </div>
             </el-descriptions-item>
           </template>
         </el-descriptions>
@@ -256,16 +299,23 @@
 import axios from "axios"
 import PostCard from "@/components/postBoardView/PostCard.vue";
 import NewsBlockList from "@/components/NewsBlockList.vue";
+import globalData from "@/global/global";
+import {messageProps} from "element-plus";
 export default {
   name: "UserInfoPage",
   components: {NewsBlockList, PostCard},
   data(){
     return{
+      followMap: new Map(),
+      myFollowVisible:false,
+      followList:[],
+
       //从数据库获取的数据
       certification:{},   //认证信息
       userInfo:{},     //用户基本信息，包含numOfCoin,isCertified等信息
       userPosts: [],   // 用户上传的帖子
       isLogin:true ,    //判断正在操控的用户是否处于登陆状态
+      isFollowed: false,
 
       //本页面需要的一些变量，不用从数据库获取
       isEdit:false, //是否允许编辑信息
@@ -296,14 +346,22 @@ export default {
           }
           const responseData2 = response.data.data.certification;
           this.certification = responseData2
-          this.isLogin = responseData.data.data.isLogin; // 获取用户登录状态
+          this.isLogin = !globalData.isLogin; // 获取用户登录状态
+          this.followList = response.data.data.followList;
+
+          console.log(this.followList)
+
+          this.followList.forEach(user => {
+            this.followMap.set(user.userID, true)
+          })
+
         })
         .catch(error => {
           console.error(error)
         });
     /* 获取用户发布的帖子 */
     this.fetchUserPosts(this.userInfo.userID);
-    //在控制台打印被查看信息的用户的ID
+
   },
 
   //进行一些必要的计算工作
@@ -326,6 +384,69 @@ export default {
     }
   },
   methods:{
+    onFollowBtnClick(userId) {
+      let isFollowed = this.followMap.get(userId)
+
+      if (isFollowed) {
+        this.unfollow(userId)
+      } else {
+        this.followUser(userId)
+      }
+    },
+    unfollow(userId) {
+      if(userId){
+        axios.post("/api/unfollowUser", { thisUserID: globalData.userInfo.userId ,followUserID: userId })
+            .then(response => {
+              //如果后端返回的状态码是200，那么将isFollowed设置为false
+              if (response.data.status === 200) {
+                this.followMap.set(userId, false)
+              }
+            })
+            .catch(error => {
+              console.error(error);
+            });
+      }
+      else {
+        axios.post("/api/unfollowUser", {thisUserID: globalData.userInfo.userId ,followUserID: this.userInfo.userID})
+            .then(response => {
+              //如果后端返回的状态码是200，那么将isFollowed设置为false
+              if (response.data.status === 200) {
+                this.isFollowed = false;
+              }
+            })
+            .catch(error => {
+              console.error(error);
+            });
+      }
+    },
+    //添加一个新的方法，用于处理关注按钮的点击事件
+    followUser(userId) {
+
+      if(userId){
+        axios.post("/api/followUser", { thisUserID: globalData.userInfo.userId ,followUserID: userId })
+            .then(response => {
+              //如果后端返回的状态码是200，那么将isFollowed设置为true
+              if (response.data.status === 200) {
+                this.followMap.set(userId, true);
+              }
+            })
+            .catch(error => {
+              console.error(error);
+            });
+      }
+      else{
+        axios.post("/api/followUser", {thisUserID: globalData.userInfo.userId ,followUserID: this.userInfo.userID})
+            .then(response => {
+              //如果后端返回的状态码是200，那么将isFollowed设置为true
+              if (response.data.status === 200) {
+                this.isFollowed = true;
+              }
+            })
+            .catch(error => {
+              console.error(error);
+            });
+      }
+    },
     showPhotoUpload(){
       //显示上传头像框
       this.photoUpload = true;
@@ -491,5 +612,69 @@ export default {
   position: relative;
   width: 85%;
   margin: 0 auto;
+}
++
+.input-container {
+  position: relative;
+}
+
+.input {
+  font-size: 1em;
+  width: 88%;
+  padding: 0.6em 1em;
+  border: none;
+  border-radius: 6px;
+  background-color: #f8f8f8;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+//max-width: 600px;
+  color: #333;
+}
+
+.input:hover {
+  background-color: #f2f2f2;
+}
+
+.input:focus {
+  outline: none;
+  background-color: #fff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.input::placeholder {
+  color: #999;
+}
+
+.highlight {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #6cb16a;
+  transition: width 0.3s ease;
+}
+
+.input:focus + .highlight {
+  width: 75%;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  .avatar {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+  }
+}
+
+.name {
+  flex: 1;
+}
+
+.followed-btn {
+  margin-left: 10px;
+  color: #ccc;
 }
 </style>
