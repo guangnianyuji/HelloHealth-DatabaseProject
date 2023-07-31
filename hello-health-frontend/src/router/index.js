@@ -33,10 +33,6 @@ const router = createRouter({
                 name: "homeView",
                 component: ()=>import("@/views/MainPageView.vue"),
             }, {
-                path: "consultation",
-                name: "consultationView",
-                component: ()=>import("@/views/TestView2.vue"),
-            }, {
                 path: "news",
                 name: "newsView",
                 component: ()=>import("@/views/HealthFlashView.vue"),
@@ -80,23 +76,22 @@ const router = createRouter({
                 path: "user/:userId",
                 name: "otherView",
                 component: () => import("@/views/UserInfoView.vue")
-            }]
-        },
-        {
-            path: '/coin',
-            name: 'coin',
-            children:[
-                {
-                    path: "detail",
-                    name: "coinView",
-                    component: ()=>import("@/components/CoinView.vue"),
-                },
-                {
-                    path: "UserAgreement",
-                    name: "UserAgreement",
-                    component: ()=>import("@/pages/UserAgreementPage.vue"),
-                }
-            ]
+            }, {
+                path: '/coin',
+                name: 'coin',
+                children:[
+                    {
+                        path: "detail",
+                        name: "coinView",
+                        component: ()=>import("@/components/CoinView.vue"),
+                    },
+                    {
+                        path: "UserAgreement",
+                        name: "UserAgreement",
+                        component: ()=>import("@/pages/UserAgreementPage.vue"),
+                    }
+                ]
+            },]
         },
         { path: '/:pathMatch(.*)*', name: 'NotFound', component: ()=>import("@/pages/ErrorPage.vue") },
 
