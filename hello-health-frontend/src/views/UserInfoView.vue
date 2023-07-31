@@ -75,6 +75,56 @@
           我的杏仁币：
           {{ numOfCoin }}
         </el-button>
+        <el-container>
+            <el-aside class="coin-left">
+        <el-row style="margin-left: 1%;margin-bottom: 2%;">
+            <div style="font-size: 14px;">硬币记录</div>
+            <div style="font-size: 14px;color: grey;margin-left: 3px;">
+              您最近一周的变化情况
+            </div>
+        </el-row>
+        <el-table :data="CoinRecordList" 
+                    :default-sort="{ prop: 'Time', order: 'ascending' }" 
+                    height="250" style="width: 100%" class="table">
+                <el-table-column prop="Time" label="时间" width="150" />
+                <el-table-column prop="Num" label="变化" width="120" />
+                <el-table-column prop="Reason" label="原因" width="150"/>
+        </el-table>
+      </el-aside>
+            <el-main class="coin-right">
+                <el-row>
+                    <div style="font-size: 14px;margin-bottom: 1%;">杏仁币有什么用</div>
+                </el-row>
+                <el-row>
+                    <div style="font-size: 14px;color: grey;">
+                        杏仁币是本平台中专用的虚拟货币，取自“杏林春暖 ，悬壶济世”之意。
+                    </div>
+                </el-row>
+                <el-row>
+                    <div style="font-size: 14px;color: grey;">
+                        • 用于对优秀帖子进行投币。
+                    </div>
+                </el-row>
+                <el-row>
+                    <div style="font-size: 14px;color: grey;">
+                        • 可以用来悬赏专业医生用户回答专业问题。
+                    </div>
+                </el-row>
+                <el-row>
+                    <div style="font-size: 14px;margin-top: 5%;margin-bottom: 1%;">如何获得杏仁币</div>
+                </el-row>
+                <el-row>
+                    <div style="font-size: 14px;color: grey;">
+                        • 每日登录、完成健康计划。
+                    </div>
+                </el-row>
+                <el-row>
+                    <div style="font-size: 14px;color: grey;">
+                        • 发帖被投杏仁币、发帖获得较大浏览量和获得高价值流量认可。
+                    </div>
+                </el-row>
+            </el-main>
+        </el-container>
       </el-card>
     </div>
     <!--展示信息的分栏，分栏3：基本信息-->
@@ -325,7 +375,10 @@ export default {
       dialogVisible:false,    //对话框是否可见
       size:'small',
       file:null, //上传的文件对象
-      photoUpload:false   //头像上传，初始为false
+      photoUpload:false,   //头像上传，初始为false
+      //杏仁币流水
+      CoinRecordList:[],
+      RecordNum:0,
     }
   },
   mounted() {
@@ -465,8 +518,21 @@ export default {
           .catch(error => {
             console.error(error);
           });
-    }
-  }
+    },
+    getCoinRecord()
+            {
+                const apiUrl = "/api/coinRecord";
+                axios.get(apiUrl)
+                .then(res => {
+                this.CoinRecordList = res.data.data.coinRecordList;    // 获取全部硬币记录列表
+                this.RecordNum = this.CoinRecordList.length;          // 总记录数
+                console.log("coinrecord:/n"+JSON.stringfy(this.CoinRecordList));
+          })
+    },
+  },
+  created(){
+            this.getCoinRecord()
+  },
 }
 
 </script>
@@ -551,4 +617,18 @@ export default {
     width: 85%;
     margin: 0 auto;
 }
+
+.coin-left{
+    width:auto;
+    padding-top: 20px;
+}
+.table{
+    margin-top: 2%;
+}
+.coin-right{
+    width: auto;
+    margin-top: 3%;
+    margin-left: 5%;
+}
+
 </style>
