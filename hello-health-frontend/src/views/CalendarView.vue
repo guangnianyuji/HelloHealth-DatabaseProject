@@ -3,6 +3,7 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import '@fortawesome/fontawesome-free/css/all.css'; // needs additional webpack config!
 
+import _ from 'lodash' //导入loadsh插件
 import { defineComponent } from 'vue'
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
@@ -12,7 +13,7 @@ import interactionPlugin from '@fullcalendar/interaction'
 import { INITIAL_EVENTS, createEventId } from './event-utils'
 import { Calendar } from '@fullcalendar/core';
 import bootstrapPlugin from '@fullcalendar/bootstrap';
-//import "bootswatch/dist/minty/bootstrap.min.css";
+import "bootswatch/dist/minty/bootstrap.min.css";
 import zhCnLocale from '@fullcalendar/core/locales/zh-cn';
 
 export default defineComponent({
@@ -22,6 +23,35 @@ export default defineComponent({
     },
     data() {
         return {
+            dialogVisible: false,
+            form: {
+                title: '',
+                startDate: '',
+                startTime: '',
+                endDate: '',
+                endTime: '',
+                priority: ''
+            },
+            rules: {
+                title: [
+                    { required: true, message: '请输入事项主题', trigger: 'blur' }
+                ],
+                startDate: [
+                    { required: true, message: '请选择开始日期', trigger: 'change' }
+                ],
+                startTime: [
+                    { required: true, message: '请选择开始时间', trigger: 'change' }
+                ],
+                endDate: [
+                    { required: true, message: '请选择结束日期', trigger: 'change' }
+                ],
+                endTime: [
+                    { required: true, message: '请选择结束时间', trigger: 'change' }
+                ],
+                remark: [
+                    { required: true, message: '请填写事项优先级', trigger: 'blur' }
+                ]
+            },
             calendarOptions: {
                 plugins: [
                     dayGridPlugin,
@@ -37,18 +67,22 @@ export default defineComponent({
                 },
                 themeSystem: 'bootstrap',
                 initialView: 'dayGridMonth',
-                initialEvents: INITIAL_EVENTS, // alternatively, use the `events` setting to fetch from a feed
+                //initialEvents: INITIAL_EVENTS, // alternatively, use the `events` setting to fetch from a feed
                 editable: true,
                 selectable: true,
                 selectMirror: true,
                 dayMaxEvents: true,
                 weekends: true,
+                navLinks: true,
+                //dateClick: this.handleDateClick, // ToDo
                 select: this.handleDateSelect,
                 eventClick: this.handleEventClick,
                 eventsSet: this.handleEvents,
                 handleWindowResize: true,//是否随浏览器窗口大小变化而自动变化
                 eventLimit: true,       //数据条数太多时，限制各自里显示的数据条数（多余的以“+2more”格式显示），默认false不限制,支持输入数字设定固定的显示条数
-                locale: zhCnLocale // the initial locale
+                locale: zhCnLocale,     // 设置语言
+                eventColor: "#78C2AD",  // 修改日程背景色
+                events: [],
                 /* you can update a remote database when these fire:
                 eventAdd:
                 eventChange:
@@ -63,7 +97,39 @@ export default defineComponent({
         handleWeekendsToggle() {
             this.calendarOptions.weekends = !this.calendarOptions.weekends // update a property
         },
+
+        // 日期加1天
+        addDate(date, days) {
+            var d = new Date(date);
+            d.setDate(d.getDate() + days);
+            var mon = (d.getMonth() + 1) < 10 ? "0" + (d.getMonth() + 1) : d.getMonth() + 1;
+            let endD = d.getDate() < 10 ? '0' + d.getDate() : d.getDate();
+            return `${d.getFullYear()}-${mon}-${endD}`;
+        },
+        // 获取会议事件title
+        getTitle(date1, date2) {
+            let start = date1.substring(11, 16);
+            let end = date2.substring(11, 16);
+            return `${start}~${end}`;
+        },
+        getShowTime(beginDate, endDate) {
+            this.form.startDate = this.dealWithTime(beginDate);
+            this.form.startTime = this.getHoursMin(beginDate);
+            this.form.endDate = this.dealWithTime(endDate);
+            this.form.endTime = this.getHoursMin(endDate);
+        },
+        // 获取时分时间
+        getHoursMin(value) {
+            return value.substring(11, 16);
+        },
+        // 处理会议时间格式
+        dealWithTime(date) {
+            let newDate = /\d{4}-\d{1,2}-\d{1,2}/g.exec(date)[0];
+            return newDate;
+        },
+        /*
         handleDateSelect(selectInfo) {
+            if (!this.canUserEdit) return;
             let title = prompt('请输入提醒事项的标题：')
             let calendarApi = selectInfo.view.calendar
 
@@ -78,31 +144,75 @@ export default defineComponent({
                     allDay: selectInfo.allDay
                 })
             }
+        },*/
+
+        // 日历日程点击事件
+        handleEventClick(calEvent) {
+            console.log(calEvent, '事件2');
+            this.dialogVisible = true;
+            //let id = calEvent.event.id;
+            //let info = this.subList.filter((item) => {
+            //return item.id == id
+            //});
+            this.$nextTick(() => {
+                this.form = _.cloneDeep(info[0]);
+                // 处理时间回显
+                this.getShowTime(this.form.beginDate, this.form.endDate);
+                console.log(info[0], '数据')
+            });
         },
+        handleEvents(events) {
+            console.log(events, '事件3');
+        },
+        handleDateSelect(selectInfo) {
+            if (!this.canUserEdit) return;
+            console.log(selectInfo, '事件4');
+            console.log(this.dialogVisible);
+            this.dialogVisible = !this.dialogVisible;
+        },
+
+        /*
         handleEventClick(clickInfo) {
             if (!this.canUserEdit) return;
             if (confirm(`请确认是否删除事项 '${clickInfo.event.title}'`)) {
                 clickInfo.event.remove()
             }
         },
+        
         handleEvents(events) {
-            this.currentEvents = events
+            this.currentEvents = events;
+            console.log(events, '事件3');
         },
-        addEvent() {
-            // 第一种思路： 使用官方提供的方法
-            // this.calendarApi.addEvent({
-            //    title: 'event 11',
-            //    start: '2021-11-28',
-            //})
-
-            //第二种：通过vue的双向绑定
-            this.calendarOptions.events.push({
-                title: 'event 11',
-                start: '2023-7-28',
-            });
-        },
+        */
         toggleEdit() {
             this.canUserEdit = !this.canUserEdit;
+        },
+
+        // 提交数据
+        submitForm(formName) {
+            this.$refs[formName].validate((valid) => {
+                if (valid) {
+                    this.form.startDate = `${this.form.startDate} ${this.form.startTime}`;
+                    this.form.endDate = `${this.form.endDate} ${this.form.endTime}`;
+                    console.log(this.form, '数据');
+                    this.dialogVisible = false;
+                } else {
+                    console.log('error submit!!');
+                    return false;
+                }
+            });
+        },
+        resetForm(formName) {
+            this.dialogVisible = false;
+            this.$refs[formName].resetFields();
+        },
+        //关闭弹窗，重置表单
+        close() {
+            this.$confirm('确认关闭？')
+                .then(_ => {
+                    done();
+                })
+                .catch(_ => { });
         },
     }
 })
@@ -113,15 +223,20 @@ export default defineComponent({
     <div class='CalendarView'>
         <div class='mainCalendar'>
             <FullCalendar class='calendar' ref="fullCalendar" :options='calendarOptions'>
-                <template v-slot:eventContent='arg'>
-                    <b>{{ arg.timeText }}</b>
-                    <i>{{ arg.event.title }}</i>
-                </template>
+                
             </FullCalendar>
-            <br>
-            <el-button class='modeChange' type="primary" @click="toggleEdit">
-                模式: {{ canUserEdit ? '修改' : '查看' }}
-            </el-button>
+            <div class="tags-container">
+                <el-button class="modeChange" type="primary" @click="toggleEdit">
+                    模式:{{ canUserEdit ? '修改' : '查看' }}
+                </el-button>
+
+                <div class="tag-tip">
+                    <el-tag type="danger" class="tag">高优先级</el-tag>
+                    <el-tag type="warning" class="tag">中优先级</el-tag>
+                    <el-tag type="success" class="tag">低优先级</el-tag>
+                </div>
+            </div>
+
 
         </div>
 
@@ -131,16 +246,9 @@ export default defineComponent({
                     <div class="health-calendar">Health Calendar</div>
                 </div>
 
-                <div class="addEvent-button" @click="addEvent">
-                    <div class="addEvent-button-base">
-                        <svg class="addIcon" width="20" height="20" viewBox="0 0 20 20" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" clip-rule="evenodd"
-                                d="M10 5C10.2652 5 10.5196 5.10536 10.7071 5.29289C10.8946 5.48043 11 5.73478 11 6V9H14C14.2652 9 14.5196 9.10536 14.7071 9.29289C14.8946 9.48043 15 9.73478 15 10C15 10.2652 14.8946 10.5196 14.7071 10.7071C14.5196 10.8946 14.2652 11 14 11H11V14C11 14.2652 10.8946 14.5196 10.7071 14.7071C10.5196 14.8946 10.2652 15 10 15C9.73478 15 9.48043 14.8946 9.29289 14.7071C9.10536 14.5196 9 14.2652 9 14V11H6C5.73478 11 5.48043 10.8946 5.29289 10.7071C5.10536 10.5196 5 10.2652 5 10C5 9.73478 5.10536 9.48043 5.29289 9.29289C5.48043 9.10536 5.73478 9 6 9H9V6C9 5.73478 9.10536 5.48043 9.29289 5.29289C9.48043 5.10536 9.73478 5 10 5V5Z"
-                                fill="#00BFA8" fill-opacity="0.6" />
-                        </svg>
-                    </div>
-                </div>
+                <el-button class="addEvent-button" @click="dialogVisible = true" type="success" plain>
+                    <i class="fi fi-rr-plus"></i>
+                </el-button>
             </div>
 
             <div class='sidebar-section'>
@@ -168,6 +276,71 @@ export default defineComponent({
                 </div>
             </div>
         </div>
+
+        <!--日程新增弹窗start-->
+        <el-dialog title="健康事项新增" :visible.sync='dialogVisible' :before-close="close" width="45%">
+            <el-form :model="form" :rules="rules" ref="form" label-width="120px" size="small" class="demo-ruleForm">
+
+                <el-form-item label="事项主题" prop="title">
+                    <el-input v-model="form.title"></el-input>
+                </el-form-item>
+
+                <el-form-item label="开始时间" required>
+                    <el-col :span="11">
+                        <el-form-item prop="startDate" style="margin-bottom: 0">
+                            <el-date-picker type="date" format="yyyy-MM-dd" value-format="yyyy-MM-dd" placeholder="选择日期"
+                                v-model="form.startDate" style="width: 100%;">
+                            </el-date-picker>
+                        </el-form-item>
+                    </el-col>
+                    <el-col class="line" :span="2">-</el-col>
+                    <el-col :span="11">
+                        <el-form-item prop="startTime" style="margin-bottom: 0">
+                            <el-time-select placeholder="选择时间" v-model="form.startTime" :picker-options="{
+                                start: '00:00',
+                                step: '00:30',
+                                end: '23:30 ',
+                            }" style="width: 100%;">
+                            </el-time-select>
+                        </el-form-item>
+                    </el-col>
+                </el-form-item>
+
+                <el-form-item label="结束时间" required>
+                    <el-col :span="11">
+                        <el-form-item prop="endDate" style="margin-bottom: 0">
+                            <el-date-picker type="date" format="yyyy-MM-dd" value-format="yyyy-MM-dd" placeholder="选择日期"
+                                v-model="form.endDate" style="width: 100%;">
+                            </el-date-picker>
+                        </el-form-item>
+                    </el-col>
+                    <el-col class="line" :span="2">-</el-col>
+                    <el-col :span="11">
+                        <el-form-item prop="endTime" style="margin-bottom: 0">
+                            <el-time-select placeholder="选择时间" v-model="form.endTime" :picker-options="{
+                                start: '00:00',
+                                step: '00:30',
+                                end: '23:30 ',
+                                minTime: form.startTime
+                            }" style="width: 100%;">
+                            </el-time-select>
+                        </el-form-item>
+                    </el-col>
+                </el-form-item>
+                <el-form-item label="优先级">
+                    <el-select v-model="form.priority" placeholder="请选择事项优先级">
+                        <el-option label="高优先级" value="highPriority"></el-option>
+                        <el-option label="中优先级" value="middlePriority"></el-option>
+                        <el-option label="低优先级" value="lowPriority"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item>
+                    <el-button @click="resetForm('form')">取消</el-button>
+                    <el-button type="primary" @click="submitForm('form')">提交</el-button>
+                </el-form-item>
+            </el-form>
+        </el-dialog>
+        <!--日程新增弹窗end-->
     </div>
 </template>
 
@@ -278,6 +451,24 @@ li {
     position: relative;
 }
 
+.highPriority {
+    background: var(--blue-500, #EC4899);
+    border-radius: 50%;
+    flex-shrink: 0;
+    width: 12px;
+    height: 12px;
+    position: relative;
+}
+
+.middlePriority {
+    background: var(--blue-500, #FBBF24);
+    border-radius: 50%;
+    flex-shrink: 0;
+    width: 12px;
+    height: 12px;
+    position: relative;
+}
+
 .lowPriority {
     background: var(--blue-500, #3b82f6);
     border-radius: 50%;
@@ -344,4 +535,20 @@ li {
     max-width: 1100px;
     margin: 0 auto;
 }
+
+el-dialog {
+    z-index: 999;
+}
+
+.tags-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px;
+}
+
+.tag {
+  margin-left: 10px; /* Add your desired spacing value here */
+}
+
 </style>
