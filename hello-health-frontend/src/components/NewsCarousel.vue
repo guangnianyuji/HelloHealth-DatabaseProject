@@ -25,7 +25,7 @@
     },
     methods: {
       getNewsList() {
-        const apiUrl = "/api/hotnews";
+        const apiUrl = "/api/Flash/hotnews";
         axios.get(apiUrl)
             .then(res => {
               this.newsList = res.data.data.newsList;    // 获取全部新闻列表

@@ -99,7 +99,7 @@ const onSubmit = async () => {
             alert('密码重设成功！')
             await router.push("/login")
         } else{
-            if (responseObj.data.errorType == 'wrong vertification code') {
+            if (responseObj.data.errorType == 'wrong verification code') {
                 errorMsg.value = '验证码错误！'
                 isError.value = true
             } else if (responseObj.data.errorType == 'phone number not registered') {
@@ -120,7 +120,7 @@ const sendVerificationCode = async () => {
     errorMsg.value = ''
     isError.value = false
 
-    const requestVertificationCode = {
+    const requestVerificationCode = {
         user_phone: forgotPasswordCredential.user_phone,
     }
 
@@ -144,7 +144,7 @@ const sendVerificationCode = async () => {
         }
     }, 1000);
 
-    let response = await axios.post('/api/SendVertificationCode', requestVertificationCode)
+    let response = await axios.post('/api/SendVerificationCode', requestVerificationCode)
     let responseObj = response.data
     if (responseObj.errorCode !== 200) {
         errorMsg.value = '错误代码' + responseObj.errorCode
