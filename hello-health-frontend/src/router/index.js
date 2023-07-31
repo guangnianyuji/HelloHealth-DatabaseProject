@@ -31,7 +31,7 @@ const router = createRouter({
             children:[{
                 path: "",
                 name: "homeView",
-                component: ()=>import("@/views/TestView1.vue"),
+                component: ()=>import("@/views/MainPageView.vue"),
             }, {
                 path: "consultation",
                 name: "consultationView",
@@ -68,6 +68,10 @@ const router = createRouter({
                 path: 'medicineCollection',
                 name: 'medicineCollectionView',
                 component: ()=>import("@/views/MedicineCollectionView.vue"),
+            }, {
+                path: 'postCollection',
+                name: 'postCollectionView',
+                component: ()=>import("@/views/PostCollectionView.vue"),
             },{
                 path: "user",
                 name: "myView",
