@@ -138,7 +138,7 @@
 
 .left{
     width:auto;
-    padding-left: 3%;
+    padding-left: 4%;
     padding-top: 20px;
 }
 .table{
@@ -157,11 +157,12 @@
     color: #000000;
 }
 .pay-image{
+    margin-left:2px;
     background-image: url("../assets/code.png");
     background-size:cover;
     background-position: center;
     margin-top: 2%;
-    margin-left: 3%;
+
     width: 150px;
     height: 150px;
 }
@@ -214,6 +215,7 @@ export default
                 .then(res => {
                 this.CoinRecordList = res.data.data.coinRecordList;    // 获取全部硬币记录列表
                 this.RecordNum = this.CoinRecordList.length;          // 总记录数
+                console.log("123"+JSON.stringfy(this.CoinRecordList));
           })
             }
                
