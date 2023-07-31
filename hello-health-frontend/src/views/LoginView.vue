@@ -11,7 +11,7 @@
         </div>
 
         <el-form-item label="手机号" v-bind:class="{ error: isError }">
-            <el-input v-model="loginCredential.user_phone" @click="clearErrorBorder"/>
+            <el-input v-model="loginCredential.user_phone" @click="clearErrorBorder" type="number" step="1" min="0"/>
         </el-form-item>
         <el-form-item label="密码" v-bind:class="{ error: isError }">
             <el-input v-model="loginCredential.password" type="password" @click="clearErrorBorder" show-password/>

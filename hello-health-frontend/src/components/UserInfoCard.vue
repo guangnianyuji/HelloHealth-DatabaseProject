@@ -9,13 +9,15 @@ const props = defineProps({
 let userGroupNameDict = {
     "none": "点击登录",
     "normal": "普通用户",
-    "doctor": "医生"
+    "doctor": "医生",
+    "admin": "管理员"
 }
 
 </script>
 
 <template>
     <div class="avatarHolder">
+        <!--TODO:要变成能点击的样式，等个人界面做好-->
         <el-avatar class="avatar" :size="50" :src="userInfo.avatar_url" :class="{showAvatarBorder: showAvatarBorder}"/>
         <div class="userInfoHolder">
             <div class="userName">{{ userInfo.user_name }}</div>
