@@ -31,12 +31,12 @@
                     </div>
                   </el-dialog>
                   <el-dialog title="我的关注" v-model="this.myFollowVisible" @close="search">
-                    <el-card class="user-card" v-for="user in followList" :key="user.userID" @click="goUserPage(user.userID)">
+                    <el-card class="user-card" v-for="user in followList" :key="user.userID">
                       <div class="user-info">
                         <div class="avatar">
                           <el-avatar :src="user.avatarUrl"></el-avatar>
                         </div>
-                        <div class="name">{{user.userName}}</div>
+                        <div class="name"  @click="goUserPage(user.userID)">{{user.userName}}</div>
                         <el-button
                             :type="followMap.get(user.userID) ? 'primary' : 'default'"
                             @click="onFollowBtnClick(user.userID)"
@@ -301,6 +301,7 @@ import PostCard from "@/components/postBoardView/PostCard.vue";
 import NewsBlockList from "@/components/NewsBlockList.vue";
 import globalData from "@/global/global";
 import {messageProps} from "element-plus";
+
 export default {
   name: "UserInfoPage",
   components: {NewsBlockList, PostCard},
