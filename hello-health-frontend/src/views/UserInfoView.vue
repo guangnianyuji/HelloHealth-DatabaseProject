@@ -1,10 +1,6 @@
-<!--
-用户个人信息界面
-作者：张安琦，吴可非
--->
 <template>
   <!--整个页面是可以上下滚动的-->
-<div  class="wrapper">
+  <div  class="wrapper">
     <!--展示信息的分栏，分栏1：用户头像-->
     <div>
       <el-card class="cardStyle">
@@ -12,37 +8,42 @@
           <el-container>
             <el-aside>
               <div class="avatar-container">
-                <el-avatar class="avatar" :src="isAdministrator ? 'administrator.portrait' : avatarUrl"></el-avatar>
-                <el-button class="pic-edit-button" type="primary" icon="el-icon-edit" @click="showPhotoUpload">Edit</el-button>
-                <el-dialog v-model="photoUpload" title="头像上传" width="50%">
-                  <div style="text-align: center;">
-                    <p>请上传头像</p>
-                    <el-upload
-                        class="upload-demo"
-                        action="https://jsonplaceholder.typicode.com/posts/"
-                        :auto-upload="false"
-                        :on-change="handleChange"
-                    >
-                      <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-                      <div slot="tip" class="el-upload__tip">上传文件格式为.jpg、.jpeg、.png、.gif，且不超过 2MB</div>
-                    </el-upload>
-                  </div>
-                  <div slot="footer" class="dialog-footer">
-                    <el-button @click="photoUpload = false">取 消</el-button>
-                    <el-button type="primary" @click="submitPhoto">确 定</el-button>
-                  </div>
-                </el-dialog>
+                <el-avatar class="avatar" :src="isLogin ? userInfo.avatarUrl : require('@/assets/SamplePic.png')"></el-avatar>
+                <template v-if="isCurrentUser">
+                  <el-button class="pic-edit-button" type="primary" icon="el-icon-edit" @click="showPhotoUpload">Edit</el-button>
+                  <el-dialog v-model="photoUpload" title="头像上传" width="50%">
+                    <div style="text-align: center;">
+                      <p>请上传头像</p>
+                      <el-upload
+                          class="upload-demo"
+                          action="https://jsonplaceholder.typicode.com/posts/"
+                          :auto-upload="false"
+                          :on-change="handleChange"
+                          accept="image/jpg,image/jpeg,image/png,image/gif"
+                      >
+                        <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                        <div slot="tip" class="el-upload__tip">上传文件格式为.jpg、.jpeg、.png、.gif，且不超过 2MB</div>
+                      </el-upload>
+                    </div>
+                    <div slot="footer" class="dialog-footer">
+                      <el-button @click="photoUpload = false">取 消</el-button>
+                      <el-button type="primary" @click="submitPhoto">确 定</el-button>
+                    </div>
+                  </el-dialog>
+                </template>
               </div>
             </el-aside>
             <el-main>
               <span class="userName">{{ displayName }}</span>
               <el-button v-if="!isLogin" class="login-button" type="primary" @click="goToLoginPage">请登录</el-button>
               <br><br><br>
-              <template v-if="!isAdministrator">
-                <span class="autnenInfoStyle">{{ authenInfo }}</span>
+              <div>
+                <span>{{ authenInfo }}</span>
                 <template v-if="isLogin">
-                  <span v-if="isCertified">{{ certification.professionTitle }}</span>
-                  <el-button v-else type="primary" class="certificated-button" @click="showCertificationDialog">去认证</el-button>
+                  <span v-if="isCurrentUser && !userInfo.isCertified">{{ '未认证' }}</span>
+                  <span v-else-if="userInfo.isCertified">{{ certification.professionTitle }}</span>
+                  <el-button v-else-if="isCurrentUser && !userInfo.isCertified" type="primary" class="certificated-button" @click="showCertificationDialog">去认证</el-button>
+                  <span v-else>{{ '未认证' }}</span>
                   <el-dialog v-model="dialogVisible" title="医师认证" width="50%">
                     <div style="text-align: center;">
                       <p>请上传您的医师资格证照片</p>
@@ -62,7 +63,7 @@
                     </div>
                   </el-dialog>
                 </template>
-              </template>
+              </div>
             </el-main>
           </el-container>
         </div>
@@ -70,10 +71,10 @@
     </div>
     <!--展示信息的分栏，分栏2：杏仁币信息-->
     <div>
-      <el-card class="cardStyle" v-if="isLogin && !isAdministrator">
-        <el-button class="coinButton" v-if="isLogin" link @click="goToCoinDetail">
+      <el-card class="cardStyle" v-if="isLogin">
+        <el-button class="coinButton" v-if="isLogin && isCurrentUser" link @click="goToCoinDetail">
           我的杏仁币：
-          {{ numOfCoin }}
+          {{ userInfo.numOfCoin }}
         </el-button>
         <el-container>
             <el-aside class="coin-left">
@@ -137,50 +138,12 @@
             :size="size"
             border
         >
-          <template #extra>
+          <template #extra v-if="isCurrentUser">
             <!--点“编辑”按钮可以对用户信息进行编辑-->
             <el-button type="primary"  v-if="!isEdit" @click="edit">编辑</el-button>
             <el-button type="primary" v-if="isEdit" @click="save">保存</el-button>
           </template>
-          <template v-if="isAdministrator">
-            <el-descriptions-item>
-              <template #label>
-                <div class="cell-item">
-                  工号：
-                </div>
-              </template>
-              <!--从数据库获取管理员的工号-->
-              <el-input v-model="administrator.id" :disabled="!isEdit"></el-input>
-            </el-descriptions-item>
-            <el-descriptions-item>
-              <template #label>
-                <div class="cell-item">
-                  名称：
-                </div>
-              </template>
-              <!--从数据库获取管理员的名称-->
-              <el-input v-model="administrator.name" :disabled="!isEdit"></el-input>
-            </el-descriptions-item>
-            <el-descriptions-item>
-              <template #label>
-                <div class="cell-item">
-                  联系方式：
-                </div>
-              </template>
-              <!--从数据库获取管理员的联系方式-->
-              <el-input v-model="administrator.telephone" :disabled="!isEdit"></el-input>
-            </el-descriptions-item>
-            <el-descriptions-item>
-              <template #label>
-                <div class="cell-item">
-                  邮箱：
-                </div>
-              </template>
-              <!--从数据库获取管理员的邮箱-->
-              <el-input v-model="administrator.email" :disabled="!isEdit"></el-input>
-            </el-descriptions-item>
-          </template>
-          <template v-else>
+          <template>
             <el-descriptions-item>
               <template #label>
                 <div class="cell-item">
@@ -262,118 +225,101 @@
       </el-card>
     </div>
     <!--展示信息的分栏，分栏4：如果用户是医师的话，展示医师信息，否则无-->
-    <div v-if="isCertified && isLogin && !isAdministrator"    >
-    <el-card class="cardStyle">
-      <el-descriptions
-          class="margin-top"
-          title="医师信息"
-          :column="3"
-          :size="size"
-          border
-      >
-        <template #extra>
-          <!--点“编辑”按钮弹出医师认证框-->
-          <el-button type="primary" @click="dialogVisible = true">编辑</el-button>
-          <el-dialog v-model="dialogVisible" title="医师认证" width="50%">
-            <div style="text-align: center;">
-              <p>请上传您的医师资格证照片</p>
-              <el-upload
-                  class="upload-demo"
-                  action="https://jsonplaceholder.typicode.com/posts/"
-                  :auto-upload="false"
-                  :on-change="handleChange"
-              >
-                <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-                <div slot="tip" class="el-upload__tip">上传文件格式为.jpg、.jpeg、.png、.gif，且不超过 2MB</div>
-              </el-upload>
-            </div>
-            <div slot="footer" class="dialog-footer">
-              <el-button @click="dialogVisible = false">取 消</el-button>
-              <el-button type="primary" @click="submitCertification">确 定</el-button>
-            </div>
-          </el-dialog>
-        </template>
-        <el-descriptions-item>
-          <template #label>
-            <div class="cell-item">
-              姓名：
-            </div>
-          </template>
-          <!--从数据库获取姓名-->
-          {{certification.name}}
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template #label>
-            <div class="cell-item">
-              职称：
-            </div>
-          </template>
-          <!--从数据库获取职称-->
-          {{certification.professionTitle}}
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template #label>
-            <div class="cell-item">
-              认证时间：
-            </div>
-          </template>
-          <!--从后端获取认证时间-->
-          {{certification.date}}
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template #label>
-            <div class="cell-item">
-              （曾）就职医院：
-            </div>
-          </template>
-          <!--从数据库获取就职医院信息-->
-          {{certification.hospital}}
-        </el-descriptions-item>
-      </el-descriptions>
-    </el-card>
-  </div>
-    <!--展示信息的分栏，分栏5：我的发布-->
-    <div v-if="isLogin && !isAdministrator">
+    <div v-if="userInfo.isCertified && isLogin && isCurrentUser">
       <el-card class="cardStyle">
         <el-descriptions
             class="margin-top"
-            title="我的发布"
+            title="医师信息"
+            :column="3"
+            :size="size"
+            border
+        >
+          <template #extra>
+            <!--点“编辑”按钮弹出医师认证框-->
+            <el-button type="primary" @click="dialogVisible = true">编辑</el-button>
+            <el-dialog v-model="dialogVisible" title="医师认证" width="50%">
+              <div style="text-align: center;">
+                <p>请上传您的医师资格证照片</p>
+                <el-upload
+                    class="upload-demo"
+                    action="https://jsonplaceholder.typicode.com/posts/"
+                    :auto-upload="false"
+                    :on-change="handleChange"
+                >
+                  <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                  <div slot="tip" class="el-upload__tip">上传文件格式为.jpg、.jpeg、.png、.gif，且不超过 2MB</div>
+                </el-upload>
+              </div>
+              <div slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="submitCertification">确 定</el-button>
+              </div>
+            </el-dialog>
+          </template>
+          <el-descriptions-item>
+            <template #label>
+              <div class="cell-item">
+                职称：
+              </div>
+            </template>
+            <!--从数据库获取职称-->
+            {{certification.professionTitle}}
+          </el-descriptions-item>
+          <el-descriptions-item>
+            <template #label>
+              <div class="cell-item">
+                认证时间：
+              </div>
+            </template>
+            <!--从后端获取认证时间-->
+            {{certification.date}}
+          </el-descriptions-item>
+        </el-descriptions>
+      </el-card>
+    </div>
+    <!--展示信息的分栏，分栏5：我的发布-->
+    <div v-if="isLogin">
+      <el-card class="cardStyle">
+        <el-descriptions
+            class="margin-top"
+            :title="isCurrentUser ? '我的发布' : 'ta的发布'"
             :column="3"
             :size="size"
             border
         >
         </el-descriptions>
-        <h1>hello</h1>
-        <h1>hello</h1>
-        <h1>hello</h1>
-        <h1>hello</h1>
-        <h1>hello</h1>
-        <h1>hello</h1>
-        <h1>hello</h1>
+        <el-row v-if="userPosts">
+          <el-col :span="8" v-for="post in userPosts" :key="post">
+            <PostCard :post_info="post" style="margin-left:10% ;margin-right:10% ;margin-bottom: 15%;"></PostCard>
+          </el-col>
+        </el-row>
       </el-card>
     </div>
-</div>
+  </div>
 </template>
 
 <script>
 import axios from "axios"
+import PostCard from "@/components/postBoardView/PostCard.vue";
+import NewsBlockList from "@/components/NewsBlockList.vue";
+import { ElMessage } from "element-plus";
 export default {
   name: "UserInfoPage",
+  components: {NewsBlockList, PostCard},
   data(){
     return{
-      //用户头像图片的URL
-      avatarUrl:'https://example.com/avatar.jpg',
-      //用户医师认证信息
-      isCertified: true, //初始状态为未认证
-      isAdministrator: false, //是否为管理员
-      administrator: {},    //管理员信息
+      //从数据库获取的数据
       certification:{},   //认证信息
-      userInfo:{},     //用户基本信息
-      isLogin :true,    //初始状态未登录
-      numOfCoin: 0,    //杏仁币数量，初始为0
+      userInfo:{},     //用户基本信息，包含numOfCoin,isCertified等信息
+      userPosts: [],   // 用户上传的帖子
+      isLogin:true ,    //判断正在操控的用户是否处于登陆状态
+
+      //本页面需要的一些变量，不用从数据库获取
       isEdit:false, //是否允许编辑信息
       dialogVisible:false,    //对话框是否可见
       size:'small',
+
+      //用户上传的，要传给数据库的一些数据
       file:null, //上传的文件对象
       photoUpload:false,   //头像上传，初始为false
       //杏仁币流水
@@ -381,27 +327,17 @@ export default {
       RecordNum:0,
     }
   },
+  //从数据库获取所需的用户信息
   mounted() {
-    // 从后端API获取医师认证信息
-      let userIdNum = parseInt(this.$route.params.userId ? this.$route.params.userId: 0);
-      console.log(userIdNum)
-      if(isNaN(userIdNum)){
-          this.$router.replace("/error");
-          return;
-      }
+    let userIdNum = parseInt(this.$route.params.userId ? this.$route.params.userId: 0);
+    if(isNaN(userIdNum)){
+      this.$router.replace("/error");
+      return;
+    }
     axios.post('/api/UserInfo/Details',{user_id: userIdNum})
         .then(response => {
           const responseData = response.data.data.userInfo;
           this.userInfo = responseData
-          //     .map(userData => ({
-          //   userID: userData.userID,
-          //   userName: userData.userName,
-          //   gender: userData.gender,
-          //   birthday: userData.birthday,
-          //   telephone: userData.telephone,
-          //   email: userData.email,
-          //   description: userData.description
-          // }))
           // 将gender的值更改为数组
           this.userInfo.gender = ["男", "女"]
           // 将gender的默认值设置为从数据库获取到的性别值
@@ -410,41 +346,33 @@ export default {
           }
           const responseData2 = response.data.data.certification;
           this.certification = responseData2
-          //     .map(doctorData => ({
-          //   name: doctorData.name,
-          //   date: doctorData.date,
-          //   professionTitle: doctorData.professionTitle,
-          //   hospital: doctorData.hospital,
-          // }))
-          const responseData3 = response.data.data.administrator;
-          this.administrator = responseData3
-            //   .map(administratorData => ({
-            // name: administratorData.name,     //名称
-            // telephone: administratorData.telephone,    //联系方式
-            // email: administratorData.email,    //邮箱
-            // id: administratorData.id,    //工号
-            // portait: administratorData.portait,    //管理员头像
-          // }))
+          this.isLogin = responseData.data.data.isLogin; // 获取用户登录状态
         })
         .catch(error => {
           console.error(error)
         });
+    /* 获取用户发布的帖子 */
+    this.fetchUserPosts(this.userInfo.userID);
+    //在控制台打印被查看信息的用户的ID
   },
+
+  //进行一些必要的计算工作
   computed: {
+    //判断输出文字
     authenInfo() {
       return this.isLogin ? '认证信息：' : '未登录';
     },
+    //根据操控页面的用户的登陆状态来判断是显示要查看的用户信息还是“未登录”字样
     displayName() {
-      if (this.isLogin && this.isAdministrator) {
-        // 如果用户已登录并且是管理员，则显示管理员名称
-        return /*this.administrator.name*/ "管理员名";
-      } else if (this.isLogin) {
-        // 否则，如果用户已登录，则显示普通用户名
-        return /*this.userInfo.userName*/ "用户名";
+      if(this.isLogin) {
+        return this.userInfo.userName;
       } else {
-        // 否则，如果用户未登录，则不显示任何名称
-        return '';
+        return '未登录';
       }
+    },
+    //判断是否是本人在查看信息页面，来判断该用户是否可对信息进行修改
+    isCurrentUser() {
+      return !this.$route.params.userId;
     }
   },
   methods:{
@@ -469,10 +397,7 @@ export default {
     },
     save(){
       // 将修改后的用户信息保存到数据库
-      axios
-          .put('/api/UserInfo/Details', {
-            userInfo: this.userInfo,
-          })
+      axios.put('/api/modifyUserInfo')
           .then(response => {
             // 保存成功后将isEdit变量设置为false，禁用编辑模式
             this.isEdit = false;
@@ -480,6 +405,30 @@ export default {
             this.userInfo.gender = this.userInfo.gender;
             // 将下拉框选中的值保存到userInfo.birthday中
             this.userInfo.birthday=this.userInfo.birthday;
+            let user_info={
+              name :this.UserInfo.userName,
+              email:this.UserInfo.email,
+              description:this.UserInfo.description,
+              gender: this.gender == "男" ? "m" : "f",
+              birthday: this.birthday == "暂未填写" ? null : this.UserInfo.birthday,
+              telephone:this.UserInfo.telephone,
+            };
+            if(response.data.data.status == true){
+              ElMessage({
+                type: "success",
+                message: "修改成功！",
+                duration: 2000,
+                showClose: true,
+              });
+              //store.commit("changePersonInfo", user_info);
+            } else {
+              ElMessage({
+                type: "error",
+                message: "修改失败！",
+                duration: 2000,
+                showClose: true,
+              });
+            }
           })
           .catch((error) => {
             this.isEdit = false;
@@ -495,7 +444,7 @@ export default {
       const formData = new FormData();
       formData.append('file', this.file);
       // 发起一个 POST 请求，将 formData 发送给后端服务器
-      axios.post('/api/certification', formData)
+      axios.post('/api/uploadDoctorApproval', formData)
           .then(response => {
             console.log(response.data);
             this.dialogVisible = false;
@@ -510,7 +459,7 @@ export default {
       const formData = new FormData();
       formData.append('file', this.file);
       // 发起一个 POST 请求，将 formData 发送给后端服务器
-      axios.post('/api/certification', formData)
+      axios.post("/api/uploadAvatar", formData)
           .then(response => {
             console.log(response.data);
             this.photoUpload = false;
@@ -533,6 +482,17 @@ export default {
   created(){
             this.getCoinRecord()
   },
+    /* 求获取用户发布的帖子 */
+    fetchUserPosts(userID) {
+      axios.get("/api/fetchUserPosts", {
+        params: {
+          userID
+        }
+      }).then(res => {
+        this.userPosts= res.data.data.post_list;
+      })
+    }
+  }
 }
 
 </script>
@@ -613,9 +573,9 @@ export default {
 }
 
 .wrapper{
-    position: relative;
-    width: 85%;
-    margin: 0 auto;
+  position: relative;
+  width: 85%;
+  margin: 0 auto;
 }
 
 .coin-left{
