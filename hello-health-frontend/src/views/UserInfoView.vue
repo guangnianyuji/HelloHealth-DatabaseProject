@@ -38,10 +38,10 @@
                         </div>
                         <div class="name">{{user.userName}}</div>
                         <el-button
-                            :type="followMap.get(user.userId) ? 'primary' : 'default'"
+                            :type="followMap.get(user.userID) ? 'primary' : 'default'"
                             @click="onFollowBtnClick(user.userID)"
                         >
-                          {{ followMap.get(user.userId) ? '+ 关注' : '已关注' }}
+                          {{ followMap.get(user.userID) ? '+ 关注' : '已关注' }}
                         </el-button>
                       </div>
                       <div class="description">
@@ -58,7 +58,7 @@
               <el-button
                   v-if="isLogin && !isCurrentUser"
                   :type="isFollowed ? 'default' : 'primary'"
-                  @click="onFollowBtnClick"
+                  @click="onFollowBtnClick(null)"
               >
                 {{ isFollowed ? '已关注' : '+ 关注' }}
               </el-button>
@@ -306,7 +306,8 @@ export default {
   components: {NewsBlockList, PostCard},
   data(){
     return{
-      followMap: new Map(),
+      isFollowed: false,
+      followMap: new Map(), // 用来匹配关注列表的已关注和+关注
       myFollowVisible:false,
       followList:[],
 
@@ -315,7 +316,6 @@ export default {
       userInfo:{},     //用户基本信息，包含numOfCoin,isCertified等信息
       userPosts: [],   // 用户上传的帖子
       isLogin:true ,    //判断正在操控的用户是否处于登陆状态
-      isFollowed: false,
 
       //本页面需要的一些变量，不用从数据库获取
       isEdit:false, //是否允许编辑信息
@@ -352,7 +352,7 @@ export default {
           console.log(this.followList)
 
           this.followList.forEach(user => {
-            this.followMap.set(user.userID, true)
+            this.followMap.set(user.userID, false)
           })
 
         })
@@ -385,7 +385,10 @@ export default {
   },
   methods:{
     onFollowBtnClick(userId) {
+
       let isFollowed = this.followMap.get(userId)
+
+      console.log(isFollowed)
 
       if (isFollowed) {
         this.unfollow(userId)
@@ -398,9 +401,7 @@ export default {
         axios.post("/api/unfollowUser", { thisUserID: globalData.userInfo.userId ,followUserID: userId })
             .then(response => {
               //如果后端返回的状态码是200，那么将isFollowed设置为false
-              if (response.data.status === 200) {
-                this.followMap.set(userId, false)
-              }
+              this.followMap.set(userId, false)
             })
             .catch(error => {
               console.error(error);
@@ -410,9 +411,7 @@ export default {
         axios.post("/api/unfollowUser", {thisUserID: globalData.userInfo.userId ,followUserID: this.userInfo.userID})
             .then(response => {
               //如果后端返回的状态码是200，那么将isFollowed设置为false
-              if (response.data.status === 200) {
-                this.isFollowed = false;
-              }
+              this.isFollowed = false;
             })
             .catch(error => {
               console.error(error);
@@ -426,9 +425,7 @@ export default {
         axios.post("/api/followUser", { thisUserID: globalData.userInfo.userId ,followUserID: userId })
             .then(response => {
               //如果后端返回的状态码是200，那么将isFollowed设置为true
-              if (response.data.status === 200) {
-                this.followMap.set(userId, true);
-              }
+              this.followMap.set(userId, true);
             })
             .catch(error => {
               console.error(error);
@@ -438,9 +435,7 @@ export default {
         axios.post("/api/followUser", {thisUserID: globalData.userInfo.userId ,followUserID: this.userInfo.userID})
             .then(response => {
               //如果后端返回的状态码是200，那么将isFollowed设置为true
-              if (response.data.status === 200) {
-                this.isFollowed = true;
-              }
+              this.isFollowed = true;
             })
             .catch(error => {
               console.error(error);
