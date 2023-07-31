@@ -24,7 +24,7 @@
     "@tiptap/vue-3": "^2.0.3",
     "axios": "^1.4.0",
     "bootstrap": "^4.6.2",
-    "bootswatch": "^5.3.0",
+    "bootswatch": "^5.3.1",
     "element-plus": "^2.3.7",
     "tippy.js": "^6.3.7",
     "unplugin-element-plus": "^0.7.1",
