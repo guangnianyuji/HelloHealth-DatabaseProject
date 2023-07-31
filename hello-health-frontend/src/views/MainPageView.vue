@@ -259,6 +259,7 @@
 <script>
 import globalData from "@/global/global";
 import router from "@/router";
+import {ElMessage} from "element-plus";
 import NewsCarousel from "../components/NewsCarousel.vue";
 export default {
     
