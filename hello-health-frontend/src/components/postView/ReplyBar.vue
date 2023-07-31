@@ -4,7 +4,11 @@ import globalData from "@/global/global"
 const emit = defineEmits(["replySubmit"])
 const replyContent = ref('')
 const submitReply = () => {
-    emit("replySubmit",replyContent)
+    emit("replySubmit",replyContent,void 0,submitSuccess)
+}
+
+const submitSuccess = () =>{
+    replyContent.value = '';
 }
 </script>
 

@@ -1,50 +1,98 @@
 <template>
     <div class="PB_title">
-      <div>
-        <el-row >
-            <el-col span="10">
-            <svg t="1688614393322" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
-                 p-id="2387" width="32" height="32">
-                <path d="M512 85.333c23.573 0 42.667 20.118 42.667 44.907v763.52c0 24.79-19.094 44.907-42.667 44.907s-42.667-20.118-42.667-44.907V130.24c0-24.79 19.094-44.907 42.667-44.907z"
-                      p-id="2388" fill="#6cb16a"></path>
-            </svg>
-            HH论坛 
-            </el-col>
+        <div>
+            <el-row >
+                <el-col :span="20">
+                    <div class="forum-title title-with-line" >
+                        HH论坛
+                    </div>
 
-            <el-col span="20" :offset="18">
-                <img src="../assets/10.png" style="height: 100px">
-            </el-col>
-        </el-row>
-      </div>
-         
-      <div class="post_field">
-        <el-tabs 
-        v-model="type_sort.type"
-        class="demo-tabs"
-         
-        @tab-click="sortSwitcher">
-            <el-tab-pane  label="最新论坛" name="Time"> </el-tab-pane>
-            <el-tab-pane  label="最热论坛" name="Heat"> </el-tab-pane>
-         </el-tabs>
+                </el-col>
 
-          <el-row>
-            <el-col :span="8" v-for="post in post_list" :key="post">
-                <post-card :post_info="post" style="margin-left:10% ;margin-right:10% ;margin-bottom: 15%;">
-                    
-                </post-card>
-            </el-col>
-          </el-row>
+                <el-col :span="4">
+                    <img alt="" src="../assets/10.png" style="height: 100px">
+                </el-col>
+            </el-row>
         </div>
- 
+
+        <div class="post_field">
+            <el-tabs
+                v-model="type_sort.type"
+                class="demo-tabs"
+
+                @tab-click="sortSwitcher">
+                <el-tab-pane  label="最新论坛" name="Time"> </el-tab-pane>
+                <el-tab-pane  label="最热论坛" name="Heat"> </el-tab-pane>
+            </el-tabs>
+
+            <el-row v-if="post_list">
+                <el-col :span="8" v-for="post in post_list" :key="post">
+                    <post-card :post_info="post" style="margin-left:10% ;margin-right:10% ;margin-bottom: 15%;"></post-card>
+                </el-col>
+            </el-row>
+        </div>
+
 
     </div>
-   
+
+    <el-dialog
+        v-model="dialogVisible"
+        class="editorDialog"
+        modal-class="editorDialogModal"
+        title="发布帖子"
+        width="70%"
+        top="0"
+    >
+        <el-form label-width="50px" label-position="left" :model="newPostInfo">
+            <el-form-item label="标题">
+                <el-input v-model="newPostInfo.title" />
+            </el-form-item>
+            <el-form-item label="悬赏">
+                <el-radio-group v-model="newPostInfo.is_bounty">
+                    <el-radio :label="true">是</el-radio>
+                    <el-radio :label="false">否</el-radio>
+                </el-radio-group>
+                <el-form-item label="赏金" class="bountyLabel" v-if="newPostInfo.is_bounty">
+                    <el-input v-model="newPostInfo.bounty_value" type="number" min="0" step="1"/>
+                </el-form-item>
+            </el-form-item>
+            <el-form-item label="标签">
+                <el-select
+                    class="tagSelector"
+                    v-model="newPostInfo.tags"
+                    multiple
+                    placeholder="选择2~4个标签"
+                    style="width: 240px"
+                    :allow-create="true"
+                    :filterable="true"
+                    :multiple-limit="4"
+                >
+                    <el-option
+                        v-for="item in tags"
+                        :key="item"
+                        :label="item"
+                        :value="item"
+                    />
+                </el-select>
+            </el-form-item>
+        </el-form>
+        <TipTapEditable ref="editor"/>
+        <template #footer>
+            <span class="dialog-footer">
+                <el-button type="primary" @click="submitNewPost">
+                    发布
+                </el-button>
+            </span>
+        </template>
+    </el-dialog>
+
+    <WritePostButton  @click="openPostEditor" v-if="gdata.login"></WritePostButton>
 </template>
 
 <style scoped>
 .post_field {
-  margin-bottom: 3%;
-  /*border-radius: 28px;*/
+    margin-bottom: 3%;
+    /*border-radius: 28px;*/
 }
 /*起不了作用，切换栏不能变大小
 {
@@ -60,56 +108,139 @@
     padding-top: 20px;
     margin-right: 8.5%;
 }
+.forum-title {
+    position: relative;
+}
+
+.title-with-line:before{
+    content:"";
+    top:50%;
+    width: 1px;
+    height: 1.2em;
+    display: inline-block;
+    position: absolute;
+    background-color: var(--el-color-primary);
+    border: 1px solid var(--el-color-primary);
+    border-radius: 2px;
+    transform: translate(-16px , -50%);
+}
+
+.bountyLabel{
+    margin-left: 30px;
+}
+
+.tagSelector{
+    width: 100% !important;
+}
 
 </style>
 
 <script>
-import PostCard from "../components/PostCard.vue"
+import PostCard from "../components/postBoardView/PostCard.vue"
 import axios from "axios";
-import {reactive} from 'vue'
+// import reactive from 'vue'
+import WritePostButton from "@/components/postBoardView/WritePostButton.vue";
+import globalData from "@/global/global";
+import {ElMessage} from "element-plus";
+import TipTapEditable from "@/components/postView/TipTapEditable.vue";
 export default{
     components:
-    {
-        PostCard
-         
-    },
+        {
+            TipTapEditable,
+            WritePostButton,
+            PostCard,
+        },
 
-    data:()=>
-    ({
-        type_sort: reactive({
-         type: "Time",   
-         }) ,//之前选择的类型
-         
-        post_list: [],
-        
-        //云端mock地址，可删
-        test_add: "https://mock.apifox.cn/m1/2961538-0-default"
-    }),
+    data:()=> (
+        {
+            type_sort: {
+                type: "Time",
+            } ,//之前选择的类型
+            dialogVisible: false,
+            post_list: [],
+            gdata: globalData,
+            newPostInfo:{
+                title:"",
+                is_bounty: false,
+                bounty_value: 0,
+                content: "",
+                tags: []
+            },
+            tags:[],
+        }),
     methods:
-    {
-        sortSwitcher ( res) {
-            console.log(res.paneName );
-            if(res.paneName==this.type_sort.type){
-                return;
+        {
+            sortSwitcher ( res) {
+                console.log(res.paneName );
+                if(res.paneName===this.type_sort.type){
+                    return;
+                }
+                this.type_sort.type=res.paneName;
+                this.sortBy();
+            },
+            sortBy(){
+                axios
+                    .post("/api/Post/SortBy", this.type_sort)
+                    .then((res)=> {
+                        this.post_list= res.data.data.post_list;
+                        this.tags = res.data.data.tags;
+                    })
+                    .catch((errMsg) => {
+                        console.log(errMsg);
+                        this.loading = false;
+                    });
+            },
+            openPostEditor() {
+                if(!globalData.login){
+                    ElMessage.error('请先登录再参与讨论。')
+                    return;
+                }
+                this.dialogVisible = true
+            },
+
+            async submitNewPost() {
+                if(this.$refs.editor.editor.state.doc.textContent.length < 15) {
+                    ElMessage.error('请输入更多内容。');
+                    return;
+                }
+                if(this.newPostInfo.title.length < 5) {
+                    ElMessage.error('请输入更长的标题。');
+                    return;
+                }
+                if(this.newPostInfo.tags.length < 2) {
+                    ElMessage.error('请选择更多标签。');
+                    return;
+                }
+                if(this.newPostInfo.is_bounty &&(parseInt(this.newPostInfo.bounty_value) <= 0 || Math.floor(parseFloat(this.newPostInfo.bounty_value))!==parseInt(this.newPostInfo.bounty_value))) {
+                    ElMessage.error('请输入正数整悬赏值。');
+                    return;
+                }
+                this.newPostInfo.content = JSON.stringify(this.$refs.editor.editor.getJSON())
+                let response = await axios.post("/api/SendPost",this.newPostInfo)
+                let responseObj = response.data;
+                if(responseObj.errorCode!==200) {
+                    ElMessage.error('发送失败，错误码：' + responseObj.errorCode);
+                    return;
+                }
+                if(responseObj.data.status!==true) {
+                    ElMessage.error('发送失败：' + responseObj.data.msg);
+                    return;
+                }
+                ElMessage.success('发送成功，请等待审核通过。');
+                this.dialogVisible = false;
+                this.$refs.editor.editor.commands.clearContent();
+                this.newPostInfo = {
+                    title:"",
+                    is_bounty: false,
+                    bounty_value: 0,
+                    content: "",
+                    tags: []
+                }
             }
-            this.type_sort.type=res.paneName;
-            this.sortBy();
-      },
-      sortBy(){   
-        axios
-        .post(this.test_add+"/api/Post/SortBy", this.type_sort)
-        .then((res)=> {
-            this.post_list=[].concat(res.data.data.post_list);
-        })
-        .catch((errMsg) => {
-          console.log(errMsg);
-          this.loading = false;
-        });
-      },
-    },
+        },
     created(){
         this.sortBy();
-      }
+    }
 }
 
 </script>

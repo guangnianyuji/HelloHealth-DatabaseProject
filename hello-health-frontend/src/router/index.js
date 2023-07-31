@@ -31,7 +31,7 @@ const router = createRouter({
             children:[{
                 path: "",
                 name: "homeView",
-                component: ()=>import("@/views/TestView1.vue"),
+                component: ()=>import("@/views/MainPageView.vue"),
             }, {
                 path: "consultation",
                 name: "consultationView",
@@ -41,25 +41,60 @@ const router = createRouter({
                 name: "newsView",
                 component: ()=>import("@/views/HealthFlashView.vue"),
             }, {
-                path: "detailedNews",
+                path: "news/:flash_id",
                 name: "detailedNews",
-                component: ()=>import("@/pages/DetailedNewsPage.vue"),
+                component: ()=>import("@/views/DetailedNewsView.vue"),
+            }, {
+                path: "medicine",
+                name: "medicineView",
+                component: () => import("@/views/FindMedicineView.vue")
+            }, {
+                path: 'medicineCard',
+                name: 'medicineCardView',
+                component: ()=>import("@/views/MedicineInformationView.vue"),
+            },{
+                path: "forum",
+                name: "forumView",
+                component: () => import ("@/views/PostBoardView.vue")
+            }, {
+                path: "forum/:postId",
+                name: "postView",
+                component: () => import ("@/views/PostView.vue")
+            },{
+                path: "calendar",
+                name: "calendarView",
+                component: () => import ("@/views/HealthCalendarView.vue")
+            }, {
+                path: 'medicineCollection',
+                name: 'medicineCollectionView',
+                component: ()=>import("@/views/MedicineCollectionView.vue"),
+            }, {
+                path: 'postCollection',
+                name: 'postCollectionView',
+                component: ()=>import("@/views/PostCollectionView.vue"),
+            },{
+                path: "user",
+                name: "myView",
+                component: () => import("@/views/UserInfoView.vue")
+            },{
+                path: "user/:userId",
+                name: "otherView",
+                component: () => import("@/views/UserInfoView.vue")
             }]
         },
         {
-            path: '/',
+            path: '/coin',
             name: 'coin',
-            //component: ()=>import("@/pages/HomePage.vue"),
             children:[
                 {
-                    path: "coin",
-                    name: "coinview",
+                    path: "detail",
+                    name: "coinView",
                     component: ()=>import("@/components/CoinView.vue"),
                 },
                 {
                     path: "UserAgreement",
                     name: "UserAgreement",
-                    component: ()=>import("@/pages/UseragreementPage.vue"),
+                    component: ()=>import("@/pages/UserAgreementPage.vue"),
                 }
             ]
         },
