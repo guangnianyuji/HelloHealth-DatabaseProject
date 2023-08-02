@@ -98,15 +98,68 @@
     </div>
     <!--展示信息的分栏，分栏2：杏仁币信息-->
     <div>
-      <el-card class="cardStyle" v-if="isLogin">
-        <el-button class="coinButton" v-if="isLogin && isCurrentUser" link @click="goToCoinDetail">
+      <el-card class="cardStyle" v-if="isLogin && !isAdministrator">
+        <el-row>
+          <div style="font-size: 18px;margin-top: 2px;">
           我的杏仁币：
-          {{ userInfo.numOfCoin }}
-        </el-button>
-        <span v-if="isLogin && !isCurrentUser">
-      杏仁币数量：
-      {{ userInfo.numOfCoin }}
-    </span>
+          </div>
+          <div style="color:green;font-size: 22px;">
+          {{ numOfCoin }}
+          </div>
+          <el-button class="coinButton" v-if="isLogin" link @click="goToCoinDetail">
+          杏仁币详情>>
+          </el-button>
+        </el-row>
+        <el-container>
+            <el-aside class="coin-left">
+        <el-row style="margin-left: 1%;margin-bottom: 2%;">
+            <div style="font-size: 14px;">硬币记录</div>
+            <div style="font-size: 14px;color: grey;margin-left: 3px;">
+              您最近一周的变化情况
+            </div>
+        </el-row>
+        <el-table :data="CoinRecordList" 
+                    :default-sort="{ prop: 'Time', order: 'ascending' }" 
+                    height="250" style="width: 100%" class="table">
+                <el-table-column prop="Time" label="时间" width="150" />
+                <el-table-column prop="Num" label="变化" width="120" />
+                <el-table-column prop="Reason" label="原因" width="150"/>
+        </el-table>
+      </el-aside>
+            <el-main class="coin-right">
+                <el-row>
+                    <div style="font-size: 14px;margin-bottom: 1%;">杏仁币有什么用</div>
+                </el-row>
+                <el-row>
+                    <div style="font-size: 14px;color: grey;">
+                        杏仁币是本平台中专用的虚拟货币，取自“杏林春暖 ，悬壶济世”之意。
+                    </div>
+                </el-row>
+                <el-row>
+                    <div style="font-size: 14px;color: grey;">
+                        • 用于对优秀帖子进行投币。
+                    </div>
+                </el-row>
+                <el-row>
+                    <div style="font-size: 14px;color: grey;">
+                        • 可以用来悬赏专业医生用户回答专业问题。
+                    </div>
+                </el-row>
+                <el-row>
+                    <div style="font-size: 14px;margin-top: 5%;margin-bottom: 1%;">如何获得杏仁币</div>
+                </el-row>
+                <el-row>
+                    <div style="font-size: 14px;color: grey;">
+                        • 每日登录、完成健康计划。
+                    </div>
+                </el-row>
+                <el-row>
+                    <div style="font-size: 14px;color: grey;">
+                        • 发帖被投杏仁币、发帖获得较大浏览量和获得高价值流量认可。
+                    </div>
+                </el-row>
+            </el-main>
+        </el-container>
       </el-card>
     </div>
     <!--展示信息的分栏，分栏3：基本信息-->
@@ -479,7 +532,7 @@ export default {
     },
     /*跳转到杏仁币的流水页面函数*/
     goToCoinDetail(){
-      this.$router.push('/coin/detail');
+      this.$router.push('/detail');
     },
     showCertificationDialog() {
       // 显示认证框
@@ -603,8 +656,9 @@ export default {
   font-weight: bold;
   color:black;
 }
-/*杏仁币按钮样式*/
+/*杏仁币“更多详情”样式*/
 .coinButton{
+  margin-left: 2%;
   font-size:16px;
   color: #409EFF;
 }

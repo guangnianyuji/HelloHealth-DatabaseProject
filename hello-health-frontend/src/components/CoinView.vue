@@ -1,23 +1,24 @@
 <template>
     <div>
-        <el-row class="HF_title">
-            <svg t="1688614393322" class="icon" viewBox="0 0 1024 1024" version="1.1"
-            xmlns="http://www.w3.org/2000/svg"
-            p-id="2387" width="32" height="32">
-            <path d="M512 85.333c23.573 0 42.667 20.118 42.667 44.907v763.52c0 24.79-19.094 44.907-42.667 44.907s-42.667-20.118-42.667-44.907V130.24c0-24.79 19.094-44.907 42.667-44.907z"
-            p-id="2388" fill="#6cb16a"></path>
-            </svg>
-                <div style="padding-top: 5px">我的杏仁币</div>
+        <el-row class="title-wrapper" style="">
+        <el-button class="button" link @click="goToInfo">
+            <i class="fi fi-br-angle-left" style="font-size:20px;"></i>
+                <div style="margin-left: 3px;font-size:20px ;margin-right:5px;">返回</div>
+        </el-button>
+        <img alt="" src="../assets/coindraw.png" style="height: 80px;margin-top: -5px;margin-left: 32%;margin-right: 5px;">
+        <div class="title">
+            杏仁币详情
+        </div>
         </el-row>
-        <el-row>
+        <el-row style="padding-left: 12px;margin-top: 0px;">
             <div class="coin-number-title">杏仁币余额：  </div>
             <div class="coin-number">{{CoinNum}}</div>
         </el-row>
         <el-container>
             <el-aside class="left">
                 <el-row>
-                    <div style="font-size: 14px;">硬币记录</div>
-                    <div style="font-size: 14px;color: grey;margin-left: 3px;">
+                    <div style="font-size: 15px;">杏仁币记录</div>
+                    <div style="font-size: 15px;color: grey;margin-left: 3px;">
                         您最近一周的变化情况
                     </div>
                 </el-row>
@@ -66,29 +67,36 @@
         <el-row>
             <div class="buy-title">购买杏仁币 </div>
         </el-row>
-        <el-row>
-            <div style="font-size: 14px;color: grey;margin-top:1%;margin-left: 3%;">
+        <el-row style="padding-left: 12px;">
+            <div style="font-size: 15px;color: grey;margin-top:1%;margin-left: 45px;">
                 购买数量
             </div>
         </el-row>
-        <el-row>
-            <div style="margin-left: 3%;margin-top: 1%;">
+        <el-row style="padding-left: 4%;padding-top: 1%;">
                 <el-radio-group v-model="BuyNum" 
                 size="large">
                 <el-radio-button v-for="num in numbers" :key="num" :label="num">
                     {{ num }}
                 </el-radio-button>
                 </el-radio-group>
-            </div>
+                <el-input-number
+                v-model="BuyNum"
+                :min="1"
+                :max="999"
+                size="large"
+                placeholder="Please input"
+                style="margin-left: 1%;"
+                />
         </el-row>
         <el-row>
-            <el-container>
+            <el-container style="padding-left: 4%;">
                 <el-aside class="pay-image">
 
                 </el-aside>
                 <el-main>
                     <el-row>
-                        <div class="pay-number">{{BuyNum}}.00</div>
+                        <div class="pay-number">¥ {{BuyNum}}.00</div>
+                        <div style="margin-top: 20px;margin-left: 30px;color: gray;">请扫码支付</div>
                     </el-row>
                     <el-row>
                         <div style="font-size: 16px;margin-top:1%;margin-left: 2%;">请先阅读并同意支付相关协议</div>
@@ -129,11 +137,23 @@
 
 }
 
-.HF_title {
-  font-size: 18px;
-  color: #000000;
-  margin-left: 2%;
-  padding-top: 0px;
+.title-wrapper {
+    margin-top: 1%;
+    vertical-align: center;
+    height: 60px;
+}
+.title{
+    font-size: 30px;
+    margin-left: 0%;
+    margin-top: 1%;
+}
+
+.button{
+    width: 80px;
+    height:37px;
+    margin-left: 2%;
+    margin-top: 1%;
+    color: black;
 }
 
 .left{
@@ -147,11 +167,12 @@
 }
 .right{
     width: auto;
-    margin-left: 3%;
+    padding-top: 30px;
+    margin-left: 4%;
 }
 .buy-title{
     margin-top: 2%;
-    margin-left: 3%;
+    margin-left: 55px;
     font-size:22px;
     font-weight: bold;
     color: #000000;
@@ -207,6 +228,10 @@ export default
                 this.$router.push({
                     name: 'UserAgreement',
                 })
+            },
+            /*跳转到个人信息界面*/
+            goToInfo(){
+            this.$router.push('/user')
             },
             getCoinRecord()
             {
