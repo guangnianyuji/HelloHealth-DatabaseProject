@@ -12,18 +12,20 @@
       <div class="postList">
         <el-row :gutter="20">
           <el-col :span="12" v-for="item in list" :key="item.id" style="margin-bottom: 20px;">
-            <el-card class="card" shadow="hover" :body-style="{ padding: '0px' }">
-              <div style="display: flex; flex-direction: row;">
+            <el-card class="card" shadow="never" :body-style="{ padding: '0px' }">
+              <div style="display: flex; flex-direction: row">
                 <div>
                   <a :href="'/forum/' + item.id">
                     <img
                       :src="item.imgUrl"
                       class="image"
+                      title=""
+                      alt=""
                     />
                   </a>
                 </div>
                 <div style="flex-grow: 1;">
-                  <div style="display: flex; flex-direction: column;">
+                  <div style="display: flex; flex-direction: column">
                     <div style="display: inline-block">
                       <a class="postTitle" :href="'/forum/' + item.id">
                         {{ item.title }}
@@ -110,10 +112,8 @@ async function updatePostCollectionList() {
   list.value = responseObj.data.list;
   total.value = parseInt(responseObj.data.total);
   cancelled.value = [];
-  console.log(list.value);
   for(let i = 0; i < list.value.length; i++) {
     cancelled.value[list.value[i].id] = false;
-    console.log(cancelled.value[list.value[i].id]);
   }
 }
 
@@ -202,6 +202,11 @@ onMounted(() => {
     height: 150px;
     position: relative;
   }
+
+  .card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0px 15px rgba(0, 0, 0, 0.3);
+  } 
 
   .image {
     border-radius: 5px;
