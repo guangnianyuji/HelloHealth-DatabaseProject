@@ -90,6 +90,7 @@ const router = createRouter({
                 name: "UserAgreement",
                 component: ()=>import("@/pages/UserAgreementPage.vue"),
             }]
+
         },
         { path: '/:pathMatch(.*)*', name: 'NotFound', component: ()=>import("@/pages/ErrorPage.vue") },
 
