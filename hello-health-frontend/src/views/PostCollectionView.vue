@@ -160,14 +160,15 @@ onMounted(() => {
   }
 
   .title {
-    font-size: 20px;
+    font-size: 24px;
     color: #000000;
-    margin-left: 4%;
+    padding-left: 4%;
     padding-top: 20px;
+    font-weight: 450
   }
 
   .postList {
-    margin-top: 10px;
+    margin-top: 15px;
     margin-left: 5%;
     width: 90%;
   }
@@ -248,4 +249,7 @@ onMounted(() => {
     color: black;
   }
   
+  .icon {
+    transform: scale(1.4);
+  }
 </style>
