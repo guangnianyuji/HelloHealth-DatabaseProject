@@ -33,10 +33,6 @@ const router = createRouter({
                 name: "homeView",
                 component: ()=>import("@/views/MainPageView.vue"),
             }, {
-                path: "consultation",
-                name: "consultationView",
-                component: ()=>import("@/views/TestView2.vue"),
-            }, {
                 path: "news",
                 name: "newsView",
                 component: ()=>import("@/views/HealthFlashView.vue"),
