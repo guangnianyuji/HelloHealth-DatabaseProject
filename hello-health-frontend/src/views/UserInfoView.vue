@@ -71,10 +71,17 @@
     <!--展示信息的分栏，分栏2：杏仁币信息-->
     <div>
       <el-card class="cardStyle" v-if="isLogin && !isAdministrator">
-        <el-button class="coinButton" v-if="isLogin" link @click="goToCoinDetail">
+        <el-row>
+          <div style="font-size: 18px;margin-top: 2px;">
           我的杏仁币：
+          </div>
+          <div style="color:green;font-size: 22px;">
           {{ numOfCoin }}
-        </el-button>
+          </div>
+          <el-button class="coinButton" v-if="isLogin" link @click="goToCoinDetail">
+          杏仁币详情>>
+          </el-button>
+        </el-row>
         <el-container>
             <el-aside class="coin-left">
         <el-row style="margin-left: 1%;margin-bottom: 2%;">
@@ -458,7 +465,7 @@ export default {
     },
     /*跳转到杏仁币的流水页面函数*/
     goToCoinDetail(){
-      this.$router.push('/coin/detail');
+      this.$router.push('/detail');
     },
     showCertificationDialog() {
       // 显示认证框
@@ -585,8 +592,9 @@ export default {
   font-weight: bold;
   color:black;
 }
-/*杏仁币按钮样式*/
+/*杏仁币“更多详情”样式*/
 .coinButton{
+  margin-left: 2%;
   font-size:16px;
   color: #409EFF;
 }
