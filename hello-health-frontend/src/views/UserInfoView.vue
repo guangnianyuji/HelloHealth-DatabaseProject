@@ -62,14 +62,14 @@
               >
                 {{ isFollowed ? '已关注' : '+ 关注' }}
               </el-button>
-              <el-button v-else-if="isLogin && isCurrentUser" type="primary" @click="this.myFollowVisible = true">我的关注</el-button>
+              <el-button v-else-if="isLogin && isCurrentUser" class="attention-list" @click="this.myFollowVisible = true">我的关注</el-button>
               <br><br><br>
               <div>
                 <span>{{ authenInfo }}</span>
                 <template v-if="isLogin">
-                  <span v-if="isCurrentUser && !userInfo.isCertified">{{ '未认证' }}</span>
+                  <span v-if="!isCurrentUser && !userInfo.isCertified">{{ '未认证' }}</span>
                   <span v-else-if="userInfo.isCertified">{{ certification.professionTitle }}</span>
-                  <el-button v-else-if="isCurrentUser && !userInfo.isCertified" type="primary" class="certificated-button" @click="showCertificationDialog">去认证</el-button>
+                  <el-button v-else-if="isCurrentUser && !userInfo.isCertified"  class="certificated-button" @click="showCertificationDialog">去认证</el-button>
                   <span v-else>{{ '未认证' }}</span>
                   <el-dialog v-model="dialogVisible" title="医师认证" width="50%">
                     <div style="text-align: center;">
@@ -178,7 +178,7 @@
                 ></el-date-picker>
               </template>
             </el-descriptions-item>
-            <el-descriptions-item>
+            <el-descriptions-item  v-if="isCurrentUser">
               <template #label>
                 <div class="cell-item">
                   联系电话：
@@ -301,6 +301,7 @@ import PostCard from "@/components/postBoardView/PostCard.vue";
 import NewsBlockList from "@/components/NewsBlockList.vue";
 import globalData from "@/global/global";
 import {messageProps} from "element-plus";
+import { ElMessage } from "element-plus";
 
 export default {
   name: "UserInfoPage",
@@ -347,7 +348,7 @@ export default {
           }
           const responseData2 = response.data.data.certification;
           this.certification = responseData2
-          this.isLogin = !globalData.isLogin; // 获取用户登录状态
+          //this.isLogin = globalData.isLogin; // 获取用户登录状态 change
           this.followList = response.data.data.followList;
           this.isFollowed = response.data.data.isFollowed;
 
@@ -398,7 +399,7 @@ export default {
       axios.post('/api/UserInfo/Details',{user_id: userIdNum})
           .then(response => {
 
-            this.isLogin = !globalData.isLogin; // 获取用户登录状态
+            // this.isLogin = globalData.isLogin; // 获取用户登录状态 change
             this.followList = response.data.data.followList;
             this.isFollowed = response.data.data.isFollowed;
 
@@ -491,7 +492,7 @@ export default {
     save(){
       // 将修改后的用户信息保存到数据库
       axios
-          .put('/api/UserInfo/Details', {
+          .post('/api/UserInfo/Details', {
             userInfo: this.userInfo,
           })
           .then(response => {
@@ -527,18 +528,34 @@ export default {
     },
     /*将用户上传的头像传给后端数据库*/
     submitPhoto(){
-      // 创建一个 FormData 对象
+      //创建一个FormData对象
       const formData = new FormData();
-      formData.append('file', this.file);
-      // 发起一个 POST 请求，将 formData 发送给后端服务器
-      axios.post("/api/uploadAvatar", formData)
-          .then(response => {
-            console.log(response.data);
-            this.photoUpload = false;
+      formData.append('user_id', this.$route.params.userId);
+      formData.append('user_profile', this.profile);
+      axios
+          .post("/api/UserInfo/uploadAvatar",formData,
+              {
+                headers: {
+                  'Content-Type': 'multipart/form-data'
+                }
+              })
+          .then((res) =>{
+            console.log(res);
+            if(res.data.data.status == true){
+              ElMessage.success("更改成功！");
+              this.profile = res.data.data.url + "?=" + Math.random();
+              store.commit("changeProfile",this.file);
+              this.$refs.upload.clearFiles();
+              this.photoUpload = false;
+            }
+            else{
+              ElMessage.error("更改失败！");
+            }
           })
-          .catch(error => {
-            console.error(error);
-          });
+          .catch((err) => {
+            console.log(err);
+            ElMessage.error("更改失败！");
+          })
     },
     /* 求获取用户发布的帖子 */
     fetchUserPosts(userID) {
@@ -617,10 +634,11 @@ export default {
 }
 /*”去认证“按钮样式*/
 .certificated-button{
-  background-color: antiquewhite;
-  border-color: white;
-  color: #666666;
-  font-size:20px;
+  background-color: white;
+  border-color: antiquewhite;
+  color: #c45656;
+
+  margin-left:60px;
 }
 /*弹出的医师认证框的按钮设置*/
 .dialog-footer {
@@ -684,19 +702,22 @@ export default {
 .user-info {
   display: flex;
   align-items: center;
-  .avatar {
-    width: 50px;
-    height: 50px;
-    margin-right: 10px;
-  }
+}
+
+.avatar {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
 }
 
 .name {
   flex: 1;
 }
 
-.followed-btn {
-  margin-left: 10px;
-  color: #ccc;
+/*“我的关注”按钮的样式*/
+.attention-list{
+  margin-left: 80px;
+  border-color: white;
+  color: #00bfa8;
 }
 </style>
