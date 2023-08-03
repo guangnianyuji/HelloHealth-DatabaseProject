@@ -5,7 +5,7 @@ import LinkButtonWithIcon from "@/components/LinkButtonWithIcon.vue";
 import {changeTheme} from "@/assets/changeTheme";
 import router from "@/router";
 import axios from "axios";
-import {onMounted, reactive, ref} from "vue";
+import {onMounted, reactive, ref, watch} from "vue";
 import UserInfoCard from "@/components/UserInfoCard.vue";
 import globalData from "@/global/global"
 import {ElMenuItem, ElSubMenu} from "element-plus";
@@ -41,10 +41,7 @@ const updateNotifications = () =>{
 }
 
 const avatarClicked = () =>{
-    if(isLogin.value){
-        //TODO
-        alert("跳转到个人主页！")
-    }else{
+    if(!isLogin.value){
         router.push("/login")
     }
 }
@@ -104,6 +101,7 @@ const getSidebarPath = () => {
 }
 
 const menu = ref();
+let contentDom = undefined;
 onMounted(()=>{
     (()=>{
         let menuItemNow = getSidebarPath();
@@ -115,7 +113,13 @@ onMounted(()=>{
                 }
             }
         }
+        contentDom = document.querySelector(".content")
     })()
+})
+
+
+watch(router.currentRoute, () => {
+    contentDom.scrollTo({left: 0, top: 0})
 })
 
 </script>
@@ -264,6 +268,5 @@ onMounted(()=>{
 .userInfoWrapper{
     padding: 10px 20px;
     border-bottom: 1px #eee solid;
-    cursor: pointer;
 }
 </style>
