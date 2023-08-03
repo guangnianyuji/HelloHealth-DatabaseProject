@@ -94,7 +94,7 @@
             </div>
 
             <div class="functionRow">
-                    <div class="part-el-card">
+                    <div class="part-el-card" style="width:80% ;">
                         
                         <div class="icon-circle" style="background-color: #f3effb">
 
@@ -109,7 +109,9 @@
                         </div>
 
                         <div class="part-el-card-space" style="color: #9eb4cb; ">
-                         我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介
+                            <p>系统全面的药品专栏库和科学权威的药品信息</p>
+                            <p>药品分类查找和搜索功能，药品收藏功能</p>
+                            <p>囊括常见可靠的保健品和药膳，智能推荐药品</p>
                         </div>
 
                         <div class="part-el-card-space" style="text-align: center;">
