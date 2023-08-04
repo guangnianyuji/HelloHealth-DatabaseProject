@@ -112,49 +112,61 @@
         </el-row>
         <el-container>
             <el-aside class="coin-left">
-        <el-row style="margin-left: 1%;margin-bottom: 2%;">
-            <div style="font-size: 14px;">硬币记录</div>
-            <div style="font-size: 14px;color: grey;margin-left: 3px;">
-              您最近一周的变化情况
-            </div>
-        </el-row>
-        <el-table :data="CoinRecordList" 
+
+              <el-row style="margin-left: 1%;margin-bottom: 2%;margin-top: 3.5%;">
+                <div style="font-size: 15px;">硬币记录</div>
+                <div style="font-size: 14px;color: grey;margin-left: 3px;margin-top: 1px;">
+                您最近一周的变化情况
+              </div>
+              </el-row>
+              <el-table :data="CoinRecordList" 
+
                     :default-sort="{ prop: 'Time', order: 'ascending' }" 
                     height="250" style="width: 100%" class="table">
                 <el-table-column prop="Time" label="时间" width="150" />
                 <el-table-column prop="Num" label="变化" width="120" />
                 <el-table-column prop="Reason" label="原因" width="150"/>
         </el-table>
-      </el-aside>
+            </el-aside>
             <el-main class="coin-right">
                 <el-row>
-                    <div style="font-size: 14px;margin-bottom: 1%;">杏仁币有什么用</div>
+                    <div style="font-size: 15px;margin-bottom: 1%;">杏仁币介绍</div>
                 </el-row>
                 <el-row>
-                    <div style="font-size: 14px;color: grey;">
+                    <div style="font-size: 14px;margin-bottom: 1%;margin-left: 2px;">杏仁币的用处</div>
+                </el-row>
+                <el-row>
+                    <div style="font-size: 14px;color: grey;margin-left: 2px;">
+
                         杏仁币是本平台中专用的虚拟货币，取自“杏林春暖 ，悬壶济世”之意。
                     </div>
                 </el-row>
                 <el-row>
-                    <div style="font-size: 14px;color: grey;">
+
+                    <div style="font-size: 14px;color: grey;margin-left: 2px;">
+
                         • 用于对优秀帖子进行投币。
                     </div>
                 </el-row>
                 <el-row>
-                    <div style="font-size: 14px;color: grey;">
+                    <div style="font-size: 14px;color: grey;margin-left: 2px;">
+
                         • 可以用来悬赏专业医生用户回答专业问题。
                     </div>
                 </el-row>
                 <el-row>
-                    <div style="font-size: 14px;margin-top: 5%;margin-bottom: 1%;">如何获得杏仁币</div>
+
+                    <div style="font-size: 14px;margin-top: 5%;margin-bottom: 1%;margin-left: 2px;">如何获得杏仁币</div>
                 </el-row>
                 <el-row>
-                    <div style="font-size: 14px;color: grey;">
+                    <div style="font-size: 14px;color: grey;margin-left: 2px;">
                         • 每日登录、完成健康计划。
                     </div>
                 </el-row>
                 <el-row>
-                    <div style="font-size: 14px;color: grey;">
+
+                    <div style="font-size: 14px;color: grey;margin-left: 2px;">
+
                         • 发帖被投杏仁币、发帖获得较大浏览量和获得高价值流量认可。
                     </div>
                 </el-row>
@@ -679,6 +691,13 @@ export default {
   font-size:16px;
   color: #409EFF;
 }
+.coin-left{
+  width: auto;
+}
+.coin-right{
+  margin-left: 2%;
+}
+
 /*”请登录“按钮样式*/
 .login-button{
   background-color: white;
@@ -707,7 +726,7 @@ export default {
   width: 85%;
   margin: 0 auto;
 }
-+
+
 .input-container {
   position: relative;
 }
@@ -721,7 +740,7 @@ export default {
   background-color: #f8f8f8;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
-//max-width: 600px;
+  max-width: 600px;
   color: #333;
 }
 
