@@ -27,7 +27,7 @@ const searchStart = (msg) => {
 }
 
 const exitButtonClicked = async ()=>{
-    await axios.get("/api/Logout")
+    await axios.get("/api/Login/Logout")
     window.location.href ="/";
 }
 
@@ -62,7 +62,6 @@ const menus = [
     {"title":"HH 论坛","icon":"fi-rr-user-md-chat","path":"/forum"},
     {"title":"健康日程档案","icon":"fi-rr-calendar-clock","path":"/calendar"},
     {"title":"个人信息管理","icon":"fi-rr-user-gear","path":"/user"},
-    {"title":"客服中心","icon":"fi-rr-headset","path":"/customer_service"},
 ];
 
 let userInfo = reactive({
@@ -144,7 +143,6 @@ onMounted(()=>{
                     </template>
                 </el-popover>
 
-                <LinkButtonWithIcon font-color="#fff" text="联系客服" icon="fi-rr-headset"></LinkButtonWithIcon>
                 <div class="line">
                 </div>
                 <LinkButtonWithIcon font-color="#fff" text="退出" icon="" @click="exitButtonClicked"></LinkButtonWithIcon>
