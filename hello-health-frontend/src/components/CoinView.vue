@@ -5,13 +5,17 @@
             <i class="fi fi-br-angle-left" style="font-size:20px;"></i>
                 <div style="margin-left: 3px;font-size:20px ;margin-right:5px;">返回</div>
         </el-button>
+
         <img alt="" src="../assets/coindraw.png" style="height: 50px;margin-top: 8px;margin-left: 24%;margin-right: 5px;">
+
         <div class="title">
             杏仁币详情
         </div>
         </el-row>
+
         <div class="content-wrapper">
             <el-row style="padding-left: 12px;margin-top: 0px;">
+
             <div class="coin-number-title">杏仁币余额：  </div>
             <div class="coin-number">{{CoinNum}}</div>
         </el-row>
@@ -71,12 +75,16 @@
         <el-row>
             <div class="buy-title">购买杏仁币 </div>
         </el-row>
+
         <el-row style="padding-left: 14px;">
+
             <div style="font-size: 15px;color: grey;margin-top:1%;margin-left: 45px;">
                 购买数量
             </div>
         </el-row>
+
         <el-row style="padding-left: 59px;padding-top: 5px;">
+
                 <el-radio-group v-model="BuyNum" 
                 size="large">
                 <el-radio-button v-for="num in numbers" :key="num" :label="num">
@@ -149,6 +157,7 @@
 
 .title-wrapper {
     margin-top: 0.5%;
+
     vertical-align: center;
     height: 60px;
 }
@@ -162,6 +171,7 @@
     width: 80px;
     height:37px;
     margin-left: 6%;
+
     margin-top: 1%;
     color: black;
 }
@@ -181,8 +191,10 @@
     margin-left: 4%;
 }
 .buy-title{
+
     margin-top: 1.8%;
     margin-left: 58px;
+
     font-size:22px;
     font-weight: bold;
     color: #000000;
