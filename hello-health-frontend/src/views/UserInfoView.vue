@@ -2,13 +2,14 @@
   <!--整个页面是可以上下滚动的-->
   <div  class="wrapper">
     <!--展示信息的分栏，分栏1：用户头像-->
+    <!--size="100" style="margin-left:20px;margin-top:20px;" fit="contain"-->
     <div>
       <el-card class="cardStyle">
         <div class="common-layout">
           <el-container>
-            <el-aside>
+            <el-aside width="200px">
               <div class="avatar-container">
-                <el-avatar class="avatar" :src="isLogin ? userInfo.avatarUrl : require('@/assets/SamplePic.png')"></el-avatar>
+                <el-avatar :size="100" style="margin-left:30px;margin-top:20px;" fit="contain" :src="isLogin ? userInfo.avatarUrl : require('/src/assets/defaultAvatar.png')"></el-avatar>
                 <template v-if="isCurrentUser">
                   <el-button class="pic-edit-button" type="primary" icon="el-icon-edit" @click="showPhotoUpload">Edit</el-button>
                   <el-dialog v-model="photoUpload" title="头像上传" width="50%">
@@ -58,6 +59,7 @@
               <el-button
                   v-if="isLogin && !isCurrentUser"
                   :type="isFollowed ? 'default' : 'primary'"
+                  style="margin-left: 40px;margin-bottom:10px"
                   @click="onFollowBtnClick(null)"
               >
                 {{ isFollowed ? '已关注' : '+ 关注' }}
@@ -78,7 +80,20 @@
                           class="upload-demo"
                           action="https://jsonplaceholder.typicode.com/posts/"
                           :auto-upload="false"
-                          :on-change="handleChange"
+                          :on-change="handleChangeCertification"
+                      >
+                        <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                        <div slot="tip" class="el-upload__tip">上传文件格式为.jpg、.jpeg、.png、.gif，且不超过 2MB</div>
+                      </el-upload>
+                    </div>
+                    <br><br>
+                    <div style="text-align: center;">
+                      <p>请上传您的执业证照片</p>
+                      <el-upload
+                          class="upload-demo"
+                          action="https://jsonplaceholder.typicode.com/posts/"
+                          :auto-upload="false"
+                          :on-change="handleChangeCertification"
                       >
                         <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
                         <div slot="tip" class="el-upload__tip">上传文件格式为.jpg、.jpeg、.png、.gif，且不超过 2MB</div>
@@ -196,10 +211,11 @@
                   用户名：
                 </div>
               </template>
-              <!--从数据库获取用户名-->
+              <!--从数据库获取用户名，用户名不可修改-->
               <div class="input-container">
-                <input type="text" name="text" class="input" placeholder="请输入用户名"
-                       v-model="userInfo.userName" :disabled="!isEdit">
+                <!--<input type="text" name="text" class="input" placeholder="请输入用户名"
+                       v-model="userInfo.userName" :disabled="!isEdit">-->
+                <span>{{userInfo.userName}}</span>
                 <div class="highlight"></div>
               </div>
             </el-descriptions-item>
@@ -212,7 +228,7 @@
               <!--从数据库获取性别-->
               <template v-if="!isEdit">
                 <!-- 在"编辑"状态下，性别显示框是一个标签组件 -->
-                <el-tag>{{ userInfo.gender }}</el-tag>
+                <el-tag class="input">{{ userInfo.gender }}</el-tag>
               </template>
               <template v-if="isEdit">
                 <!-- 在"保存"状态下，性别显示框是一个下拉框组件 -->
@@ -229,15 +245,18 @@
                 </div>
               </template>
               <!--从数据库获取出生日期-->
+
               <template v-if="!isEdit">
-                <!-- 在"编辑"状态下，生日显示框是一个数据框 -->
-                <el-input v-model="userInfo.birthday" :disabled="!isEdit"></el-input>
+                <!-- 在"编辑"状态下，生日显示框是从数据框获取到的用户的生日信息 -->
+                <el-tag class="input">{{userInfo.birthday}}</el-tag>
+                <!--<el-input class="birthdayStyle" v-model="userInfo.birthday" :disabled="!isEdit"></el-input>-->
               </template>
               <template v-if="isEdit">
                 <!-- 在"保存"状态下，生日显示框是一个时间选择框 -->
                 <el-date-picker
                     v-model="userInfo.birthday"
                     type="date"
+                    formate="YYYY/MM/DD"
                     value-format="yyyy-MM-dd"
                     placeholder="选择日期"
                 ></el-date-picker>
@@ -249,10 +268,11 @@
                   联系电话：
                 </div>
               </template>
-              <!--从数据库获取联系电话-->
+              <!--从数据库获取联系电话，联系电话不可修改-->
               <div class="input-container">
-                <input type="text" name="text" class="input" placeholder="请输入联系电话"
-                       v-model="userInfo.telephone" :disabled="!isEdit">
+                <!--<input type="text" name="text" class="input" placeholder="请输入联系电话"
+                       v-model="userInfo.telephone" :disabled="!isEdit">-->
+                <span>{{userInfo.telephone}}</span>
                 <div class="highlight"></div>
               </div>
             </el-descriptions-item>
@@ -306,7 +326,20 @@
                     class="upload-demo"
                     action="https://jsonplaceholder.typicode.com/posts/"
                     :auto-upload="false"
-                    :on-change="handleChange"
+                    :on-change="handleChangeCertification"
+                >
+                  <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                  <div slot="tip" class="el-upload__tip">上传文件格式为.jpg、.jpeg、.png、.gif，且不超过 2MB</div>
+                </el-upload>
+              </div>
+              <br><br>
+              <div style="text-align: center;">
+                <p>请上传您的执业证照片</p>
+                <el-upload
+                    class="upload-demo"
+                    action="https://jsonplaceholder.typicode.com/posts/"
+                    :auto-upload="false"
+                    :on-change="handleChangeCertification"
                 >
                   <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
                   <div slot="tip" class="el-upload__tip">上传文件格式为.jpg、.jpeg、.png、.gif，且不超过 2MB</div>
@@ -317,6 +350,7 @@
                 <el-button type="primary" @click="submitCertification">确 定</el-button>
               </div>
             </el-dialog>
+
           </template>
           <el-descriptions-item>
             <template #label>
@@ -365,7 +399,6 @@ import axios from "axios"
 import PostCard from "@/components/postBoardView/PostCard.vue";
 import NewsBlockList from "@/components/NewsBlockList.vue";
 import globalData from "@/global/global";
-import {messageProps} from "element-plus";
 import { ElMessage } from "element-plus";
 
 export default {
@@ -391,6 +424,8 @@ export default {
 
       //用户上传的，要传给数据库的一些数据
       file:null, //上传的文件对象
+      qualificationCertificate:null,//医师资格证照片
+      practiceCertificate:null,//执业证照片
       photoUpload:false,   //头像上传，初始为false
     }
   },
@@ -401,7 +436,7 @@ export default {
       this.$router.replace("/error");
       return;
     }
-    axios.post('/api/UserInfo/Details',{user_id: userIdNum})
+    axios.get('/api/UserInfo/Details')
         .then(response => {
           const responseData = response.data.data.userInfo;
           this.userInfo = responseData
@@ -491,7 +526,7 @@ export default {
     },
     unfollow(userId) {
       if(userId){
-        axios.post("/api/unfollowUser", { thisUserID: globalData.userInfo.userId ,followUserID: userId })
+        axios.post("/api/UserInfo/unfollowUser", { thisUserID: globalData.userInfo.userId ,followUserID: userId })
             .then(response => {
               //如果后端返回的状态码是200，那么将isFollowed设置为false
               this.followMap.set(userId, false)
@@ -501,7 +536,7 @@ export default {
             });
       }
       else {
-        axios.post("/api/unfollowUser", {thisUserID: globalData.userInfo.userId ,followUserID: this.userInfo.userID})
+        axios.post("/api/UserInfo/unfollowUser", {thisUserID: globalData.userInfo.userId ,followUserID: this.userInfo.userID})
             .then(response => {
               //如果后端返回的状态码是200，那么将isFollowed设置为false
               this.isFollowed = false;
@@ -525,7 +560,7 @@ export default {
             });
       }
       else{
-        axios.post("/api/followUser", {thisUserID: globalData.userInfo.userId ,followUserID: this.userInfo.userID})
+        axios.post("/api/UserInfo/followUser", {thisUserID: globalData.userInfo.userId ,followUserID: this.userInfo.userID})
             .then(response => {
               //如果后端返回的状态码是200，那么将isFollowed设置为true
               this.isFollowed = true;
@@ -556,71 +591,95 @@ export default {
     },
     save(){
       // 将修改后的用户信息保存到数据库
-      axios
-          .post('/api/UserInfo/Details', {
-            userInfo: this.userInfo,
-          })
+      axios.post('/api/UserInfo/modifyUserInfo', {
+        gender: this.userInfo.gender,
+        email:this.userInfo.email,
+        birthday:this.userInfo.birthday,
+        description:this.userInfo.description,
+        userName:this.userInfo.userName,
+        telephone:this.userInfo.telephone,
+      })
           .then(response => {
-            // 保存成功后将isEdit变量设置为false，禁用编辑模式
-            this.isEdit = false;
             // 将下拉框选中的值保存到userInfo.gender中
-            this.userInfo.gender = this.userInfo.gender;
+            //this.userInfo.gender = this.userInfo.gender;
             // 将下拉框选中的值保存到userInfo.birthday中
-            this.userInfo.birthday=this.userInfo.birthday;
+            //this.userInfo.birthday=this.userInfo.birthday;
+            if (response.data.data.status == true) {
+              ElMessage.success("上传成功，请等待管理员审核！");
+              // 保存成功后将isEdit变量设置为false，禁用编辑模式
+              this.isEdit = false;
+            } else {
+              ElMessage.error("上传失败！");
+            }
           })
           .catch((error) => {
             this.isEdit = false;
             console.error(error);
+            ElMessage.error("上传失败！");
           });
     },
-    handleChange(file,fileList){
+    handleChangeCertification(file,fileList){
       console.log(file,fileList);
+      // 判断是医师资格证照片还是执业证照片
+      if (fileList.length === 1) {
+        this.qualificationCertificate = file.raw; // 医师资格证照片
+      } else if (fileList.length === 2) {
+        this.practiceCertificate = file.raw; // 执业证照片
+      }
     },
     /*将用户上传的医师资格证照片传给后端数据库*/
     submitCertification(){
       // 创建一个 FormData 对象
       const formData = new FormData();
-      formData.append('file', this.file);
+      // 添加医师资格证照片
+      if (this.qualificationCertificate) {
+        formData.append('qualificationCertificate', this.qualificationCertificate);
+      }
+      // 添加执业证照片
+      if (this.practiceCertificate) {
+        formData.append('practiceCertificate', this.practiceCertificate);
+      }
       // 发起一个 POST 请求，将 formData 发送给后端服务器
-      axios.post('/api/uploadDoctorApproval', formData)
+      axios.post('/api/UserInfo/uploadDoctorApproval', formData)
           .then(response => {
             console.log(response.data);
-            this.dialogVisible = false;
+            if (response.data.data.status == true) {
+              ElMessage.success("上传成功，请等待管理员审核！");
+              this.dialogVisible = false;
+            } else {
+              ElMessage.error("上传失败！");
+            }
           })
           .catch(error => {
             console.error(error);
+            ElMessage.error("上传失败！");
           });
+    },
+    handleChange(file,fileList){
+      console.log(file,fileList);
+      this.file = file.raw
     },
     /*将用户上传的头像传给后端数据库*/
     submitPhoto(){
       //创建一个FormData对象
       const formData = new FormData();
-      formData.append('user_id', this.$route.params.userId);
-      formData.append('user_profile', this.profile);
-      axios
-          .post("/api/UserInfo/uploadAvatar",formData,
-              {
-                headers: {
-                  'Content-Type': 'multipart/form-data'
-                }
-              })
-          .then((res) =>{
-            console.log(res);
-            if(res.data.data.status == true){
+      formData.append('file',this.file);
+      //发起一个POST请求，将formData发送给后端服务器
+      axios.post("/api/UserInfo/uploadAvatar",formData)
+          .then((response) =>{
+            console.log(response.data);
+            if(response.data.data.status == true){
               ElMessage.success("更改成功！");
-              this.profile = res.data.data.url + "?=" + Math.random();
-              store.commit("changeProfile",this.file);
-              this.$refs.upload.clearFiles();
               this.photoUpload = false;
             }
             else{
               ElMessage.error("更改失败！");
             }
           })
-          .catch((err) => {
-            console.log(err);
+          .catch(error => {
+            console.log(error);
             ElMessage.error("更改失败！");
-          })
+          });
     },
     /* 求获取用户发布的帖子 */
     fetchUserPosts(userID) {
@@ -650,15 +709,7 @@ export default {
   position:relative;
   display:inline-block;
 }
-/*用户头像样式*/
-.avatar{
-  border-radius:50%;
-  object-fit: cover;
-  margin-top:20px;
-  margin-left:20px;
-  width:100px;
-  height:100px;
-}
+
 /*头像编辑按钮的样式设置*/
 .pic-edit-button{
   position: absolute;
@@ -670,7 +721,7 @@ export default {
   height:25px;
   background-color: transparent;
   border-color: transparent;
-  color:#666666;
+  color: #9eb4cb;
 }
 /*鼠标悬浮在编辑按钮时的样式*/
 .pic-edit-button:hover {
