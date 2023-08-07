@@ -107,6 +107,7 @@ export default {
   height: 10px;
 }
 .flash-title {
+  font-size: 15px;
   position: relative;
   text-decoration: none;            /* 移除默认的下划线 */
 }
