@@ -31,24 +31,21 @@
                       <el-button type="primary" @click="submitPhoto">确 定</el-button>
                     </div>
                   </el-dialog>
-                  <el-dialog title="我的关注" v-model="this.myFollowVisible" @close="search">
-                    <el-card class="user-card" v-for="user in followList" :key="user.userID">
-                      <div class="user-info">
-                        <div class="avatar">
-                          <el-avatar :src="user.avatarUrl"></el-avatar>
+                  <el-dialog title="我的关注" v-model="myFollowVisible" @close="search">
+                    <div class="user-cards">
+                      <el-card class="user-card" v-for="user in followList" :key="user.info">
+                        <div class="user-info">
+                          <UserInfoCard :user-info="user.info" @click="goUserPage(user.info.user_id)"></UserInfoCard>
+                          <el-button
+                              :type="followMap.get(user.info.user_id) ? 'primary' : 'default'"
+                              style="margin: 20px"
+                              @click="onFollowBtnClick(user.info.user_id)"
+                          >
+                            {{ followMap.get(user.info.user_id) ? '+ 关注' : '已关注' }}
+                          </el-button>
                         </div>
-                        <div class="name"  @click="goUserPage(user.userID)">{{user.userName}}</div>
-                        <el-button
-                            :type="followMap.get(user.userID) ? 'primary' : 'default'"
-                            @click="onFollowBtnClick(user.userID)"
-                        >
-                          {{ followMap.get(user.userID) ? '+ 关注' : '已关注' }}
-                        </el-button>
-                      </div>
-                      <div class="description">
-                        {{user.description}}
-                      </div>
-                    </el-card>
+                      </el-card>
+                    </div>
                   </el-dialog>
                 </template>
               </div>
@@ -111,84 +108,7 @@
         </div>
       </el-card>
     </div>
-    <!--展示信息的分栏，分栏2：杏仁币信息-->
-    <div>
-      <el-card class="cardStyle" v-if="isLogin && !isAdministrator">
-        <el-row>
-          <div style="font-size: 18px;margin-top: 2px;">
-          我的杏仁币：
-          </div>
-          <div style="color:green;font-size: 22px;">
-          {{ numOfCoin }}
-          </div>
-          <el-button class="coinButton" v-if="isLogin" link @click="goToCoinDetail">
-          杏仁币详情>>
-          </el-button>
-        </el-row>
-        <el-container>
-            <el-aside class="coin-left">
 
-              <el-row style="margin-left: 1%;margin-bottom: 2%;margin-top: 3.5%;">
-                <div style="font-size: 15px;">硬币记录</div>
-                <div style="font-size: 14px;color: grey;margin-left: 3px;margin-top: 1px;">
-                您最近一周的变化情况
-              </div>
-              </el-row>
-              <el-table :data="CoinRecordList" 
-
-                    :default-sort="{ prop: 'Time', order: 'ascending' }" 
-                    height="250" style="width: 100%" class="table">
-                <el-table-column prop="Time" label="时间" width="150" />
-                <el-table-column prop="Num" label="变化" width="120" />
-                <el-table-column prop="Reason" label="原因" width="150"/>
-        </el-table>
-            </el-aside>
-            <el-main class="coin-right">
-                <el-row>
-                    <div style="font-size: 15px;margin-bottom: 1%;">杏仁币介绍</div>
-                </el-row>
-                <el-row>
-                    <div style="font-size: 14px;margin-bottom: 1%;margin-left: 2px;">杏仁币的用处</div>
-                </el-row>
-                <el-row>
-                    <div style="font-size: 14px;color: grey;margin-left: 2px;">
-
-                        杏仁币是本平台中专用的虚拟货币，取自“杏林春暖 ，悬壶济世”之意。
-                    </div>
-                </el-row>
-                <el-row>
-
-                    <div style="font-size: 14px;color: grey;margin-left: 2px;">
-
-                        • 用于对优秀帖子进行投币。
-                    </div>
-                </el-row>
-                <el-row>
-                    <div style="font-size: 14px;color: grey;margin-left: 2px;">
-
-                        • 可以用来悬赏专业医生用户回答专业问题。
-                    </div>
-                </el-row>
-                <el-row>
-
-                    <div style="font-size: 14px;margin-top: 5%;margin-bottom: 1%;margin-left: 2px;">如何获得杏仁币</div>
-                </el-row>
-                <el-row>
-                    <div style="font-size: 14px;color: grey;margin-left: 2px;">
-                        • 每日登录、完成健康计划。
-                    </div>
-                </el-row>
-                <el-row>
-
-                    <div style="font-size: 14px;color: grey;margin-left: 2px;">
-
-                        • 发帖被投杏仁币、发帖获得较大浏览量和获得高价值流量认可。
-                    </div>
-                </el-row>
-            </el-main>
-        </el-container>
-      </el-card>
-    </div>
     <!--展示信息的分栏，分栏3：基本信息-->
     <div v-if="isLogin">
       <el-card class="cardStyle">
@@ -391,6 +311,84 @@
         </el-row>
       </el-card>
     </div>
+    <!--展示信息的分栏，分栏2：杏仁币信息-->
+    <div>
+      <el-card class="cardStyle" v-if="isLogin && isCurrentUser">
+        <el-row>
+          <div style="font-size: 18px;margin-top: 2px;">
+            我的杏仁币：
+          </div>
+          <div style="color:green;font-size: 22px;">
+            {{ numOfCoin }}
+          </div>
+          <el-button class="coinButton" v-if="isLogin" link @click="goToCoinDetail">
+            杏仁币详情>>
+          </el-button>
+        </el-row>
+        <el-container>
+          <el-aside class="coin-left">
+
+            <el-row style="margin-left: 1%;margin-bottom: 2%;margin-top: 3.5%;">
+              <div style="font-size: 15px;">硬币记录</div>
+              <div style="font-size: 14px;color: grey;margin-left: 3px;margin-top: 1px;">
+                您最近一周的变化情况
+              </div>
+            </el-row>
+            <el-table :data="CoinRecordList"
+
+                      :default-sort="{ prop: 'Time', order: 'ascending' }"
+                      height="250" style="width: 100%" class="table">
+              <el-table-column prop="Time" label="时间" width="150" />
+              <el-table-column prop="Num" label="变化" width="120" />
+              <el-table-column prop="Reason" label="原因" width="150"/>
+            </el-table>
+          </el-aside>
+          <el-main class="coin-right">
+            <el-row>
+              <div style="font-size: 15px;margin-bottom: 1%;">杏仁币介绍</div>
+            </el-row>
+            <el-row>
+              <div style="font-size: 14px;margin-bottom: 1%;margin-left: 2px;">杏仁币的用处</div>
+            </el-row>
+            <el-row>
+              <div style="font-size: 14px;color: grey;margin-left: 2px;">
+
+                杏仁币是本平台中专用的虚拟货币，取自“杏林春暖 ，悬壶济世”之意。
+              </div>
+            </el-row>
+            <el-row>
+
+              <div style="font-size: 14px;color: grey;margin-left: 2px;">
+
+                • 用于对优秀帖子进行投币。
+              </div>
+            </el-row>
+            <el-row>
+              <div style="font-size: 14px;color: grey;margin-left: 2px;">
+
+                • 可以用来悬赏专业医生用户回答专业问题。
+              </div>
+            </el-row>
+            <el-row>
+
+              <div style="font-size: 14px;margin-top: 5%;margin-bottom: 1%;margin-left: 2px;">如何获得杏仁币</div>
+            </el-row>
+            <el-row>
+              <div style="font-size: 14px;color: grey;margin-left: 2px;">
+                • 每日登录、完成健康计划。
+              </div>
+            </el-row>
+            <el-row>
+
+              <div style="font-size: 14px;color: grey;margin-left: 2px;">
+
+                • 发帖被投杏仁币、发帖获得较大浏览量和获得高价值流量认可。
+              </div>
+            </el-row>
+          </el-main>
+        </el-container>
+      </el-card>
+    </div>
   </div>
 </template>
 
@@ -400,10 +398,11 @@ import PostCard from "@/components/postBoardView/PostCard.vue";
 import NewsBlockList from "@/components/NewsBlockList.vue";
 import globalData from "@/global/global";
 import { ElMessage } from "element-plus";
+import UserInfoCard from "@/components/UserInfoCard.vue";
 
 export default {
   name: "UserInfoPage",
-  components: {NewsBlockList, PostCard},
+  components: {UserInfoCard, NewsBlockList, PostCard},
   data(){
     return{
       isFollowed: false,
@@ -455,7 +454,7 @@ export default {
           console.log(this.followList)
 
           this.followList.forEach(user => {
-            this.followMap.set(user.userID, false)
+            this.followMap.set(user.user_id, false)
           })
 
         })
@@ -506,7 +505,7 @@ export default {
             console.log(this.followList)
 
             this.followList.forEach(user => {
-              this.followMap.set(user.userID, false)
+              this.followMap.set(user.info.user_id, false)
             })
 
           })
@@ -550,7 +549,7 @@ export default {
     followUser(userId) {
 
       if(userId){
-        axios.post("/api/followUser", { thisUserID: globalData.userInfo.userId ,followUserID: userId })
+        axios.post("/api/UserInfo/followUser", { thisUserID: globalData.userInfo.userId ,followUserID: userId })
             .then(response => {
               //如果后端返回的状态码是200，那么将isFollowed设置为true
               this.followMap.set(userId, true);
@@ -827,21 +826,22 @@ export default {
   display: flex;
   align-items: center;
 }
-
-.avatar {
-  width: 50px;
-  height: 50px;
-  margin-right: 10px;
-}
-
-.name {
-  flex: 1;
-}
-
 /*“我的关注”按钮的样式*/
 .attention-list{
   margin-left: 80px;
   border-color: white;
   color: #00bfa8;
+}
+.user-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.user-card {
+  margin: 10px;
+}
+.user-info {
+  display: flex;
+  justify-content: space-between;
 }
 </style>
