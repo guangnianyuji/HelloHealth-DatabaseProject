@@ -33,15 +33,15 @@
                   </el-dialog>
                   <el-dialog title="我的关注" v-model="myFollowVisible" @close="search">
                     <div class="user-cards">
-                      <el-card class="user-card" v-for="user in followList" :key="user.info">
+                      <el-card class="user-card" v-for="user in followList" :key="user.user_id">
                         <div class="user-info">
-                          <UserInfoCard :user-info="user.info" @click="goUserPage(user.info.user_id)"></UserInfoCard>
+                          <UserInfoCard :user-info="user" @click="goUserPage(user.user_id)"></UserInfoCard>
                           <el-button
-                              :type="followMap.get(user.info.user_id) ? 'primary' : 'default'"
+                              :type="followMap.get(user.user_id) ? 'default' : 'primary'"
                               style="margin: 20px"
-                              @click="onFollowBtnClick(user.info.user_id)"
+                              @click="onFollowBtnClick(user.user_id)"
                           >
-                            {{ followMap.get(user.info.user_id) ? '+ 关注' : '已关注' }}
+                            {{ followMap.get(user.user_id) ? '已关注' : '+关注' }}
                           </el-button>
                         </div>
                       </el-card>
@@ -177,7 +177,7 @@
                     v-model="userInfo.birthday"
                     type="date"
                     formate="YYYY/MM/DD"
-                    value-format="yyyy-MM-dd"
+                    value-format="YYYY-MM-DD"
                     placeholder="选择日期"
                 ></el-date-picker>
               </template>
@@ -454,7 +454,7 @@ export default {
           console.log(this.followList)
 
           this.followList.forEach(user => {
-            this.followMap.set(user.user_id, false)
+            this.followMap.set(user.user_id, true)
           })
 
         })
@@ -505,7 +505,7 @@ export default {
             console.log(this.followList)
 
             this.followList.forEach(user => {
-              this.followMap.set(user.info.user_id, false)
+              this.followMap.set(user.user_id, false)
             })
 
           })
