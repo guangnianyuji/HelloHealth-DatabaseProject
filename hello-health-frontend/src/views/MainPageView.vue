@@ -8,7 +8,26 @@
                     <div class="main-welcome">
                         <div class="welcome">Welcome To<br />HelloHealth</div>
 
-                        <div class="contenttext">HelloHealth 网页简介</div>
+                        <div class="contenttext"> 
+                            <p><h2>探寻健康之门，启程HelloHealth</h2></p>
+                            <p> &nbsp;</p>
+                            <p>我们是一个独具匠心的医疗健康交流平台</p>
+                            <li>便捷药品搜索与收藏</li>
+                            <li>个性化健康计划制订</li>
+                            <li>热情洋溢的健康论坛</li>
+                            <li>医疗新闻的前沿倾听</li>
+                            <p> &nbsp;</p>
+                            <h2>
+                                <p>
+                                    加入我们，赋予生命更多的关爱与呵护
+                                </p>
+                                <p>&nbsp;</p>
+                                <p>
+                                    与全球健康爱好者一起，开启身体心灵的奇妙旅程
+                                </p>
+                            </h2>
+
+                        </div>
                     </div>
 
                     <button class="btn" @click="go('login')">
@@ -94,6 +113,8 @@
             </div>
 
             <div class="functionRow">
+                <el-row gutter="30">
+                    <el-col :span="8">
                     <div class="part-el-card">
                         
                         <div class="icon-circle" style="background-color: #f3effb">
@@ -127,7 +148,9 @@
                     </div>
                          
                     </div>
+                    </el-col>
 
+                    <el-col :span="8">
                     <div class="part-el-card">
                         
                         <div div class="icon-circle" style="background-color: #eaf7f0">
@@ -158,6 +181,9 @@
                         </div>
                          
                     </div>
+                    </el-col>
+
+                    <el-col :span="8">
 
                     <div class="part-el-card">
                         
@@ -189,7 +215,9 @@
                         </div>
 
                     </div>
+                    </el-col>
 
+                </el-row>
             </div>
 
         </div>
@@ -323,7 +351,8 @@ export default {
     border-radius:25px ;
     background-color: #fff;
     padding: 40px;
-    box-shadow: 0 6px 6px rgba(36,37,38,.02)
+    box-shadow: 0 6px 6px rgba(36,37,38,.02);
+    height: 80%;
 }
 
 .part{
