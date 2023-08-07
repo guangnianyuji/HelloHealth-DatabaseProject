@@ -35,7 +35,7 @@ const openCommentEditor = () =>{
 }
 
 const reloadPost = ()=>{
-    axios.get("/api/PostInfo/"+ postId)
+    axios.get("/api/Forum/"+ postId)
         .then((res) => {
                 let responseObj = res.data;
                 if(responseObj.errorCode!==200){
@@ -70,7 +70,7 @@ const submitNewComment = async() => {
         ElMessage.error('请输入更多内容。');
         return;
     }
-    let response = await axios.post("/api/SendFloor",{
+    let response = await axios.post("/api/Forum/SendFloor",{
         content:JSON.stringify(editor.value.editor.getJSON()),
         post_id:postId
     })

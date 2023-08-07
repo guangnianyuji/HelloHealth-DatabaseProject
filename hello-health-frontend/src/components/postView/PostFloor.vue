@@ -73,7 +73,7 @@ const onReplySubmit = (content,reply_user_info,handler) =>{
         ElMessage.error("请输入更多内容。");
         return;
     }
-    axios.post("/api/CommentFloor", {
+    axios.post("/api/Forum/CommentFloor", {
         content: content.value,
         reply_floor_id: prop.floorInfo.comment_id,
         reply_user_id: reply_user_info ? reply_user_info.user_id: -1
