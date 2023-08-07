@@ -60,7 +60,7 @@ export default {
 
             formData.append('image', this.$refs.fileInput.files[0]);
 
-            axios.post('/ImgUpload', formData, {
+            axios.post('/api/Forum/ImgUpload', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
