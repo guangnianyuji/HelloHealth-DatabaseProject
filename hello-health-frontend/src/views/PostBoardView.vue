@@ -216,7 +216,7 @@ export default{
                     return;
                 }
                 this.newPostInfo.content = JSON.stringify(this.$refs.editor.editor.getJSON())
-                let response = await axios.post("/api/SendPost",this.newPostInfo)
+                let response = await axios.post("/api/Forum/SendPost",this.newPostInfo)
                 let responseObj = response.data;
                 if(responseObj.errorCode!==200) {
                     ElMessage.error('发送失败，错误码：' + responseObj.errorCode);
