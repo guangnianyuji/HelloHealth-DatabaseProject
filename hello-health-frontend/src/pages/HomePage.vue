@@ -68,13 +68,10 @@ let userInfo = reactive({
 
 const isLogin = ref(false);
 
-(async ()=>{
-    let response = await axios.get("/api/UserInfo")
 
-    if(response.data.errorCode!==200) return;
-    let responseObj = response.data.data
+axios.get("/api/UserInfo").then(response => {
+    let responseObj = response.json
     isLogin.value = responseObj.login;
-
     if(!responseObj.login) return;
     menus.v = [
         {"title":"首页","icon":"fi-rr-home","path":"/"},
@@ -89,12 +86,14 @@ const isLogin = ref(false);
         {"title":"HH 论坛","icon":"fi-rr-user-md-chat","path":"/forum"},
         {"title":"健康日程档案","icon":"fi-rr-calendar-clock","path":"/calendar"},
         {"title":"个人信息管理","icon":"fi-rr-user-gear","path":"/user"}
-
     ]
     globalData.login = true;
     userInfo.data = responseObj
     globalData.userInfo = userInfo.data
-})()
+}).catch(error => {
+    error.defaultHandler();
+})
+
 
 const getSidebarPath = () => {
     let path = router.currentRoute.value.path.split("/")

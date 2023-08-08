@@ -108,7 +108,7 @@
             </div>
 
             <div class="functionRow">
-                <el-row gutter="30">
+                <el-row :gutter="30">
                     <el-col :span="8">
                         <div class="part-el-card">
                             <div class="icon-circle" style="background-color: #f3effb">
