@@ -8,7 +8,21 @@
                     <div class="main-welcome">
                         <div class="welcome">Welcome To<br />HelloHealth</div>
 
-                        <div class="contenttext">HelloHealth 网页简介</div>
+                        <div class="contenttext"> 
+                            <p><h2>探寻健康之门，启程HelloHealth</h2></p>
+                            <p> &nbsp;</p>
+                           
+                            <h2>
+                                <p>
+                                    加入我们，赋予生命更多的关爱与呵护
+                                </p>
+                                <p>&nbsp;</p>
+                                <p>
+                                    与全球健康爱好者一起，开启身体心灵的奇妙旅程
+                                </p>
+                            </h2>
+
+                        </div>
                     </div>
 
                     <button class="btn" @click="go('login')">
@@ -88,12 +102,14 @@
                     </div>
 
                     <div style="color: #9eb4cb; " class="functionDesc">
-                         我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介
+                      我们提供全方位、用户友好的健康管理和交流平台。通过HH找药查看和收藏药品信息；通过健康日历便捷管理健康日程，设置提醒，记录体征数据；在HH论坛参与社区互动。
                     </div>
 
             </div>
 
             <div class="functionRow">
+                <el-row gutter="30">
+                    <el-col :span="8">
                     <div class="part-el-card">
                         
                         <div class="icon-circle" style="background-color: #f3effb">
@@ -109,7 +125,9 @@
                         </div>
 
                         <div class="part-el-card-space" style="color: #9eb4cb; ">
-                         我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介
+                            <p>系统全面的药品专栏库和科学权威的药品信息。</p>
+                            <p>药品分类查找和搜索功能，药品收藏功能。</p>
+                            <p>囊括常见可靠的保健品和药膳，智能推荐药品。</p>
                         </div>
 
                         <div class="part-el-card-space" style="text-align: center;">
@@ -125,7 +143,9 @@
                     </div>
                          
                     </div>
+                    </el-col>
 
+                    <el-col :span="8">
                     <div class="part-el-card">
                         
                         <div div class="icon-circle" style="background-color: #eaf7f0">
@@ -140,7 +160,9 @@
                         </div>                        
                         
                         <div class="part-el-card-space" style="color: #9eb4cb; ">
-                         我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介
+                          <p>在日历中管理您的每日健康事项：饮食、运动、服药、医嘱提示...</p>
+                          <p>设置HH健康助手跟踪您的事项完成情况，一切尽在掌握。</p>
+                          <p>记录您的体检报告，动态监测血糖、血压、血脂等体征数据。</p>
                         </div>
 
                         <div class="part-el-card-space" style="text-align: center;">
@@ -154,6 +176,9 @@
                         </div>
                          
                     </div>
+                    </el-col>
+
+                    <el-col :span="8">
 
                     <div class="part-el-card">
                         
@@ -170,7 +195,8 @@
                         </div>
 
                         <div class="part-el-card-space" style="color: #9eb4cb; ">
-                         我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介 我是简介
+                          <p>发布您的提问或者分享您的经验，具有专业医生资质的用户将为您答疑解惑。</p>
+                          <p>为优质帖子点赞、收藏、投币，参与社区互动，共享信息，建立联系。</p>
                         </div>
 
                         <div class="part-el-card-space" style="text-align: center;">
@@ -184,7 +210,9 @@
                         </div>
 
                     </div>
+                    </el-col>
 
+                </el-row>
             </div>
 
         </div>
@@ -318,7 +346,8 @@ export default {
     border-radius:25px ;
     background-color: #fff;
     padding: 40px;
-    box-shadow: 0 6px 6px rgba(36,37,38,.02)
+    box-shadow: 0 6px 6px rgba(36,37,38,.02);
+    height: 80%;
 }
 
 .part{

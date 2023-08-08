@@ -45,7 +45,7 @@ export default{
                 })
                 .then(() => {
 
-                    axios.post("/api/Comment/SetSolution",
+                    axios.post("/api/Forum/SetSolution",
                         reactive({
                             user_id:globalData.userInfo.user_id,
                             comment_id:this.comment_id,

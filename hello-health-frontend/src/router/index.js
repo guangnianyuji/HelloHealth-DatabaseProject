@@ -76,22 +76,16 @@ const router = createRouter({
                 path: "user/:userId",
                 name: "otherView",
                 component: () => import("@/views/UserInfoView.vue")
-            }, {
-                path: '/coin',
-                name: 'coin',
-                children:[
-                    {
-                        path: "detail",
-                        name: "coinView",
-                        component: ()=>import("@/components/CoinView.vue"),
-                    },
-                    {
-                        path: "UserAgreement",
-                        name: "UserAgreement",
-                        component: ()=>import("@/pages/UserAgreementPage.vue"),
-                    }
-                ]
-            },]
+            },{
+                path: "detail",
+                name: "coinView",
+                component: ()=>import("@/components/CoinView.vue"),
+            },
+            {
+                path: "UserAgreement",
+                name: "UserAgreement",
+                component: ()=>import("@/pages/UserAgreementPage.vue"),
+            }]
         },
         { path: '/:pathMatch(.*)*', name: 'NotFound', component: ()=>import("@/pages/ErrorPage.vue") },
 
