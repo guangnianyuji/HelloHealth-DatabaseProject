@@ -46,20 +46,12 @@ const avatarClicked = () =>{
     }
 }
 
-const menus = [
-    {"title":"首页","icon":"fi-rr-home","path":"/"},
-    {"title":"HH 找药","icon":"fi-rr-capsules","path":"/medicine"},
-    {"title":"收藏管理","icon":"fi-rr-followcollection","path":"collection",
-        "children":[
-            {"title":"药品收藏","icon":"fi-rr-capsules","path":"/medicineCollection"},
-            {"title":"帖子收藏","icon":"fi-rr-memo","path":"/postCollection"},
-        ]
-    },
-    {"title":"健康资讯","icon":"fi-rr-books","path":"/news"},
-    {"title":"HH 论坛","icon":"fi-rr-user-md-chat","path":"/forum"},
-    {"title":"健康日程档案","icon":"fi-rr-calendar-clock","path":"/calendar"},
-    {"title":"个人信息管理","icon":"fi-rr-user-gear","path":"/user"},
-];
+const menus = reactive({v:[
+        {"title":"首页","icon":"fi-rr-home","path":"/"},
+        {"title":"HH 找药","icon":"fi-rr-capsules","path":"/medicine"},
+        {"title":"健康资讯","icon":"fi-rr-books","path":"/news"},
+        {"title":"HH 论坛","icon":"fi-rr-user-md-chat","path":"/forum"},
+    ]});
 
 let userInfo = reactive({
     data:{
@@ -84,6 +76,21 @@ const isLogin = ref(false);
     isLogin.value = responseObj.login;
 
     if(!responseObj.login) return;
+    menus.v = [
+        {"title":"首页","icon":"fi-rr-home","path":"/"},
+        {"title":"HH 找药","icon":"fi-rr-capsules","path":"/medicine"},
+        {"title":"收藏管理","icon":"fi-rr-followcollection","path":"collection",
+            "children":[
+                {"title":"药品收藏","icon":"fi-rr-capsules","path":"/medicineCollection"},
+                {"title":"帖子收藏","icon":"fi-rr-memo","path":"/postCollection"},
+            ]
+        },
+        {"title":"健康资讯","icon":"fi-rr-books","path":"/news"},
+        {"title":"HH 论坛","icon":"fi-rr-user-md-chat","path":"/forum"},
+        {"title":"健康日程档案","icon":"fi-rr-calendar-clock","path":"/calendar"},
+        {"title":"个人信息管理","icon":"fi-rr-user-gear","path":"/user"}
+
+    ]
     globalData.login = true;
     userInfo.data = responseObj
     globalData.userInfo = userInfo.data
@@ -105,7 +112,7 @@ let contentDom = undefined;
 onMounted(()=>{
     (()=>{
         let menuItemNow = getSidebarPath();
-        for(let item of menus){
+        for(let item of menus.v){
             if(!item.children) continue;
             for(let child of item.children){
                 if(child.path===menuItemNow){
@@ -165,7 +172,7 @@ watch(router.currentRoute, () => {
 
 
                 <el-menu :default-active="getSidebarPath()" class="sideBarMenu" ref="menu">
-                    <component v-for="item in menus" :is="item.children ? ElSubMenu : ElMenuItem" :index="item.path" v-on="item.children ? {}: {click: menuItemClick}">
+                    <component v-for="item in menus.v" :is="item.children ? ElSubMenu : ElMenuItem" :index="item.path" v-on="item.children ? {}: {click: menuItemClick}">
                         <template #title>
                             <i class="fi" :class="item.icon"></i>
                             <span>{{item.title}}</span>

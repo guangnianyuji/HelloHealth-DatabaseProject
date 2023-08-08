@@ -180,7 +180,7 @@ export default{
             },
             sortBy(){
                 axios
-                    .post("/api/Post/SortBy", this.type_sort)
+                    .post("/api/Forum/SortBy", this.type_sort)
                     .then((res)=> {
                         this.post_list= res.data.data.post_list;
                         this.tags = res.data.data.tags;
