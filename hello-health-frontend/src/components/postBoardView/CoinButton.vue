@@ -65,7 +65,7 @@ export default {
                     })
                         .then(({value}) => {
                             coinValue = value;
-                            axios.post("/api/Comment/Coin", {
+                            axios.post("/api/Forum/Coin", {
                                 operate: op,
                                 comment_id: this.comment_id,
                                 coin_value: coinValue
@@ -95,7 +95,7 @@ export default {
                 }
 
                 // op为0代表不操作，只重新获取硬币数
-                // axios.post("/api/Comment/Coin", {
+                // axios.post("/api/Forum/Coin", {
                 //     operate: op,
                 //     comment_id: this.comment_id,
                 //     coin_value: coinValue

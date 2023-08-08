@@ -47,7 +47,7 @@ export default
         changeLike() {//op为0，只查询；op为1 要操作
 
 
-            axios.post("/api/Comment/Like",
+            axios.post("/api/Forum/Like",
                 {
                     operate: 1,
                     comment_id: this.comment_id

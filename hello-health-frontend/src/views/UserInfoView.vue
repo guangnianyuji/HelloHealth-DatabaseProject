@@ -2,13 +2,14 @@
   <!--整个页面是可以上下滚动的-->
   <div  class="wrapper">
     <!--展示信息的分栏，分栏1：用户头像-->
+    <!--size="100" style="margin-left:20px;margin-top:20px;" fit="contain"-->
     <div>
       <el-card class="cardStyle">
         <div class="common-layout">
           <el-container>
-            <el-aside>
+            <el-aside width="200px">
               <div class="avatar-container">
-                <el-avatar class="avatar" :src="isLogin ? userInfo.avatarUrl : require('@/assets/SamplePic.png')"></el-avatar>
+                <el-avatar :size="100" style="margin-left:30px;margin-top:20px;" fit="contain" :src="isLogin ? userInfo.avatarUrl : require('/src/assets/defaultAvatar.png')"></el-avatar>
                 <template v-if="isCurrentUser">
                   <el-button class="pic-edit-button" type="primary" icon="el-icon-edit" @click="showPhotoUpload">Edit</el-button>
                   <el-dialog v-model="photoUpload" title="头像上传" width="50%">
@@ -30,24 +31,21 @@
                       <el-button type="primary" @click="submitPhoto">确 定</el-button>
                     </div>
                   </el-dialog>
-                  <el-dialog title="我的关注" v-model="this.myFollowVisible" @close="search">
-                    <el-card class="user-card" v-for="user in followList" :key="user.userID">
-                      <div class="user-info">
-                        <div class="avatar">
-                          <el-avatar :src="user.avatarUrl"></el-avatar>
+                  <el-dialog title="我的关注" v-model="myFollowVisible" @close="search">
+                    <div class="user-cards">
+                      <el-card class="user-card" v-for="user in followList" :key="user.user_id">
+                        <div class="user-info">
+                          <UserInfoCard :user-info="user" @click="goUserPage(user.user_id)"></UserInfoCard>
+                          <el-button
+                              :type="followMap.get(user.user_id) ? 'default' : 'primary'"
+                              style="margin: 20px"
+                              @click="onFollowBtnClick(user.user_id)"
+                          >
+                            {{ followMap.get(user.user_id) ? '已关注' : '+关注' }}
+                          </el-button>
                         </div>
-                        <div class="name"  @click="goUserPage(user.userID)">{{user.userName}}</div>
-                        <el-button
-                            :type="followMap.get(user.userID) ? 'primary' : 'default'"
-                            @click="onFollowBtnClick(user.userID)"
-                        >
-                          {{ followMap.get(user.userID) ? '+ 关注' : '已关注' }}
-                        </el-button>
-                      </div>
-                      <div class="description">
-                        {{user.description}}
-                      </div>
-                    </el-card>
+                      </el-card>
+                    </div>
                   </el-dialog>
                 </template>
               </div>
@@ -58,18 +56,19 @@
               <el-button
                   v-if="isLogin && !isCurrentUser"
                   :type="isFollowed ? 'default' : 'primary'"
+                  style="margin-left: 40px;margin-bottom:10px"
                   @click="onFollowBtnClick(null)"
               >
                 {{ isFollowed ? '已关注' : '+ 关注' }}
               </el-button>
-              <el-button v-else-if="isLogin && isCurrentUser" type="primary" @click="this.myFollowVisible = true">我的关注</el-button>
+              <el-button v-else-if="isLogin && isCurrentUser" class="attention-list" @click="this.myFollowVisible = true">我的关注</el-button>
               <br><br><br>
               <div>
                 <span>{{ authenInfo }}</span>
                 <template v-if="isLogin">
-                  <span v-if="isCurrentUser && !userInfo.isCertified">{{ '未认证' }}</span>
+                  <span v-if="!isCurrentUser && !userInfo.isCertified">{{ '未认证' }}</span>
                   <span v-else-if="userInfo.isCertified">{{ certification.professionTitle }}</span>
-                  <el-button v-else-if="isCurrentUser && !userInfo.isCertified" type="primary" class="certificated-button" @click="showCertificationDialog">去认证</el-button>
+                  <el-button v-else-if="isCurrentUser && !userInfo.isCertified"  class="certificated-button" @click="showCertificationDialog">去认证</el-button>
                   <span v-else>{{ '未认证' }}</span>
                   <el-dialog v-model="dialogVisible" title="医师认证" width="50%">
                     <div style="text-align: center;">
@@ -78,7 +77,20 @@
                           class="upload-demo"
                           action="https://jsonplaceholder.typicode.com/posts/"
                           :auto-upload="false"
-                          :on-change="handleChange"
+                          :on-change="handleChangeCertification"
+                      >
+                        <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                        <div slot="tip" class="el-upload__tip">上传文件格式为.jpg、.jpeg、.png、.gif，且不超过 2MB</div>
+                      </el-upload>
+                    </div>
+                    <br><br>
+                    <div style="text-align: center;">
+                      <p>请上传您的执业证照片</p>
+                      <el-upload
+                          class="upload-demo"
+                          action="https://jsonplaceholder.typicode.com/posts/"
+                          :auto-upload="false"
+                          :on-change="handleChangeCertification"
                       >
                         <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
                         <div slot="tip" class="el-upload__tip">上传文件格式为.jpg、.jpeg、.png、.gif，且不超过 2MB</div>
@@ -96,19 +108,7 @@
         </div>
       </el-card>
     </div>
-    <!--展示信息的分栏，分栏2：杏仁币信息-->
-    <div>
-      <el-card class="cardStyle" v-if="isLogin">
-        <el-button class="coinButton" v-if="isLogin && isCurrentUser" link @click="goToCoinDetail">
-          我的杏仁币：
-          {{ userInfo.numOfCoin }}
-        </el-button>
-        <span v-if="isLogin && !isCurrentUser">
-      杏仁币数量：
-      {{ userInfo.numOfCoin }}
-    </span>
-      </el-card>
-    </div>
+
     <!--展示信息的分栏，分栏3：基本信息-->
     <div v-if="isLogin">
       <el-card class="cardStyle">
@@ -131,10 +131,11 @@
                   用户名：
                 </div>
               </template>
-              <!--从数据库获取用户名-->
+              <!--从数据库获取用户名，用户名不可修改-->
               <div class="input-container">
-                <input type="text" name="text" class="input" placeholder="请输入用户名"
-                       v-model="userInfo.userName" :disabled="!isEdit">
+                <!--<input type="text" name="text" class="input" placeholder="请输入用户名"
+                       v-model="userInfo.userName" :disabled="!isEdit">-->
+                <span>{{userInfo.userName}}</span>
                 <div class="highlight"></div>
               </div>
             </el-descriptions-item>
@@ -147,7 +148,7 @@
               <!--从数据库获取性别-->
               <template v-if="!isEdit">
                 <!-- 在"编辑"状态下，性别显示框是一个标签组件 -->
-                <el-tag>{{ userInfo.gender }}</el-tag>
+                <el-tag class="input">{{ userInfo.gender }}</el-tag>
               </template>
               <template v-if="isEdit">
                 <!-- 在"保存"状态下，性别显示框是一个下拉框组件 -->
@@ -164,30 +165,34 @@
                 </div>
               </template>
               <!--从数据库获取出生日期-->
+
               <template v-if="!isEdit">
-                <!-- 在"编辑"状态下，生日显示框是一个数据框 -->
-                <el-input v-model="userInfo.birthday" :disabled="!isEdit"></el-input>
+                <!-- 在"编辑"状态下，生日显示框是从数据框获取到的用户的生日信息 -->
+                <el-tag class="input">{{userInfo.birthday}}</el-tag>
+                <!--<el-input class="birthdayStyle" v-model="userInfo.birthday" :disabled="!isEdit"></el-input>-->
               </template>
               <template v-if="isEdit">
                 <!-- 在"保存"状态下，生日显示框是一个时间选择框 -->
                 <el-date-picker
                     v-model="userInfo.birthday"
                     type="date"
-                    value-format="yyyy-MM-dd"
+                    formate="YYYY/MM/DD"
+                    value-format="YYYY-MM-DD"
                     placeholder="选择日期"
                 ></el-date-picker>
               </template>
             </el-descriptions-item>
-            <el-descriptions-item>
+            <el-descriptions-item  v-if="isCurrentUser">
               <template #label>
                 <div class="cell-item">
                   联系电话：
                 </div>
               </template>
-              <!--从数据库获取联系电话-->
+              <!--从数据库获取联系电话，联系电话不可修改-->
               <div class="input-container">
-                <input type="text" name="text" class="input" placeholder="请输入联系电话"
-                       v-model="userInfo.telephone" :disabled="!isEdit">
+                <!--<input type="text" name="text" class="input" placeholder="请输入联系电话"
+                       v-model="userInfo.telephone" :disabled="!isEdit">-->
+                <span>{{userInfo.telephone}}</span>
                 <div class="highlight"></div>
               </div>
             </el-descriptions-item>
@@ -241,7 +246,20 @@
                     class="upload-demo"
                     action="https://jsonplaceholder.typicode.com/posts/"
                     :auto-upload="false"
-                    :on-change="handleChange"
+                    :on-change="handleChangeCertification"
+                >
+                  <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                  <div slot="tip" class="el-upload__tip">上传文件格式为.jpg、.jpeg、.png、.gif，且不超过 2MB</div>
+                </el-upload>
+              </div>
+              <br><br>
+              <div style="text-align: center;">
+                <p>请上传您的执业证照片</p>
+                <el-upload
+                    class="upload-demo"
+                    action="https://jsonplaceholder.typicode.com/posts/"
+                    :auto-upload="false"
+                    :on-change="handleChangeCertification"
                 >
                   <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
                   <div slot="tip" class="el-upload__tip">上传文件格式为.jpg、.jpeg、.png、.gif，且不超过 2MB</div>
@@ -252,6 +270,7 @@
                 <el-button type="primary" @click="submitCertification">确 定</el-button>
               </div>
             </el-dialog>
+
           </template>
           <el-descriptions-item>
             <template #label>
@@ -292,6 +311,84 @@
         </el-row>
       </el-card>
     </div>
+    <!--展示信息的分栏，分栏2：杏仁币信息-->
+    <div>
+      <el-card class="cardStyle" v-if="isLogin && isCurrentUser">
+        <el-row>
+          <div style="font-size: 18px;margin-top: 2px;">
+            我的杏仁币：
+          </div>
+          <div style="color:green;font-size: 22px;">
+            {{ numOfCoin }}
+          </div>
+          <el-button class="coinButton" v-if="isLogin" link @click="goToCoinDetail">
+            杏仁币详情>>
+          </el-button>
+        </el-row>
+        <el-container>
+          <el-aside class="coin-left">
+
+            <el-row style="margin-left: 1%;margin-bottom: 2%;margin-top: 3.5%;">
+              <div style="font-size: 15px;">硬币记录</div>
+              <div style="font-size: 14px;color: grey;margin-left: 3px;margin-top: 1px;">
+                您最近一周的变化情况
+              </div>
+            </el-row>
+            <el-table :data="CoinRecordList"
+
+                      :default-sort="{ prop: 'Time', order: 'ascending' }"
+                      height="250" style="width: 100%" class="table">
+              <el-table-column prop="Time" label="时间" width="150" />
+              <el-table-column prop="Num" label="变化" width="120" />
+              <el-table-column prop="Reason" label="原因" width="150"/>
+            </el-table>
+          </el-aside>
+          <el-main class="coin-right">
+            <el-row>
+              <div style="font-size: 15px;margin-bottom: 1%;">杏仁币介绍</div>
+            </el-row>
+            <el-row>
+              <div style="font-size: 14px;margin-bottom: 1%;margin-left: 2px;">杏仁币的用处</div>
+            </el-row>
+            <el-row>
+              <div style="font-size: 14px;color: grey;margin-left: 2px;">
+
+                杏仁币是本平台中专用的虚拟货币，取自“杏林春暖 ，悬壶济世”之意。
+              </div>
+            </el-row>
+            <el-row>
+
+              <div style="font-size: 14px;color: grey;margin-left: 2px;">
+
+                • 用于对优秀帖子进行投币。
+              </div>
+            </el-row>
+            <el-row>
+              <div style="font-size: 14px;color: grey;margin-left: 2px;">
+
+                • 可以用来悬赏专业医生用户回答专业问题。
+              </div>
+            </el-row>
+            <el-row>
+
+              <div style="font-size: 14px;margin-top: 5%;margin-bottom: 1%;margin-left: 2px;">如何获得杏仁币</div>
+            </el-row>
+            <el-row>
+              <div style="font-size: 14px;color: grey;margin-left: 2px;">
+                • 每日登录、完成健康计划。
+              </div>
+            </el-row>
+            <el-row>
+
+              <div style="font-size: 14px;color: grey;margin-left: 2px;">
+
+                • 发帖被投杏仁币、发帖获得较大浏览量和获得高价值流量认可。
+              </div>
+            </el-row>
+          </el-main>
+        </el-container>
+      </el-card>
+    </div>
   </div>
 </template>
 
@@ -300,11 +397,12 @@ import axios from "axios"
 import PostCard from "@/components/postBoardView/PostCard.vue";
 import NewsBlockList from "@/components/NewsBlockList.vue";
 import globalData from "@/global/global";
-import {messageProps} from "element-plus";
+import { ElMessage } from "element-plus";
+import UserInfoCard from "@/components/UserInfoCard.vue";
 
 export default {
   name: "UserInfoPage",
-  components: {NewsBlockList, PostCard},
+  components: {UserInfoCard, NewsBlockList, PostCard},
   data(){
     return{
       isFollowed: false,
@@ -325,6 +423,8 @@ export default {
 
       //用户上传的，要传给数据库的一些数据
       file:null, //上传的文件对象
+      qualificationCertificate:null,//医师资格证照片
+      practiceCertificate:null,//执业证照片
       photoUpload:false,   //头像上传，初始为false
     }
   },
@@ -335,7 +435,7 @@ export default {
       this.$router.replace("/error");
       return;
     }
-    axios.post('/api/UserInfo/Details',{user_id: userIdNum})
+    axios.get('/api/UserInfo/Details')
         .then(response => {
           const responseData = response.data.data.userInfo;
           this.userInfo = responseData
@@ -347,14 +447,14 @@ export default {
           }
           const responseData2 = response.data.data.certification;
           this.certification = responseData2
-          this.isLogin = !globalData.isLogin; // 获取用户登录状态
+          //this.isLogin = globalData.isLogin; // 获取用户登录状态 change
           this.followList = response.data.data.followList;
           this.isFollowed = response.data.data.isFollowed;
 
           console.log(this.followList)
 
           this.followList.forEach(user => {
-            this.followMap.set(user.userID, false)
+            this.followMap.set(user.user_id, true)
           })
 
         })
@@ -398,14 +498,14 @@ export default {
       axios.post('/api/UserInfo/Details',{user_id: userIdNum})
           .then(response => {
 
-            this.isLogin = !globalData.isLogin; // 获取用户登录状态
+            // this.isLogin = globalData.isLogin; // 获取用户登录状态 change
             this.followList = response.data.data.followList;
             this.isFollowed = response.data.data.isFollowed;
 
             console.log(this.followList)
 
             this.followList.forEach(user => {
-              this.followMap.set(user.userID, false)
+              this.followMap.set(user.user_id, false)
             })
 
           })
@@ -425,7 +525,7 @@ export default {
     },
     unfollow(userId) {
       if(userId){
-        axios.post("/api/unfollowUser", { thisUserID: globalData.userInfo.userId ,followUserID: userId })
+        axios.post("/api/UserInfo/unfollowUser", { thisUserID: globalData.userInfo.userId ,followUserID: userId })
             .then(response => {
               //如果后端返回的状态码是200，那么将isFollowed设置为false
               this.followMap.set(userId, false)
@@ -435,7 +535,7 @@ export default {
             });
       }
       else {
-        axios.post("/api/unfollowUser", {thisUserID: globalData.userInfo.userId ,followUserID: this.userInfo.userID})
+        axios.post("/api/UserInfo/unfollowUser", {thisUserID: globalData.userInfo.userId ,followUserID: this.userInfo.userID})
             .then(response => {
               //如果后端返回的状态码是200，那么将isFollowed设置为false
               this.isFollowed = false;
@@ -449,7 +549,7 @@ export default {
     followUser(userId) {
 
       if(userId){
-        axios.post("/api/followUser", { thisUserID: globalData.userInfo.userId ,followUserID: userId })
+        axios.post("/api/UserInfo/followUser", { thisUserID: globalData.userInfo.userId ,followUserID: userId })
             .then(response => {
               //如果后端返回的状态码是200，那么将isFollowed设置为true
               this.followMap.set(userId, true);
@@ -459,7 +559,7 @@ export default {
             });
       }
       else{
-        axios.post("/api/followUser", {thisUserID: globalData.userInfo.userId ,followUserID: this.userInfo.userID})
+        axios.post("/api/UserInfo/followUser", {thisUserID: globalData.userInfo.userId ,followUserID: this.userInfo.userID})
             .then(response => {
               //如果后端返回的状态码是200，那么将isFollowed设置为true
               this.isFollowed = true;
@@ -479,7 +579,7 @@ export default {
     },
     /*跳转到杏仁币的流水页面函数*/
     goToCoinDetail(){
-      this.$router.push('/coin/detail');
+      this.$router.push('/detail');
     },
     showCertificationDialog() {
       // 显示认证框
@@ -490,54 +590,94 @@ export default {
     },
     save(){
       // 将修改后的用户信息保存到数据库
-      axios
-          .put('/api/UserInfo/Details', {
-            userInfo: this.userInfo,
-          })
+      axios.post('/api/UserInfo/modifyUserInfo', {
+        gender: this.userInfo.gender,
+        email:this.userInfo.email,
+        birthday:this.userInfo.birthday,
+        description:this.userInfo.description,
+        userName:this.userInfo.userName,
+        telephone:this.userInfo.telephone,
+      })
           .then(response => {
-            // 保存成功后将isEdit变量设置为false，禁用编辑模式
-            this.isEdit = false;
             // 将下拉框选中的值保存到userInfo.gender中
-            this.userInfo.gender = this.userInfo.gender;
+            //this.userInfo.gender = this.userInfo.gender;
             // 将下拉框选中的值保存到userInfo.birthday中
-            this.userInfo.birthday=this.userInfo.birthday;
+            //this.userInfo.birthday=this.userInfo.birthday;
+            if (response.data.data.status == true) {
+              ElMessage.success("上传成功，请等待管理员审核！");
+              // 保存成功后将isEdit变量设置为false，禁用编辑模式
+              this.isEdit = false;
+            } else {
+              ElMessage.error("上传失败！");
+            }
           })
           .catch((error) => {
             this.isEdit = false;
             console.error(error);
+            ElMessage.error("上传失败！");
           });
     },
-    handleChange(file,fileList){
+    handleChangeCertification(file,fileList){
       console.log(file,fileList);
+      // 判断是医师资格证照片还是执业证照片
+      if (fileList.length === 1) {
+        this.qualificationCertificate = file.raw; // 医师资格证照片
+      } else if (fileList.length === 2) {
+        this.practiceCertificate = file.raw; // 执业证照片
+      }
     },
     /*将用户上传的医师资格证照片传给后端数据库*/
     submitCertification(){
       // 创建一个 FormData 对象
       const formData = new FormData();
-      formData.append('file', this.file);
+      // 添加医师资格证照片
+      if (this.qualificationCertificate) {
+        formData.append('qualificationCertificate', this.qualificationCertificate);
+      }
+      // 添加执业证照片
+      if (this.practiceCertificate) {
+        formData.append('practiceCertificate', this.practiceCertificate);
+      }
       // 发起一个 POST 请求，将 formData 发送给后端服务器
-      axios.post('/api/uploadDoctorApproval', formData)
+      axios.post('/api/UserInfo/uploadDoctorApproval', formData)
           .then(response => {
             console.log(response.data);
-            this.dialogVisible = false;
+            if (response.data.data.status == true) {
+              ElMessage.success("上传成功，请等待管理员审核！");
+              this.dialogVisible = false;
+            } else {
+              ElMessage.error("上传失败！");
+            }
           })
           .catch(error => {
             console.error(error);
+            ElMessage.error("上传失败！");
           });
+    },
+    handleChange(file,fileList){
+      console.log(file,fileList);
+      this.file = file.raw
     },
     /*将用户上传的头像传给后端数据库*/
     submitPhoto(){
-      // 创建一个 FormData 对象
+      //创建一个FormData对象
       const formData = new FormData();
-      formData.append('file', this.file);
-      // 发起一个 POST 请求，将 formData 发送给后端服务器
-      axios.post("/api/uploadAvatar", formData)
-          .then(response => {
+      formData.append('file',this.file);
+      //发起一个POST请求，将formData发送给后端服务器
+      axios.post("/api/UserInfo/uploadAvatar",formData)
+          .then((response) =>{
             console.log(response.data);
-            this.photoUpload = false;
+            if(response.data.data.status == true){
+              ElMessage.success("更改成功！");
+              this.photoUpload = false;
+            }
+            else{
+              ElMessage.error("更改失败！");
+            }
           })
           .catch(error => {
-            console.error(error);
+            console.log(error);
+            ElMessage.error("更改失败！");
           });
     },
     /* 求获取用户发布的帖子 */
@@ -568,15 +708,7 @@ export default {
   position:relative;
   display:inline-block;
 }
-/*用户头像样式*/
-.avatar{
-  border-radius:50%;
-  object-fit: cover;
-  margin-top:20px;
-  margin-left:20px;
-  width:100px;
-  height:100px;
-}
+
 /*头像编辑按钮的样式设置*/
 .pic-edit-button{
   position: absolute;
@@ -588,7 +720,7 @@ export default {
   height:25px;
   background-color: transparent;
   border-color: transparent;
-  color:#666666;
+  color: #9eb4cb;
 }
 /*鼠标悬浮在编辑按钮时的样式*/
 .pic-edit-button:hover {
@@ -603,11 +735,19 @@ export default {
   font-weight: bold;
   color:black;
 }
-/*杏仁币按钮样式*/
+/*杏仁币“更多详情”样式*/
 .coinButton{
+  margin-left: 2%;
   font-size:16px;
   color: #409EFF;
 }
+.coin-left{
+  width: auto;
+}
+.coin-right{
+  margin-left: 2%;
+}
+
 /*”请登录“按钮样式*/
 .login-button{
   background-color: white;
@@ -617,10 +757,11 @@ export default {
 }
 /*”去认证“按钮样式*/
 .certificated-button{
-  background-color: antiquewhite;
-  border-color: white;
-  color: #666666;
-  font-size:20px;
+  background-color: white;
+  border-color: antiquewhite;
+  color: #c45656;
+
+  margin-left:60px;
 }
 /*弹出的医师认证框的按钮设置*/
 .dialog-footer {
@@ -635,7 +776,7 @@ export default {
   width: 85%;
   margin: 0 auto;
 }
-+
+
 .input-container {
   position: relative;
 }
@@ -649,7 +790,7 @@ export default {
   background-color: #f8f8f8;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
-//max-width: 600px;
+  max-width: 600px;
   color: #333;
 }
 
@@ -684,19 +825,23 @@ export default {
 .user-info {
   display: flex;
   align-items: center;
-  .avatar {
-    width: 50px;
-    height: 50px;
-    margin-right: 10px;
-  }
 }
-
-.name {
-  flex: 1;
+/*“我的关注”按钮的样式*/
+.attention-list{
+  margin-left: 80px;
+  border-color: white;
+  color: #00bfa8;
 }
-
-.followed-btn {
-  margin-left: 10px;
-  color: #ccc;
+.user-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.user-card {
+  margin: 10px;
+}
+.user-info {
+  display: flex;
+  justify-content: space-between;
 }
 </style>
