@@ -46,6 +46,10 @@ const click = () => {
     cursor: pointer;
 }
 
+.el-avatar{
+    min-width: 50px;
+}
+
 .userInfoHolder{
     opacity: 1;
     transition: opacity 0.3s ease;

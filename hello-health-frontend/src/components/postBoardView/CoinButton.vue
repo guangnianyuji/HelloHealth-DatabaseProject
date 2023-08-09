@@ -71,25 +71,23 @@ export default {
                                 coin_value: coinValue
                             })
                                 .then((res) => {
-                                    this.is_coined = res.data.data.status;
-                                    this.coin_num = res.data.data.comment_coin_num;
-                                    coin_status = res.data.data.coin_status;//投币是否成功
-                                })
-                            if (op === 1) {
-                                if (coin_status) {
+                                    this.is_coined = res.json.status;
+                                    this.coin_num = res.json.comment_coin_num;
                                     ElMessage({
                                         message: "投币成功！",
                                         type: "success",
 
                                     })
-                                } else {
-                                    ElMessage({
-                                        message: "币数不足，投币失败！",
-                                        type: "error",
-
-                                    })
-                                }
-                            }
+                                }).catch(error => {
+                                    if(error.network) return false;
+                                    switch (error.errorCode){
+                                        case 116:
+                                            ElMessage.error("币数不足，投币失败！")
+                                            break;
+                                        default:
+                                            error.defaultHandler("投币失败")
+                                    }
+                            })
 
                         }).catch(()=>{})
                 }

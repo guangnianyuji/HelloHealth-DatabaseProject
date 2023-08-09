@@ -40,21 +40,16 @@ export default{
                      
                     axios.post("/api/Comment/Report",
                       reactive({
-                         
                         user_id:globalData.userInfo.user_id,
                         comment_id:this.comment_id,
                         reason:value
                        }))
                        .then((res)=>{
-                        if(res.data.data.status)
-                        {
-                            ElMessage.success("举报信息提交成功！");
-                        }
-                         else
-                         {
-                            ElMessage.error("抱歉，举报信息提交失败，请再次尝试");
-                         }
-                      }) 
+                           ElMessage.success("举报信息提交成功！");
+                      }).catch(error => {
+                          if(error.network) return;
+                          error.defaultHandler("举报信息提交失败")
+                    })
                     }
                 ).catch(()=>{})
         }

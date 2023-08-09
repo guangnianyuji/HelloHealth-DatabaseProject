@@ -405,6 +405,8 @@ export default {
   components: {UserInfoCard, NewsBlockList, PostCard},
   data(){
     return{
+        isSelf: true,
+
       isFollowed: false,
       followMap: new Map(), // 用来匹配关注列表的已关注和+关注
       myFollowVisible:false,
@@ -431,11 +433,15 @@ export default {
   //从数据库获取所需的用户信息
   mounted() {
     let userIdNum = parseInt(this.$route.params.userId ? this.$route.params.userId: 0);
+    if(!this.$route.params.userId && !globalData.login){
+        this.$router.push("/login");
+        return;
+    }
     if(isNaN(userIdNum)){
       this.$router.replace("/error");
       return;
     }
-    axios.get('/api/UserInfo/Details')
+    axios.post('/api/UserInfo/Details',{user_id: userIdNum})
         .then(response => {
           const responseData = response.data.data.userInfo;
           this.userInfo = responseData
@@ -459,7 +465,8 @@ export default {
 
         })
         .catch(error => {
-          console.error(error)
+            if(error.network) return;
+            error.defaultHandler();
         });
     /* 获取用户发布的帖子 */
     this.fetchUserPosts(this.userInfo.userID);
@@ -510,7 +517,8 @@ export default {
 
           })
           .catch(error => {
-            console.error(error)
+            if(error.network) return;
+            error.defaultHandler();
           });
     },
     onFollowBtnClick(userId) {
@@ -531,7 +539,8 @@ export default {
               this.followMap.set(userId, false)
             })
             .catch(error => {
-              console.error(error);
+                if(error.network) return;
+                error.defaultHandler();
             });
       }
       else {
@@ -541,7 +550,8 @@ export default {
               this.isFollowed = false;
             })
             .catch(error => {
-              console.error(error);
+                if(error.network) return;
+                error.defaultHandler();
             });
       }
     },
@@ -555,7 +565,8 @@ export default {
               this.followMap.set(userId, true);
             })
             .catch(error => {
-              console.error(error);
+                if(error.network) return;
+                error.defaultHandler();
             });
       }
       else{
@@ -565,7 +576,8 @@ export default {
               this.isFollowed = true;
             })
             .catch(error => {
-              console.error(error);
+                if(error.network) return;
+                error.defaultHandler();
             });
       }
     },
