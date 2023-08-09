@@ -136,9 +136,10 @@ const gotoSpecificFloor = ()=>{
                     :bounty-value="postInfo.data.bounty_value"
                     :solution="postInfo.data.solution" @replyClicked="closeAllFloorReplyBar"
                     :star-info="postInfo.data.star"
+                    :post-id="postId"
                     @firstFloorReplyClicked="openCommentEditor"
                     @goToSolutionClicked="scrollToSolution"
-                    floor="1">
+        >
         </post-floor>
         <post-floor v-for="(floor,index) in floorsWithoutFirst"
                     :floor-info="floor"
@@ -150,8 +151,7 @@ const gotoSpecificFloor = ()=>{
                     :can-set-solution="postInfo.data.is_bounty &&
                         postInfo.data.solution === -1 &&
                         globalData.userInfo.user_id===postInfo.data.floors[0].author.user_id &&
-                        floor.author.user_id !== globalData.userInfo.user_id"
-                    :floor="floor.floor_number">
+                        floor.author.user_id !== globalData.userInfo.user_id">
         </post-floor>
     </div>
 

@@ -47,7 +47,7 @@ export default
             changeStar() {
                 axios.post("/api/Post/Star",{
                     operate: 1,
-                    post_id: this.post_id
+                    post_id: parseInt(this.post_id)
                 },{doNotShowLoadingScreen: true}).then((res)=>{
                     this.is_stared=res.json.status;
                     this.star_num=res.json.post_star_num;
