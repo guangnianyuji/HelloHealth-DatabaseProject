@@ -158,6 +158,7 @@ export default{
                 number: 9,
                 page: 1
                 // TODO: 加个页号选择
+
             } ,//之前选择的类型
             dialogVisible: false,
             post_list: [],
