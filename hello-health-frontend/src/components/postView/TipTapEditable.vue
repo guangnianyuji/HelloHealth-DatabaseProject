@@ -65,15 +65,19 @@ export default {
                     'Content-Type': 'multipart/form-data'
                 }
             }).then(response => {
-                if(response.data.errorCode!==200 || response.data.data.status!==true){
-                    ElMessage.error("图片上传失败，请联系管理员！")
-                    this.$refs.fileInput.value = '';
-                    return
-                }
-                this.editor.chain().focus().setImage({src: response.data.data.url}).run()
+                this.editor.chain().focus().setImage({src: response.json.url}).run()
                 this.$refs.fileInput.value = '';
                 ElMessage.success("图片上传成功，请等待图片加载。")
-            }).catch(()=>{
+            }).catch((error)=>{
+                if(error.network) return;
+                switch (error.errorCode) {
+                    case 115:
+                        ElMessage.error("图片上传失败，请联系管理员！")
+                        this.$refs.fileInput.value = '';
+                        break;
+                    default:
+                        error.defaultHandler();
+                }
                 this.$refs.fileInput.value = '';
             })
         }
