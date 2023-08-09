@@ -12,7 +12,8 @@ const router = useRoute()
 let postId = router.params.postId;
 watch(router,(old,newRoute)=>{
     postId = newRoute.params.postId;
-    reloadPost();
+    if(typeof(newRoute.params.postId) !== "undefined")
+        reloadPost();
 })
 const postInfo = reactive({
     data:{}
@@ -37,21 +38,17 @@ const openCommentEditor = () =>{
 const reloadPost = ()=>{
     axios.get("/api/Forum/PostInfo/"+ postId)
         .then((res) => {
-                let responseObj = res.data;
-                if(responseObj.errorCode!==200){
-                    ElMessage.error("错误代码："+ responseObj.errorCode);
-                    return;
-                }
-                if(!responseObj.data.status){
-                    ElMessage.error("帖子加载失败："+ responseObj.data.errorType);
-                    return;
-                }
-
-                postInfo.data = responseObj.data;
-                nextTick(gotoSpecificFloor);
-            }
-        ).catch((reason)=>{
-        alert(reason)
+            postInfo.data = res.json;
+            nextTick(gotoSpecificFloor);
+        }).catch((error)=>{
+        if(error.network) return;
+        switch (error.errorCode) {
+            case 111:
+                ElMessage.error("帖子还在审核")
+                break;
+            default:
+                error.defaultHandler("帖子加载出错");
+        }
     })
 }
 reloadPost();
@@ -65,27 +62,30 @@ const closeAllFloorReplyBar = () =>{
 }
 
 const editor = ref();
-const submitNewComment = async() => {
+
+// 发送楼层
+const submitNewComment = () => {
     if(editor.value.editor.state.doc.textContent.length < 15) {
         ElMessage.error('请输入更多内容。');
         return;
     }
-    let response = await axios.post("/api/Forum/SendFloor",{
+    axios.post("/api/Forum/SendFloor",{
         content:JSON.stringify(editor.value.editor.getJSON()),
         post_id:postId
+    }).then(res => {
+        ElMessage.success('发送成功，请等待审核通过。');
+        dialogVisible.value = false;
+        editor.value.editor.commands.clearContent();
+    }).catch(error => {
+        if(error.network) return;
+        switch (error.errorCode) {
+            case 114:
+                ElMessage.error("非认证用户不能回复悬赏贴")
+                break;
+            default:
+                error.defaultHandler("发送失败");
+        }
     })
-    let responseObj = response.data;
-    if(responseObj.errorCode!==200) {
-        ElMessage.error('发送失败，错误码：' + responseObj.errorCode);
-        return;
-    }
-    if(responseObj.data.status!==true) {
-        ElMessage.error('发送失败：' + responseObj.data.msg);
-        return;
-    }
-    ElMessage.success('发送成功，请等待审核通过。');
-    dialogVisible.value = false;
-    editor.value.editor.commands.clearContent();
 }
 
 const onSolutionSet = (comment_id) => {

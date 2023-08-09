@@ -405,6 +405,8 @@ export default {
   components: {UserInfoCard, NewsBlockList, PostCard},
   data(){
     return{
+        isSelf: true,
+
       isFollowed: false,
       followMap: new Map(), // 用来匹配关注列表的已关注和+关注
       myFollowVisible:false,
@@ -442,13 +444,21 @@ export default {
     }
   },
 
+
+
+  mounted() {
+    let userIdNum = parseInt(this.$route.params.userId ? this.$route.params.userId: 0);
+    if(!this.$route.params.userId && !globalData.login){
+        this.$router.push("/login");
+        return;
+    },
   //从数据库获取所需的用户信息
   created() {
     console.log("created")
     this.refresh();
   },
 
-  //进行一些必要的计算工作
+
   computed: {
     //判断输出文字
     authenInfo() {
@@ -512,7 +522,8 @@ export default {
           }
         })
         .catch(error => {
-          console.error(error)
+            if(error.network) return;
+            error.defaultHandler();
         });
         
      
@@ -543,7 +554,8 @@ export default {
 
           })
           .catch(error => {
-            console.error(error)
+            if(error.network) return;
+            error.defaultHandler();
           });
     },
     onFollowBtnClick(userId) {
@@ -564,7 +576,8 @@ export default {
               this.followMap.set(userId, false)
             })
             .catch(error => {
-              console.error(error);
+                if(error.network) return;
+                error.defaultHandler();
             });
       }
       else {
@@ -574,7 +587,8 @@ export default {
               this.isFollowed = false;
             })
             .catch(error => {
-              console.error(error);
+                if(error.network) return;
+                error.defaultHandler();
             });
       }
     },
@@ -588,7 +602,8 @@ export default {
               this.followMap.set(userId, true);
             })
             .catch(error => {
-              console.error(error);
+                if(error.network) return;
+                error.defaultHandler();
             });
       }
       else{
@@ -598,7 +613,8 @@ export default {
               this.isFollowed = true;
             })
             .catch(error => {
-              console.error(error);
+                if(error.network) return;
+                error.defaultHandler();
             });
       }
     },
