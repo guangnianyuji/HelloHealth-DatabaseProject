@@ -451,7 +451,8 @@ export default {
     if(!this.$route.params.userId && !globalData.login){
         this.$router.push("/login");
         return;
-    },
+    }
+  },
   //从数据库获取所需的用户信息
   created() {
     console.log("created")
