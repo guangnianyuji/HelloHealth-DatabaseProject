@@ -429,7 +429,8 @@ export default {
       practiceCertificate:null,//执业证照片
       photoUpload:false,   //头像上传，初始为false
 
-      isCurrentUser:false
+      isCurrentUser:false,
+      CoinRecordList:[]
     }
   },
   
@@ -450,7 +451,8 @@ export default {
     if(!this.$route.params.userId && !globalData.login){
         this.$router.push("/login");
         return;
-    },
+    }
+  },
   //从数据库获取所需的用户信息
   created() {
     console.log("created")
@@ -512,26 +514,24 @@ export default {
           let result=(!this.$route.params.userId)||(this.$route.params.userId==globalData.userInfo.user_id);
           console.log(result)
           this.isCurrentUser=result;
-
+          if(result)
+          {
+            axios.get("/api/HB/record")
+            .then(response=>{
+              this.CoinRecordList=response.data.data.coinRecordList;
+            })
+          }
         })
         .catch(error => {
             if(error.network) return;
             error.defaultHandler();
         });
-
+        
      
     },
 
     goUserPage(userId){
       this.$router.push("/user/"+userId)
-      // this.$router.push({
-      //   path: "/user/"+userId,
-      //   query: {
-      //     keywords: this.input,
-      //     type: this.type,
-      //     date:new Date().getTime()
-      //   }
-      // })
     },
     search(){
       let userIdNum = parseInt(this.$route.params.userId ? this.$route.params.userId: 0);
@@ -629,7 +629,7 @@ export default {
     },
     /*跳转到杏仁币的流水页面函数*/
     goToCoinDetail(){
-      this.$router.push('/detail');
+      this.$router.push('/coinDetail');
     },
     showCertificationDialog() {
       // 显示认证框
