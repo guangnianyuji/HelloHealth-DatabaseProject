@@ -235,7 +235,7 @@ export default
             numbers : ['6', '18', '68', '128','268'],
             CoinRecordList:[],
             RecordNum:0,
-            CoinNum:100,
+            CoinNum:0,
             checkedAgree:ref(false),
         }),
         watch:
@@ -257,11 +257,12 @@ export default
             },
             getCoinRecord()
             {
-                const apiUrl = "/api/coinRecord";
-                axios.get(apiUrl)
+                 
+                axios.get("/api/HB/record")
                 .then(res => {
                 this.CoinRecordList = res.data.data.coinRecordList;    // 获取全部硬币记录列表
                 this.RecordNum = this.CoinRecordList.length;          // 总记录数
+                this.CoinNum=res.data.data.coinNum;
                 console.log("123"+JSON.stringfy(this.CoinRecordList));
           })
             }
