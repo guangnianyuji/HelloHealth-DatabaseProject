@@ -33,15 +33,15 @@
                   </el-dialog>
                   <el-dialog title="我的关注" v-model="myFollowVisible" @close="search">
                     <div class="user-cards">
-                      <el-card class="user-card" v-for="user in followList" :key="user.user_id">
+                      <el-card class="user-card" v-for="user in followList" :key="user">
                         <div class="user-info">
                           <UserInfoCard :user-info="user" @click="goUserPage(user.user_id)"></UserInfoCard>
                           <el-button
-                              :type="followMap.get(user.user_id) ? 'default' : 'primary'"
+                              :type="followMap.get(user.user_id) ? 'primary' : 'default'"
                               style="margin: 20px"
-                              @click="onFollowBtnClick(user.user_id)"
+                              @click="onFollowBtnClick(user.info.user_id)"
                           >
-                            {{ followMap.get(user.user_id) ? '已关注' : '+关注' }}
+                            {{ followMap.get(user.user_id) ? '+ 关注' : '已关注' }}
                           </el-button>
                         </div>
                       </el-card>
@@ -428,42 +428,20 @@ export default {
       photoUpload:false,   //头像上传，初始为false
     }
   },
-  //从数据库获取所需的用户信息
-  mounted() {
-    let userIdNum = parseInt(this.$route.params.userId ? this.$route.params.userId: 0);
-    if(isNaN(userIdNum)){
-      this.$router.replace("/error");
-      return;
+  
+  watch: {
+    $route: {
+      handler: function(route) {
+         
+        this.refresh()
+      },
+      immediate: true
     }
-    axios.get('/api/UserInfo/Details')
-        .then(response => {
-          const responseData = response.data.data.userInfo;
-          this.userInfo = responseData
-          // 将gender的值更改为数组
-          this.userInfo.gender = ["男", "女"]
-          // 将gender的默认值设置为从数据库获取到的性别值
-          if (this.userInfo.gender !== '男' && this.userInfo.gender !== '女') {
-            this.userInfo.gender = '男'
-          }
-          const responseData2 = response.data.data.certification;
-          this.certification = responseData2
-          //this.isLogin = globalData.isLogin; // 获取用户登录状态 change
-          this.followList = response.data.data.followList;
-          this.isFollowed = response.data.data.isFollowed;
+  },
 
-          console.log(this.followList)
-
-          this.followList.forEach(user => {
-            this.followMap.set(user.user_id, true)
-          })
-
-        })
-        .catch(error => {
-          console.error(error)
-        });
-    /* 获取用户发布的帖子 */
-    this.fetchUserPosts(this.userInfo.userID);
-
+  //从数据库获取所需的用户信息
+  created() {
+    this.refresh();
   },
 
   //进行一些必要的计算工作
@@ -486,11 +464,58 @@ export default {
     }
   },
   methods:{
+    refresh(){
+      let userIdNum = parseInt(this.$route.params.userId ? this.$route.params.userId: 0);
+    console.log(userIdNum);
+    if(isNaN(userIdNum)){
+      this.$router.replace("/error");
+      return;
+    }
+    axios.post('/api/UserInfo/Details',{user_id: userIdNum})
+        .then(response => {
+          const responseData = response.data.data.userInfo;
+          this.userInfo = responseData
+          // 将gender的值更改为数组
+          //this.userInfo.gender = ["男", "女"]
+          // 将gender的默认值设置为从数据库获取到的性别值
+          if (this.userInfo.gender != '男' && this.userInfo.gender != '女') {
+            this.userInfo.gender = '男'
+          }
+          const responseData2 = response.data.data.certification;
+          this.certification = responseData2
+          //this.isLogin = globalData.isLogin; // 获取用户登录状态 change
+          this.followList = response.data.data.followList;
+          this.isFollowed = response.data.data.isFollowed;
+
+          console.log(this.followList)
+
+          this.followList.forEach(user => {
+            this.followMap.set(user.user_id, false)
+          })
+
+        })
+        .catch(error => {
+          console.error(error)
+        });
+    /* 获取用户发布的帖子 */
+    this.fetchUserPosts(this.userInfo.userID);
+
+    },
+
     goUserPage(userId){
       this.$router.push("/user/"+userId)
+      // this.$router.push({
+      //   path: "/user/"+userId,
+      //   query: {
+      //     keywords: this.input,
+      //     type: this.type,
+      //     date:new Date().getTime()
+      //   }
+      // })
     },
     search(){
       let userIdNum = parseInt(this.$route.params.userId ? this.$route.params.userId: 0);
+      this.myFollowVisible=false;
       if(isNaN(userIdNum)){
         this.$router.replace("/error");
         return;
@@ -505,7 +530,7 @@ export default {
             console.log(this.followList)
 
             this.followList.forEach(user => {
-              this.followMap.set(user.user_id, false)
+              this.followMap.set(user.info.user_id, false)
             })
 
           })
@@ -620,9 +645,9 @@ export default {
     handleChangeCertification(file,fileList){
       console.log(file,fileList);
       // 判断是医师资格证照片还是执业证照片
-      if (fileList.length === 1) {
+      if (fileList.length == 1) {
         this.qualificationCertificate = file.raw; // 医师资格证照片
-      } else if (fileList.length === 2) {
+      } else if (fileList.length == 2) {
         this.practiceCertificate = file.raw; // 执业证照片
       }
     },
@@ -632,11 +657,11 @@ export default {
       const formData = new FormData();
       // 添加医师资格证照片
       if (this.qualificationCertificate) {
-        formData.append('qualificationCertificate', this.qualificationCertificate);
+        formData.set('qualificationCertificate', this.qualificationCertificate);
       }
       // 添加执业证照片
       if (this.practiceCertificate) {
-        formData.append('practiceCertificate', this.practiceCertificate);
+        formData.set('practiceCertificate', this.practiceCertificate);
       }
       // 发起一个 POST 请求，将 formData 发送给后端服务器
       axios.post('/api/UserInfo/uploadDoctorApproval', formData)
