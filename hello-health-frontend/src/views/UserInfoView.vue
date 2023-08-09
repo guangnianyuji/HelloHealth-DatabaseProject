@@ -738,10 +738,8 @@ export default {
     },
     /* 求获取用户发布的帖子 */
     fetchUserPosts(userID) {
-      axios.get("/api/fetchUserPosts", {
-        params: {
-          userID
-        }
+      axios.post("/api/UserInfo/fetchUserPosts", {
+        user_id:userID
       }).then(res => {
         this.userPosts= res.data.data.post_list;
       })
