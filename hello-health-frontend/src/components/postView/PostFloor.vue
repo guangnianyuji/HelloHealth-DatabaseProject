@@ -121,12 +121,14 @@ const newComments = ref([])
         <div class="userInfoWrapper">
             <div class="header">
                 <UserInfoCard :user-info="floorInfo.author"></UserInfoCard>
-                <el-button type="primary" v-if="floorInfo.author.followed">
-                    <i class="fi fi-rr-plus addIcon"></i><span>关注</span>
-                </el-button>
-                <el-button type="info" plain v-else>
-                    <i class="fi fi-rr-minus addIcon"></i><span>已关注</span>
-                </el-button>
+                <div v-if="globalData.userInfo.user_id !== floorInfo.author.user_id">
+                    <el-button type="primary" v-if="floorInfo.author.followed">
+                        <i class="fi fi-rr-plus addIcon"></i><span>关注</span>
+                    </el-button>
+                    <el-button type="info" plain v-else>
+                        <i class="fi fi-rr-minus addIcon"></i><span>已关注</span>
+                    </el-button>
+                </div>
             </div>
             <div class="info">
                 <div><p>粉丝</p><p>{{floorInfo.author.follower}}</p></div>
