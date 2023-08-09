@@ -77,7 +77,7 @@ const router = createRouter({
                 name: "otherView",
                 component: () => import("@/views/UserInfoView.vue")
             },{
-                path: "detail",
+                path: "coinDetail",
                 name: "coinView",
                 component: ()=>import("@/components/CoinView.vue"),
             },
