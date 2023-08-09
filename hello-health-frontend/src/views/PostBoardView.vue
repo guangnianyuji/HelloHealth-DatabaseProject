@@ -155,6 +155,7 @@ export default{
         {
             type_sort: {
                 type: "Time",
+                number:-1
             } ,//之前选择的类型
             dialogVisible: false,
             post_list: [],

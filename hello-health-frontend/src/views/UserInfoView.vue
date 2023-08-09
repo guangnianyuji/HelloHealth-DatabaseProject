@@ -426,13 +426,15 @@ export default {
       qualificationCertificate:null,//医师资格证照片
       practiceCertificate:null,//执业证照片
       photoUpload:false,   //头像上传，初始为false
+
+      isCurrentUser:false
     }
   },
   
   watch: {
     $route: {
       handler: function(route) {
-         
+         console.log("watch")
         this.refresh()
       },
       immediate: true
@@ -441,6 +443,7 @@ export default {
 
   //从数据库获取所需的用户信息
   created() {
+    console.log("created")
     this.refresh();
   },
 
@@ -458,10 +461,6 @@ export default {
         return '未登录';
       }
     },
-    //判断是否是本人在查看信息页面，来判断该用户是否可对信息进行修改
-    isCurrentUser() {
-      return !this.$route.params.userId;
-    }
   },
   methods:{
     refresh(){
@@ -493,13 +492,23 @@ export default {
             this.followMap.set(user.user_id, false)
           })
 
+              /* 获取用户发布的帖子 */
+          this.fetchUserPosts(this.userInfo.userID);
+        //判断是否是本人在查看信息页面，来判断该用户是否可对信息进行修改
+ 
+          //return !this.$route.params.userId;
+          console.log(this.$route.params.userId)
+          console.log(globalData.userInfo.user_id)
+          let result=(!this.$route.params.userId)||(this.$route.params.userId==globalData.userInfo.user_id);
+          console.log(result)
+          this.isCurrentUser=result;
+
         })
         .catch(error => {
           console.error(error)
         });
-    /* 获取用户发布的帖子 */
-    this.fetchUserPosts(this.userInfo.userID);
 
+     
     },
 
     goUserPage(userId){
@@ -629,7 +638,7 @@ export default {
             // 将下拉框选中的值保存到userInfo.birthday中
             //this.userInfo.birthday=this.userInfo.birthday;
             if (response.data.data.status == true) {
-              ElMessage.success("上传成功，请等待管理员审核！");
+              ElMessage.success("上传成功！");//这个管理员就不审核了
               // 保存成功后将isEdit变量设置为false，禁用编辑模式
               this.isEdit = false;
             } else {
@@ -646,8 +655,11 @@ export default {
       console.log(file,fileList);
       // 判断是医师资格证照片还是执业证照片
       if (fileList.length == 1) {
+        console.log("l1")
         this.qualificationCertificate = file.raw; // 医师资格证照片
-      } else if (fileList.length == 2) {
+      } 
+      else if (fileList.length == 2) {
+        console.log("l2")
         this.practiceCertificate = file.raw; // 执业证照片
       }
     },
@@ -657,12 +669,15 @@ export default {
       const formData = new FormData();
       // 添加医师资格证照片
       if (this.qualificationCertificate) {
+        console.log("que")
         formData.set('qualificationCertificate', this.qualificationCertificate);
       }
       // 添加执业证照片
       if (this.practiceCertificate) {
+        console.log("pra")
         formData.set('practiceCertificate', this.practiceCertificate);
       }
+      console.log(formData);
       // 发起一个 POST 请求，将 formData 发送给后端服务器
       axios.post('/api/UserInfo/uploadDoctorApproval', formData)
           .then(response => {
