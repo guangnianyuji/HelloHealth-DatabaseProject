@@ -35,7 +35,7 @@ const openCommentEditor = () =>{
 }
 
 const reloadPost = ()=>{
-    axios.get("/api/Forum/"+ postId)
+    axios.get("/api/Forum/PostInfo/"+ postId)
         .then((res) => {
                 let responseObj = res.data;
                 if(responseObj.errorCode!==200){

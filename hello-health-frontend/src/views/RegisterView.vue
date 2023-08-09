@@ -49,6 +49,7 @@ import {reactive, ref} from 'vue'
 import axios from "axios";
 import {changeTheme} from "@/assets/changeTheme";
 import router from "@/router";
+import {ElMessage} from "element-plus";
 
 changeTheme('#93b27b')
 
@@ -63,7 +64,7 @@ const repeatPassword = ref('')
 
 const errorMsg = ref('')
 const isError = ref(false)
-const onSubmit = async () => {
+const onSubmit = () => {
     errorMsg.value = ''
     isError.value = false
 
@@ -84,32 +85,31 @@ const onSubmit = async () => {
         errorMsg.value = '请输入验证码！'
         isError.value = true
         return
-    } else if (repeatPassword.value != registerCredential.password) {
+    } else if (repeatPassword.value !== registerCredential.password) {
         errorMsg.value = '两次密码输入不一致！'
         isError.value = true
         return
     }
-    let response = await axios.post('/api/Register', registerCredential)
-    let responseObj = response.data
-    if (responseObj.errorCode !== 200) {
-        errorMsg.value = '错误代码' + responseObj.errorCode
-        isError.value = true
-    } else {
-        if (responseObj.data.status) {
-            isError.value = false
-            errorMsg.value = ''
-            alert('注册成功！')
-            await router.push("/login")
-        } else {
-            if (responseObj.data.errorType == 'wrong verification code') {
+    axios.post('/api/Register', registerCredential).then( response =>{
+        isError.value = false
+        errorMsg.value = ''
+        alert('注册成功！')
+        router.push("/login")
+    }).catch( error => {
+        if(error.network) return;
+        switch(error.errorCode){
+            case 101:
                 errorMsg.value = '验证码错误！'
-                isError.value = true
-            } else if (responseObj.data.errorType == 'phone number already registered') {
+                isError.value = true;
+                break;
+            case 102:
                 errorMsg.value = '用户已存在！'
                 isError.value = true
-            }
+                break;
+            default:
+                error.defaultHandler()
         }
-    }
+    })
 }
 
 const clearErrorBorder = () => {
@@ -146,20 +146,21 @@ const sendVerificationCode = async () => {
         }
     }, 1000);
 
-    let response = await axios.post('/api/Register/SendVerificationCode', requestVerificationCode)
-    let responseObj = response.data
-    if (responseObj.errorCode !== 200) {
-        errorMsg.value = '错误代码' + responseObj.errorCode
-        isError.value = true
-    } else {
-        if (responseObj.data.status === true) {
-            isError.value = false
-            errorMsg.value = ''
-        } else {
-            errorMsg.value = '发送失败，请稍后重试'
-            isError.value = true
+    axios.post('/api/SendVerificationCode', requestVerificationCode).then(response => {
+        isError.value = false
+        errorMsg.value = ''
+        ElMessage.success("发送成功。")
+    }).catch(error => {
+        if(error.network) return;
+        switch (error.errorCode) {
+            case 104:
+                errorMsg.value = '发送失败，请稍后重试'
+                isError.value = true
+                break;
+            default:
+                error.defaultHandler();
         }
-    }
+    })
 }
 </script>
   

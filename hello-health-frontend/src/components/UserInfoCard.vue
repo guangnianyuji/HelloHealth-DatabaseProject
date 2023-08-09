@@ -1,6 +1,8 @@
 <script setup>
 //这是个展示用户的头像、用户名、用户组的组件，具体参考首页左上角
 // 传入一个对象，至少要有user_id、user_name、user_group、avatar_url、verified这5个属性
+import globalData from "@/global/global.js"
+import router from "@/router";
 const props = defineProps({
     userInfo: Object,
     showAvatarBorder: Boolean,
@@ -13,10 +15,19 @@ let userGroupNameDict = {
     "admin": "管理员"
 }
 
+const click = () => {
+    if(props.userInfo.user_id === globalData.userInfo.user_id){
+        if(globalData.login) router.push("/user")
+    }else{
+        router.push("/user/" + props.userInfo.user_id)
+    }
+
+}
+
 </script>
 
 <template>
-    <div class="avatarHolder">
+    <div class="avatarHolder" @click="click">
         <!--TODO:要变成能点击的样式，等个人界面做好-->
         <el-avatar class="avatar" :size="50" :src="userInfo.avatar_url" :class="{showAvatarBorder: showAvatarBorder}"/>
         <div class="userInfoHolder">
@@ -32,6 +43,16 @@ let userGroupNameDict = {
     display: flex;
     align-items: center;
     flex-direction: row;
+    cursor: pointer;
+}
+
+.userInfoHolder{
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.avatarHolder:hover>.userInfoHolder{
+    opacity: 0.7;
 }
 
 

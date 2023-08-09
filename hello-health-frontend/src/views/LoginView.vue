@@ -46,7 +46,7 @@ const loginCredential = reactive({
 
 const errorMsg = ref('')
 const isError = ref(false)
-const onSubmit = async () => {
+const onSubmit = () => {
     errorMsg.value = "";
     isError.value = false;
 
@@ -60,24 +60,21 @@ const onSubmit = async () => {
         isError.value = true
         return
     }
-    //http://192.168.1.104:5144
-    let response = await axios.post("/api/Login",loginCredential)
-    let responseObj = response.data;
-    if(responseObj.errorCode!==200){
-        errorMsg.value = "错误代码" + responseObj.errorCode;
-        isError.value = true;
-    }else{
-        if(responseObj.data.status){
-            isError.value = false;
-            errorMsg.value = ''
-            await router.push("/")
-        }else{
-            errorMsg.value = "用户名或密码错误";
-            isError.value = true;
+    axios.post("/api/Login",loginCredential).then(response => {
+        isError.value = false;
+        errorMsg.value = ''
+        router.push("/")
+    }).catch(error => {
+        if(error.network) return;
+        switch(error.errorCode){
+            case 103:
+                errorMsg.value = "用户名或密码错误";
+                isError.value = true;
+                break;
+            default:
+                error.defaultHandler()
         }
-
-    }
-
+    })
 }
 
 const clearErrorBorder = () =>{
