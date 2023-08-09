@@ -5,7 +5,7 @@ import LinkButtonWithIcon from "@/components/LinkButtonWithIcon.vue";
 import {changeTheme} from "@/assets/changeTheme";
 import router from "@/router";
 import axios from "axios";
-import {onMounted, reactive, ref} from "vue";
+import {onMounted, reactive, ref, watch} from "vue";
 import UserInfoCard from "@/components/UserInfoCard.vue";
 import globalData from "@/global/global"
 import {ElMenuItem, ElSubMenu} from "element-plus";
@@ -41,28 +41,17 @@ const updateNotifications = () =>{
 }
 
 const avatarClicked = () =>{
-    if(isLogin.value){
-        //TODO
-        alert("跳转到个人主页！")
-    }else{
+    if(!isLogin.value){
         router.push("/login")
     }
 }
 
-const menus = [
-    {"title":"首页","icon":"fi-rr-home","path":"/"},
-    {"title":"HH 找药","icon":"fi-rr-capsules","path":"/medicine"},
-    {"title":"收藏管理","icon":"fi-rr-followcollection","path":"collection",
-        "children":[
-            {"title":"药品收藏","icon":"fi-rr-capsules","path":"/medicineCollection"},
-            {"title":"帖子收藏","icon":"fi-rr-memo","path":"/postCollection"},
-        ]
-    },
-    {"title":"健康资讯","icon":"fi-rr-books","path":"/news"},
-    {"title":"HH 论坛","icon":"fi-rr-user-md-chat","path":"/forum"},
-    {"title":"健康日程档案","icon":"fi-rr-calendar-clock","path":"/calendar"},
-    {"title":"个人信息管理","icon":"fi-rr-user-gear","path":"/user"},
-];
+const menus = reactive({v:[
+        {"title":"首页","icon":"fi-rr-home","path":"/"},
+        {"title":"HH 找药","icon":"fi-rr-capsules","path":"/medicine"},
+        {"title":"健康资讯","icon":"fi-rr-books","path":"/news"},
+        {"title":"HH 论坛","icon":"fi-rr-user-md-chat","path":"/forum"},
+    ]});
 
 let userInfo = reactive({
     data:{
@@ -79,18 +68,32 @@ let userInfo = reactive({
 
 const isLogin = ref(false);
 
-(async ()=>{
-    let response = await axios.get("/api/UserInfo")
 
-    if(response.data.errorCode!==200) return;
-    let responseObj = response.data.data
+axios.get("/api/UserInfo").then(response => {
+    let responseObj = response.json
     isLogin.value = responseObj.login;
-
     if(!responseObj.login) return;
+    menus.v = [
+        {"title":"首页","icon":"fi-rr-home","path":"/"},
+        {"title":"HH 找药","icon":"fi-rr-capsules","path":"/medicine"},
+        {"title":"收藏管理","icon":"fi-rr-followcollection","path":"collection",
+            "children":[
+                {"title":"药品收藏","icon":"fi-rr-capsules","path":"/medicineCollection"},
+                {"title":"帖子收藏","icon":"fi-rr-memo","path":"/postCollection"},
+            ]
+        },
+        {"title":"健康资讯","icon":"fi-rr-books","path":"/news"},
+        {"title":"HH 论坛","icon":"fi-rr-user-md-chat","path":"/forum"},
+        {"title":"健康日程档案","icon":"fi-rr-calendar-clock","path":"/calendar"},
+        {"title":"个人信息管理","icon":"fi-rr-user-gear","path":"/user"}
+    ]
     globalData.login = true;
     userInfo.data = responseObj
     globalData.userInfo = userInfo.data
-})()
+}).catch(error => {
+    error.defaultHandler();
+})
+
 
 const getSidebarPath = () => {
     let path = router.currentRoute.value.path.split("/")
@@ -104,10 +107,11 @@ const getSidebarPath = () => {
 }
 
 const menu = ref();
+let contentDom = undefined;
 onMounted(()=>{
     (()=>{
         let menuItemNow = getSidebarPath();
-        for(let item of menus){
+        for(let item of menus.v){
             if(!item.children) continue;
             for(let child of item.children){
                 if(child.path===menuItemNow){
@@ -115,7 +119,13 @@ onMounted(()=>{
                 }
             }
         }
+        contentDom = document.querySelector(".content")
     })()
+})
+
+
+watch(router.currentRoute, () => {
+    contentDom.scrollTo({left: 0, top: 0})
 })
 
 </script>
@@ -161,7 +171,7 @@ onMounted(()=>{
 
 
                 <el-menu :default-active="getSidebarPath()" class="sideBarMenu" ref="menu">
-                    <component v-for="item in menus" :is="item.children ? ElSubMenu : ElMenuItem" :index="item.path" v-on="item.children ? {}: {click: menuItemClick}">
+                    <component v-for="item in menus.v" :is="item.children ? ElSubMenu : ElMenuItem" :index="item.path" v-on="item.children ? {}: {click: menuItemClick}">
                         <template #title>
                             <i class="fi" :class="item.icon"></i>
                             <span>{{item.title}}</span>
@@ -264,6 +274,5 @@ onMounted(()=>{
 .userInfoWrapper{
     padding: 10px 20px;
     border-bottom: 1px #eee solid;
-    cursor: pointer;
 }
 </style>

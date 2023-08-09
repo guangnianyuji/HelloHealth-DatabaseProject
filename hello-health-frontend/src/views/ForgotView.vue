@@ -47,6 +47,7 @@ import {reactive, ref} from 'vue'
 import axios from "axios";
 import {changeTheme} from "@/assets/changeTheme";
 import router from "@/router";
+import {ElMessage} from "element-plus";
 
 changeTheme("#93b27b")
 
@@ -81,33 +82,32 @@ const onSubmit = async () => {
         errorMsg.value = '请输入新密码！'
         isError.value = true
         return
-    } else if (repeatPassword.value != forgotPasswordCredential.password) {
+    } else if (repeatPassword.value !== forgotPasswordCredential.password) {
         errorMsg.value = '两次密码输入不一致！'
         isError.value = true
         return
     }
 
-    let response = await axios.post("/api/Register/ForgotPassword",forgotPasswordCredential)
-    let responseObj = response.data;
-    if(responseObj.errorCode!==200){
-        errorMsg.value = "错误代码" + responseObj.errorCode;
-        isError.value = true;
-    } else{
-        if(responseObj.data.status){
-            isError.value = false;
-            errorMsg.value = ''
-            alert('密码重设成功！')
-            await router.push("/login")
-        } else{
-            if (responseObj.data.errorType == 'wrong verification code') {
+    axios.post("/api/Register/ForgotPassword",forgotPasswordCredential).catch(response => {
+        isError.value = false;
+        errorMsg.value = ''
+        alert('密码重设成功！')
+        router.push("/login")
+    }).then(error => {
+        if(error.network) return;
+        switch(error.errorCode){
+            case 105:
                 errorMsg.value = '验证码错误！'
                 isError.value = true
-            } else if (responseObj.data.errorType == 'phone number not registered') {
+                break;
+            case 106:
                 errorMsg.value = '用户不存在！'
                 isError.value = true
-            }
+                break;
+            default:
+                error.defaultHandler()
         }
-    }
+    })
 }
 
 const clearErrorBorder = () =>{
@@ -144,20 +144,21 @@ const sendVerificationCode = async () => {
         }
     }, 1000);
 
-    let response = await axios.post('/api/SendVerificationCode', requestVerificationCode)
-    let responseObj = response.data
-    if (responseObj.errorCode !== 200) {
-        errorMsg.value = '错误代码' + responseObj.errorCode
-        isError.value = true
-    } else {
-        if (responseObj.data.status === true) {
-            isError.value = false
-            errorMsg.value = ''
-        } else {
-            errorMsg.value = '发送失败，请稍后重试'
-            isError.value = true
+    axios.post('/api/SendVerificationCode', requestVerificationCode).then(response => {
+        isError.value = false
+        errorMsg.value = ''
+        ElMessage.success("发送成功。")
+    }).catch(error => {
+        if(error.network) return;
+        switch (error.errorCode) {
+            case 104:
+                errorMsg.value = '发送失败，请稍后重试'
+                isError.value = true
+                break;
+            default:
+                error.defaultHandler();
         }
-    }
+    })
 }
 </script>
 
