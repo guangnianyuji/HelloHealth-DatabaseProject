@@ -155,6 +155,9 @@ export default{
         {
             type_sort: {
                 type: "Time",
+                number: 9,
+                page: 1
+                // TODO: 加个页号选择
             } ,//之前选择的类型
             dialogVisible: false,
             post_list: [],
@@ -179,15 +182,14 @@ export default{
                 this.sortBy();
             },
             sortBy(){
-                axios
-                    .post("/api/Forum/SortBy", this.type_sort)
+                axios.post("/api/Forum/SortBy", this.type_sort)
                     .then((res)=> {
-                        this.post_list= res.data.data.post_list;
-                        this.tags = res.data.data.tags;
+                        this.post_list= res.json.post_list;
+                        this.tags = res.json.tags;
                     })
-                    .catch((errMsg) => {
-                        console.log(errMsg);
-                        this.loading = false;
+                    .catch((error) => {
+                        if(error.network) return;
+                        error.defaultHandler("加载帖子出错");
                     });
             },
             openPostEditor() {
@@ -216,26 +218,22 @@ export default{
                     return;
                 }
                 this.newPostInfo.content = JSON.stringify(this.$refs.editor.editor.getJSON())
-                let response = await axios.post("/api/Forum/SendPost",this.newPostInfo)
-                let responseObj = response.data;
-                if(responseObj.errorCode!==200) {
-                    ElMessage.error('发送失败，错误码：' + responseObj.errorCode);
-                    return;
-                }
-                if(responseObj.data.status!==true) {
-                    ElMessage.error('发送失败：' + responseObj.data.msg);
-                    return;
-                }
-                ElMessage.success('发送成功，请等待审核通过。');
-                this.dialogVisible = false;
-                this.$refs.editor.editor.commands.clearContent();
-                this.newPostInfo = {
-                    title:"",
-                    is_bounty: false,
-                    bounty_value: 0,
-                    content: "",
-                    tags: []
-                }
+                axios.post("/api/Forum/SendPost",this.newPostInfo).then( res =>{
+                    ElMessage.success('发送成功，请等待审核通过。');
+                    this.dialogVisible = false;
+                    this.$refs.editor.editor.commands.clearContent();
+                    this.newPostInfo = {
+                        title:"",
+                        is_bounty: false,
+                        bounty_value: 0,
+                        content: "",
+                        tags: []
+                    }
+                }).catch(error => {
+                    if(error.network) return;
+                    error.defaultHandler("发送失败");
+                })
+
             }
         },
     created(){
