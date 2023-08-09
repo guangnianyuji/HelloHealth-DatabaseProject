@@ -36,6 +36,7 @@ const showReplyBar = ref(false)
 
 const closeAllReplyBar = () =>{
     showReplyBar.value = false;
+    if(!comments.value) return;
     for(let [k,comment] of Object.entries(comments.value)){
         comment.showComment = false;
     }
@@ -79,19 +80,10 @@ const onReplySubmit = (content,reply_user_info,handler) =>{
         reply_user_id: reply_user_info ? reply_user_info.user_id: -1
     })
         .then((res)=> {
-            let responseObj = res.data;
-            if(responseObj.errorCode!==200) {
-                ElMessage.error('发送失败，错误码：' + responseObj.errorCode);
-                return;
-            }
-            if(responseObj.data.status!==true) {
-                ElMessage.error('发送失败：' + responseObj.data.msg);
-                return;
-            }
             ElMessage.success('发送成功。');
             newComments.value.push({
                 content: content.value,
-                comment_id: responseObj.data.comment_id,
+                comment_id: res.json.comment_id,
                 like: {
                     status: false,
                     num: 0
@@ -99,15 +91,15 @@ const onReplySubmit = (content,reply_user_info,handler) =>{
                 author: globalData.userInfo,
                 comment_user_id: reply_user_info ? reply_user_info.user_id : -1,
                 comment_user_name: reply_user_info ? reply_user_info.user_name : '',
-                post_time: responseObj.data.post_time
+                post_time: res.json.post_time
 
             })
             handler()
             emits("replyClicked");
         })
-        .catch((errMsg) => {
-            console.log(errMsg);
-            ElMessage.error(errMsg);
+        .catch((error) => {
+            if(error.network) return;
+            error.defaultHandler("发送失败");
         });
 
 }

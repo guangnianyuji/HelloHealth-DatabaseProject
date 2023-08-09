@@ -5,7 +5,7 @@ import LinkButtonWithIcon from "@/components/LinkButtonWithIcon.vue";
 import {changeTheme} from "@/assets/changeTheme";
 import router from "@/router";
 import axios from "axios";
-import {onMounted, reactive, ref, watch} from "vue";
+import {onBeforeMount, onMounted, reactive, ref, watch} from "vue";
 import UserInfoCard from "@/components/UserInfoCard.vue";
 import globalData from "@/global/global"
 import {ElMenuItem, ElSubMenu} from "element-plus";
@@ -67,7 +67,7 @@ let userInfo = reactive({
 });
 
 const isLogin = ref(false);
-
+const loadComplete = ref(true);
 
 axios.get("/api/UserInfo").then(response => {
     let responseObj = response.json
@@ -87,6 +87,11 @@ axios.get("/api/UserInfo").then(response => {
         {"title":"健康日程档案","icon":"fi-rr-calendar-clock","path":"/calendar"},
         {"title":"个人信息管理","icon":"fi-rr-user-gear","path":"/user"}
     ]
+    loadComplete.value = false;
+    // 等菜单卸载完了再改回来
+    setTimeout(()=>{
+        loadComplete.value = true
+    },0)
     globalData.login = true;
     userInfo.data = responseObj
     globalData.userInfo = userInfo.data
@@ -170,7 +175,7 @@ watch(router.currentRoute, () => {
                 </div>
 
 
-                <el-menu :default-active="getSidebarPath()" class="sideBarMenu" ref="menu">
+                <el-menu v-if="loadComplete" :default-active="getSidebarPath()" class="sideBarMenu" ref="menu">
                     <component v-for="item in menus.v" :is="item.children ? ElSubMenu : ElMenuItem" :index="item.path" v-on="item.children ? {}: {click: menuItemClick}">
                         <template #title>
                             <i class="fi" :class="item.icon"></i>

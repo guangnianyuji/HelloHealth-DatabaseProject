@@ -53,8 +53,8 @@ export default
                     comment_id: this.comment_id
                 },{doNotShowLoadingScreen: true})
                 .then((res) => {
-                    this.is_liked = res.data.data.status;
-                    this.like_num = res.data.data.comment_like_num;
+                    this.is_liked = res.json.status;
+                    this.like_num = res.json.comment_like_num;
                     let message;
                     if (this.is_liked === true) {
                         message = "点赞成功！"
@@ -66,7 +66,9 @@ export default
                         message: message,
                         type: 'success',
                     })
-                });
+                }).catch(error => {
+                    error.defaultHandler("操作失败")
+            });
         },
     },
     created(){

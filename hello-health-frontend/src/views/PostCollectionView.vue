@@ -98,52 +98,50 @@ const handleCurrentChange = (newPage) => {
   updatePostCollectionList();
 };
 
-async function updatePostCollectionList() {
-  const requestPostCollection = {
-    currentPage: currentPage.value,
-    pageSize: pageSize.value
-  };
-  let response = await axios.get('/api/PostCollection', requestPostCollection);
-  let responseObj = response.data;
-  if (responseObj.errorCode !== 200) {
-    alert('错误代码' + responseObj.errorCode);
-    return;
-  }
-  list.value = responseObj.data.list;
-  total.value = parseInt(responseObj.data.total);
-  cancelled.value = [];
-  for(let i = 0; i < list.value.length; i++) {
-    cancelled.value[list.value[i].id] = false;
-  }
+function updatePostCollectionList() {
+    const requestPostCollection = {
+        currentPage: currentPage.value,
+        pageSize: pageSize.value
+    };
+    axios.post('/api/PostCollection', requestPostCollection).then(res => {
+        list.value = res.json.list;
+        total.value = parseInt(res.json.total);
+        cancelled.value = [];
+        for(let i = 0; i < list.value.length; i++) {
+            cancelled.value[list.value[i].id] = false;
+        }
+    }).catch(error => {
+        if(error.network) return;
+        error.defaultHandler('加载收藏帖失败')
+    })
 }
 
-async function changeStar(id) {
+function changeStar(id) {
   cancelled.value[id] = !cancelled.value[id];
   const requestCancelPostStar = {
     operate: 1,
     post_id: id
   }
-  let response = await axios.post('/api/Post/Star', requestCancelPostStar)
-  let responseObj = response.data
-  if (responseObj.errorCode !== 200) {
-    alert('错误代码' + responseObj.errorCode);
-    return;
-  }
-  if (cancelled.value[id]) {
-    ElMessage({
-      showClose: true,
-      message: '取消收藏成功！',
-      type: 'success',
-    })
-  }
-  else {
-    ElMessage({
-      showClose: true,
-      message: '收藏成功！',
-      type: 'success',
-    })
-  }
-};
+  axios.post('/api/Post/Star', requestCancelPostStar).then(res => {
+      if (cancelled.value[id]) {
+          ElMessage({
+              showClose: true,
+              message: '取消收藏成功！',
+              type: 'success',
+          })
+      }
+      else {
+          ElMessage({
+              showClose: true,
+              message: '收藏成功！',
+              type: 'success',
+          })
+      }
+  }).catch(error => {
+      if(error.network) return;
+      error.defaultHandler(cancelled.value[id] ? '取消收藏失败' : '收藏失败')
+  })
+}
 
 onMounted(() => {
   updatePostCollectionList();
