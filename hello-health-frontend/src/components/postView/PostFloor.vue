@@ -18,6 +18,7 @@ import SetSolutionButton from "@/components/postBoardView/SetSolutionButton.vue"
 const prop = defineProps({
     floorInfo:Object,
     title:String,
+    postId:String,
     isBounty:Boolean,
     bountyValue:Number,
     solution:Number,
@@ -164,7 +165,7 @@ const newComments = ref([])
                     <LikeButton :comment_id="floorInfo.comment_id" :like-info="floorInfo.reward.like"></LikeButton>
                     <CoinButton :comment_id="floorInfo.comment_id" :coin-info="floorInfo.reward.coin">
                     </CoinButton>
-                    <StarButton v-if="title" :comment_id="floorInfo.comment_id" :star-info="starInfo"></StarButton>
+                    <StarButton v-if="title" :post_id="postId" :star-info="starInfo"></StarButton>
 
                     <div class="replyButton" @click="openReplyBar">
                         评论
