@@ -8,10 +8,10 @@
                     <div class="main-welcome">
                         <div class="welcome">Welcome To<br />HelloHealth</div>
 
-                        <div class="contenttext"> 
+                        <div class="contenttext">
                             <p><h2>探寻健康之门，启程HelloHealth</h2></p>
                             <p> &nbsp;</p>
-                           
+
                             <h2>
                                 <p>
                                     加入我们，赋予生命更多的关爱与呵护
@@ -29,17 +29,17 @@
                         <div>登录 / 注册</div>
                         <svg fill="none" viewBox="0 0 24 24" height="25px" width="25px" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linejoin="round" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"
-                                stroke="white" d="M11.6801 14.62L14.2401 12.06L11.6801 9.5"></path>
+                                  stroke="white" d="M11.6801 14.62L14.2401 12.06L11.6801 9.5"></path>
                             <path stroke-linejoin="round" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"
-                                stroke="white" d="M4 12.0601H14.17"></path>
+                                  stroke="white" d="M4 12.0601H14.17"></path>
                             <path stroke-linejoin="round" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"
-                                stroke="white" d="M12 4C16.42 4 20 7 20 12C20 17 16.42 20 12 20"></path>
+                                  stroke="white" d="M12 4C16.42 4 20 7 20 12C20 17 16.42 20 12 20"></path>
                         </svg>
                     </button>
                 </div>
 
                 <svg class="vector" width="600" height="600" viewBox="0 0 600 600" fill="none"
-                    xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                     xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                     <path d="M600 0H0V600H600V0Z" fill="url(#pattern0)" />
                     <defs>
                         <pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
@@ -52,164 +52,128 @@
         </div>
 
         <div class="part">
-        
-        <el-row>
-            <el-col :span="12">
-                <NewsCarousel/>
-        <!-- 
-        <el-carousel >
-            <el-carousel-item v-for="item in 4" :key="item">
-                <img :src="flashPic(item)" style="width:100%;height: 100%;border-radius: 50px;">
-            </el-carousel-item>
-        </el-carousel>
-        -->
-            </el-col>
 
-            <el-col :span="12">
-                <div style="margin-left: 10%;margin-top:10%;">
-                    <div style="font-size: xx-large;">
-                        <b>健康资讯</b>
-                    </div>
-                         
-                    <div style="margin-top:1%;color: #9eb4cb; ">
-                        为您推荐最新的医疗健康讯息
-                    </div>
+            <el-row>
+                <el-col :span="12">
+                    <NewsCarousel/>
+                    <!--
+                    <el-carousel >
+                        <el-carousel-item v-for="item in 4" :key="item">
+                            <img :src="flashPic(item)" style="width:100%;height: 100%;border-radius: 50px;">
+                        </el-carousel-item>
+                    </el-carousel>
+                    -->
+                </el-col>
 
-                    <div style="margin-top:5%; ">
-                        <button class="detailButton" @click="go('news')">
-                            <i class="fi fi-rr-books"></i> &nbsp;&nbsp;点击进入
-                        <div class="detailHoverEffect">
-                        <div>
+                <el-col :span="12">
+                    <div style="margin-left: 10%;margin-top:10%;">
+                        <div style="font-size: xx-large;">
+                            <b>健康资讯</b>
                         </div>
-                         </div>
-                        </button>
+
+                        <div style="margin-top:1%;color: #9eb4cb; ">
+                            为您推荐最新的医疗健康讯息
+                        </div>
+
+                        <div style="margin-top:5%; ">
+                            <button class="detailButton" @click="go('news')">
+                                <i class="fi fi-rr-books"></i> &nbsp;&nbsp;点击进入
+                                <div class="detailHoverEffect">
+                                    <div>
+                                    </div>
+                                </div>
+                            </button>
+                        </div>
+
                     </div>
 
-                </div>     
+                </el-col>
 
-            </el-col>
-        
 
-        </el-row>
-        
+            </el-row>
+
         </div>
 
 
         <div class="part">
             <div class="functionTitle">
-                    <div style="font-size: xx-large;">
-                        <b>特色功能</b>
-                    </div>
+                <div style="font-size: xx-large;">
+                    <b>特色功能</b>
+                </div>
 
-                    <div style="color: #9eb4cb; " class="functionDesc">
-                      我们提供全方位、用户友好的健康管理和交流平台。通过HH找药查看和收藏药品信息；通过健康日历便捷管理健康日程，设置提醒，记录体征数据；在HH论坛参与社区互动。
-                    </div>
+                <div style="color: #9eb4cb; " class="functionDesc">
+                    我们提供全方位、用户友好的健康管理和交流平台。通过HH找药查看和收藏药品信息；通过健康日历便捷管理健康日程，设置提醒，记录体征数据；在HH论坛参与社区互动。
+                </div>
 
             </div>
 
             <div class="functionRow">
-                <el-row gutter="30">
+                <el-row :gutter="30">
                     <el-col :span="8">
-                    <div class="part-el-card">
-                        
-                        <div class="icon-circle" style="background-color: #f3effb">
-
-                          
-                        <i class="fi fi-rs-medicine" style="color:#c6b4e8"></i>
-                         
-                         
-                        </div>
-
-                        <div class="part-el-card-title">
-                            HH找药
-                        </div>
-
-                        <div class="part-el-card-space" style="color: #9eb4cb; ">
-                            <p>系统全面的药品专栏库和科学权威的药品信息。</p>
-                            <p>药品分类查找和搜索功能，药品收藏功能。</p>
-                            <p>囊括常见可靠的保健品和药膳，智能推荐药品。</p>
-                        </div>
-
-                        <div class="part-el-card-space" style="text-align: center;">
-                        
-                            <button class="detailButton" @click="go('medicine')">
-                            <i class="fi-rr-capsules"></i> &nbsp;&nbsp;点击进入
-                            <div class="detailHoverEffect">
-                                <div>
-                                </div>
+                        <div class="part-el-card">
+                            <div class="icon-circle" style="background-color: #f3effb">
+                                <i class="fi fi-rs-medicine" style="color:#c6b4e8"></i>
                             </div>
-                        </button>
-                        
-                    </div>
-                         
-                    </div>
+                            <div class="part-el-card-title">
+                                HH找药
+                            </div>
+                            <div class="part-el-card-space cardDesc" >
+                                <p>系统全面的药品专栏库和科学权威药品信息。</p>
+                                <p>药品分类查找和搜索功能，药品收藏功能。</p>
+                                <p>囊括常见可靠的保健品和药膳，智能推荐药品。</p>
+                            </div>
+
+                            <div class="part-el-card-space" style="text-align: center;">
+                                <button class="detailButton" @click="go('medicine')">
+                                    <i class="fi-rr-capsules"></i> &nbsp;&nbsp;点击进入
+                                    <div class="detailHoverEffect"><div></div></div>
+                                </button>
+                            </div>
+                        </div>
                     </el-col>
 
                     <el-col :span="8">
-                    <div class="part-el-card">
-                        
-                        <div div class="icon-circle" style="background-color: #eaf7f0">
+                        <div class="part-el-card">
+                            <div class="icon-circle" style="background-color: #eaf7f0">
+                                <i class="fi fi-rr-pulse" style="color:#64c58d"></i>
+                            </div>
 
-                          
-                        <i class="fi fi-rr-pulse" style="color:#64c58d"></i>
-                        
-                        </div>   
-
-                        <div class="part-el-card-title">
-                            健康日程管理
-                        </div>                        
-                        
-                        <div class="part-el-card-space" style="color: #9eb4cb; ">
-                          <p>在日历中管理您的每日健康事项：饮食、运动、服药、医嘱提示...</p>
-                          <p>设置HH健康助手跟踪您的事项完成情况，一切尽在掌握。</p>
-                          <p>记录您的体检报告，动态监测血糖、血压、血脂等体征数据。</p>
+                            <div class="part-el-card-title">
+                                健康日程管理
+                            </div>
+                            <div class="part-el-card-space cardDesc">
+                                <p>在日历中管理您的每日健康事项：饮食、运动、服药、医嘱提示...</p>
+                                <p>设置HH健康助手跟踪您的事项完成情况，一切尽在掌握。</p>
+                            </div>
+                            <div class="part-el-card-space" style="text-align: center;">
+                                <button class="detailButton" @click="go('calendar')">
+                                    <i class="fi-rr-calendar-clock"></i> &nbsp;&nbsp;点击进入
+                                    <div class="detailHoverEffect"><div></div></div>
+                                </button>
+                            </div>
                         </div>
-
-                        <div class="part-el-card-space" style="text-align: center;">
-                        <button class="detailButton" @click="go('calendar')">
-                            <i class="fi-rr-calendar-clock"></i> &nbsp;&nbsp;点击进入
-                        <div class="detailHoverEffect">
-                        <div>
-                        </div>
-                         </div>
-                        </button>
-                        </div>
-                         
-                    </div>
                     </el-col>
 
                     <el-col :span="8">
+                        <div class="part-el-card">
+                            <div class="icon-circle" style="background-color: #ebf3fe">
+                                <i class="fi fi-rs-syringe" style="color:#2f80ed"></i>
+                            </div>
 
-                    <div class="part-el-card">
-                        
-                        <div div class="icon-circle" style="background-color: #ebf3fe">
-
-                        
-                        <i class="fi fi-rs-syringe" style="color:#2f80ed"></i>
-                         
-                         
+                            <div class="part-el-card-title">
+                                HH论坛
+                            </div>
+                            <div class="part-el-card-space cardDesc">
+                                <p>发布您的提问或者分享您的经验，具有专业医生资质的用户将为您答疑解惑。</p>
+                                <p>为优质帖子点赞、收藏、投币，参与社区互动，共享信息，建立联系。</p>
+                            </div>
+                            <div class="part-el-card-space" style="text-align: center;">
+                                <button class="detailButton" @click="go('forum')">
+                                    <i class="fi-rr-user-md-chat"></i> &nbsp;&nbsp;点击进入
+                                    <div class="detailHoverEffect"><div></div></div>
+                                </button>
+                            </div>
                         </div>
-                         
-                        <div class="part-el-card-title">
-                            HH论坛
-                        </div>
-
-                        <div class="part-el-card-space" style="color: #9eb4cb; ">
-                          <p>发布您的提问或者分享您的经验，具有专业医生资质的用户将为您答疑解惑。</p>
-                          <p>为优质帖子点赞、收藏、投币，参与社区互动，共享信息，建立联系。</p>
-                        </div>
-
-                        <div class="part-el-card-space" style="text-align: center;">
-                        <button class="detailButton" @click="go('forum')">
-                            <i class="fi-rr-user-md-chat"></i> &nbsp;&nbsp;点击进入
-                        <div class="detailHoverEffect">
-                        <div>
-                        </div>
-                         </div>
-                        </button>
-                        </div>
-
-                    </div>
                     </el-col>
 
                 </el-row>
@@ -221,42 +185,42 @@
             <div style="background-color: #00bfa8;">
                 <el-row style="width: 80%; margin: 0 auto;">
                     <el-col :span="8">
-                       <div class="footer-part">
+                        <div class="footer-part">
 
-                         <div class="footer-title">
-                            HelloHealth
+                            <div class="footer-title">
+                                HelloHealth
+                            </div>
+
                         </div>
-
-                      </div> 
                     </el-col>
 
                     <el-col :span="8">
-                       <div class="footer-part">
+                        <div class="footer-part">
 
-                         <div class="footer-title">
-                            Our Team
+                            <div class="footer-title">
+                                Our Team
+                            </div>
+
+                            <div class="footer-content">
+                                <el-row>
+                                    <el-col :span="12" v-for="name in We" :key="name">
+                                        <div style="margin-top:10%"> {{name}} </div>
+                                    </el-col>
+                                </el-row>
+                            </div>
+
                         </div>
-
-                        <div class="footer-content">
-                        <el-row>
-                            <el-col :span="12" v-for="name in We" :key="name">
-                               <div style="margin-top:10%"> {{name}} </div>
-                            </el-col>
-                        </el-row>
-                        </div>
-
-                      </div> 
                     </el-col>
 
 
                     <el-col :span="8">
-                       <div class="footer-part">
+                        <div class="footer-part">
 
-                         <div class="footer-title">
-                            Contact Us
+                            <div class="footer-title">
+                                Contact Us
+                            </div>
+
                         </div>
-
-                      </div> 
                     </el-col>
 
                 </el-row>
@@ -268,8 +232,8 @@
                 </div>
             </div>
         </div>
-        
-         
+
+
     </div>
 </template>
 <script>
@@ -278,11 +242,11 @@ import router from "@/router";
 import {ElMessage} from "element-plus";
 import NewsCarousel from "../components/NewsCarousel.vue";
 export default {
-    
+
     components: {NewsCarousel},
     props: {},
     data() {
-          
+
         return {
             We:['guangnianyuji','Huge_Black','bulu','luriak','a-little-dust','cicada1212','wukef2425','Karrr-Angel','mint3242','wyfjc'],
         }
@@ -298,15 +262,15 @@ export default {
             if(place==='login')
             {
                 if(globalData.login)
-               {
+                {
                     ElMessage.success('您已登录！')
                     return;
-               }
+                }
             }
-            
+
             let pathname="/"+place;
             console.log(pathname);
-             router.push(pathname)
+            router.push(pathname)
         }
     },
 };
@@ -327,16 +291,24 @@ export default {
     font-weight:600;
 }
 .icon-circle{
-    width: 5vw; 
+    width: 5vw;
     height: 5vw;
-    border-radius: 50%;  
+    border-radius: 50%;
     text-align: center;
-    
+
 }
 
 .part-el-card-space{
+    color: #9eb4cb;
     margin: 5% 0;
 }
+
+.cardDesc{
+    height: 150px;
+    max-height: 150px;
+    overflow: hidden;
+}
+
 .part-el-card-title{
     font-size:xx-large;
     font-weight:600;
@@ -400,8 +372,8 @@ export default {
 
 .welcome {
     background-image: linear-gradient(96.14deg,
-            rgba(0, 191, 168, 1) 0%,
-            #0093bf 100%);
+    rgba(0, 191, 168, 1) 0%,
+    #0093bf 100%);
     -webkit-background-clip:text;
     -webkit-text-fill-color:transparent;
 
@@ -531,6 +503,7 @@ export default {
     align-items: center;
     justify-content: center;
     z-index: 1;
+    cursor: pointer;
 }
 
 .detailHoverEffect div {
@@ -586,5 +559,6 @@ export default {
     display: flex;
     gap: 5%;
 }
+
 </style>
   
