@@ -482,6 +482,7 @@ export default {
       this.$router.replace("/error");
       return;
     }
+    console.log("此时refresh的id"+userIdNum)
     axios.post('/api/UserInfo/Details',{user_id: userIdNum})
         .then(response => {
           const responseData = response.data.data.userInfo;
