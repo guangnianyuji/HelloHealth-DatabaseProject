@@ -45,7 +45,7 @@ export default
                 this.changeStar();
             },
             changeStar() {
-                axios.post("/api/Post/Star",{
+                axios.post("/api/Forum/Star",{
                     operate: 1,
                     post_id: parseInt(this.post_id)
                 },{doNotShowLoadingScreen: true}).then((res)=>{
