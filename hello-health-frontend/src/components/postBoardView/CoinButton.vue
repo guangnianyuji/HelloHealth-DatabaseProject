@@ -71,8 +71,10 @@ export default {
                                 coin_value: coinValue
                             })
                                 .then((res) => {
+                                   
                                     this.is_coined = res.json.status;
                                     this.coin_num = res.json.comment_coin_num;
+                                    console.log(this.coin_num)
                                     ElMessage({
                                         message: "投币成功！",
                                         type: "success",
