@@ -2,26 +2,49 @@
 import {reactive, ref} from "vue";
 import router from "@/router";
 import axios from "axios";
-import {ElMessage} from "element-plus";
 
-const messages = reactive({data:[
+const showingMessages = reactive({data:[]})
 
-]})
+const messages = reactive({data:[]})
 const isLoading = ref(false);
+
+const showMsg = ref(true)
+
+const isExpended = ref(false)
+
+const toggleExpended = () => {
+    isExpended.value = !isExpended.value
+    showMsg.value = false
+    copyShowingMsg()
+    setTimeout(()=>{
+        showMsg.value = true
+    },0)
+}
+
+// 将要展示的msg复制到showingMessages
+const copyShowingMsg = () => {
+    showingMessages.data = []
+    for(let msg of messages.data){
+        if(isExpended.value || msg.unread){
+            showingMessages.data.push(msg)
+        }
+    }
+}
+
 const getNotification = () => {
     isLoading.value = true
+    isExpended.value = false
     axios.get("/api/Notification",{doNotShowLoadingScreen: true}).then((res) => {
-        isLoading.value = false
-        if (res.data.errorCode !== 200){
-            ElMessage.error("加载失败，错误码 " + res.data.errorCode)
-            return
-        }
-        let responseObj = res.data
-        if (responseObj.data.status !== true){
-            ElMessage.error("加载失败 " + responseObj.data.msg);
-            return;
-        }
-        messages.data = responseObj.data.notifications;
+        isLoading.value = false;
+        showMsg.value = false;
+        messages.data = res.json.notifications;
+        copyShowingMsg()
+        setTimeout(()=>{
+            showMsg.value = true
+        },0)
+    }).catch(error => {
+        if(error.network) return;
+        error.defaultHandler("消息加载失败");
     })
 }
 
@@ -32,6 +55,7 @@ const goUrl = (url) => {
 
 const clearMessages = () => {
     messages.data = [];
+    showingMessages.data = [];
     axios.get("/api/NotificationClear",{doNotShowLoadingScreen: true})
 }
 </script>
@@ -41,10 +65,17 @@ const clearMessages = () => {
         消息通知
     </p>
     <div class="messageWrapper">
-        <p class="messagePlaceHolder" v-if="messages.data.length===0">
-            {{isLoading ? "加载中":"没有消息"}}
+        <p class="messagePlaceHolder" v-if="showingMessages.data.length===0">
+            {{
+                (()=>{
+                    if(isLoading) return "加载中"
+                    if(messages.data.length===0) return "没有消息"
+                    if(showingMessages.data.length===0) return "没有新消息"
+                })()
+
+            }}
         </p>
-        <div class="messageEntry" v-for="item of messages.data" :class="{clickable:item.url}" @click="goUrl(item.url)">
+        <div class="messageEntry" v-if="showMsg" v-for="item of showingMessages.data" :class="{clickable:item.url}" @click="goUrl(item.url)">
             <div class="content">
                 <span class="dotWrapper" v-if="item.unread">
                     <span class="unreadDot"></span>
@@ -57,6 +88,9 @@ const clearMessages = () => {
         </div>
     </div>
     <p class="messageControls" v-if="messages.data.length>0">
+        <el-button class="clearButton" @click="toggleExpended" link>
+            <i class="fi centerIcon" :class="{'fi-rr-angle-down': !isExpended, ' fi-rr-angle-up':isExpended}"></i><span>{{isExpended?"收起":"展开全部"}}</span>
+        </el-button>
         <el-button class="clearButton" @click="clearMessages" link>
             <i class="fi fi-rr-trash centerIcon"></i><span>全部清除</span>
         </el-button>
