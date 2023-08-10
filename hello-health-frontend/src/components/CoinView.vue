@@ -29,7 +29,7 @@
                 </el-row>
                 <el-table :data="CoinRecordList" 
                     :default-sort="{ prop: 'Time', order: 'ascending' }" 
-                    height="230" style="width: 100%" class="table">
+                    height="230" style="width: 100%" class="table" empty-text="您暂时没有杏仁币记录~">
                 <el-table-column prop="Time" label="时间" width="150" />
                 <el-table-column prop="Num" label="变化" width="120" />
                 <el-table-column prop="Reason" label="原因" width="250"/>
