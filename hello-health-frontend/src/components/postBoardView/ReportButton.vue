@@ -38,7 +38,7 @@ export default{
                 })
                  .then(({ value }) => {
                      
-                    axios.post("/api/Comment/Report",
+                    axios.post("/api/Forum/Report",
                       reactive({
                         user_id:globalData.userInfo.user_id,
                         comment_id:this.comment_id,
