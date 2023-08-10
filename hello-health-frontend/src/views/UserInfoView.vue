@@ -16,6 +16,8 @@
                     <div style="text-align: center;">
                       <p>请上传头像</p>
                       <el-upload
+                         :limit="1"
+                         
                           class="upload-demo"
                           action="https://jsonplaceholder.typicode.com/posts/"
                           :auto-upload="false"
@@ -72,30 +74,38 @@
                   <span v-else>{{ '未认证' }}</span>
                   <el-dialog v-model="dialogVisible" title="医师认证" width="50%">
                     <div style="text-align: center;">
-                      <p>请上传您的医师资格证照片</p>
-                      <el-upload
-                          class="upload-demo"
-                          action="https://jsonplaceholder.typicode.com/posts/"
-                          :auto-upload="false"
-                          :on-change="handleChangeCertification"
+                      <p>请上传您的医师资格证照片和执业证照片</p>
+                      <br><br>
+                      <el-upload class="upload-demo"
+                                 action="https://jsonplaceholder.typicode.com/posts/"
+                                 :auto-upload="false"
+                                 :on-change="handleChangeDoctor"
+                      >
+                        <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                        <div slot="tip" class="el-upload__tip">上传文件格式为.jpg、.jpeg、.png、.gif，且不超过 2MB</div>
+                        <br><br>
+                      </el-upload>
+                      <el-upload class="upload-demo"
+                                 action="https://jsonplaceholder.typicode.com/posts/"
+                                 :auto-upload="false"
+                                 :on-change="handleChangeBusiness"
                       >
                         <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
                         <div slot="tip" class="el-upload__tip">上传文件格式为.jpg、.jpeg、.png、.gif，且不超过 2MB</div>
                       </el-upload>
                     </div>
-                    <br><br>
+                    <!--<br><br>
                     <div style="text-align: center;">
                       <p>请上传您的执业证照片</p>
-                      <el-upload
-                          class="upload-demo"
-                          action="https://jsonplaceholder.typicode.com/posts/"
-                          :auto-upload="false"
-                          :on-change="handleChangeCertification"
+                      <el-upload class="upload-demo"
+                                 action="https://jsonplaceholder.typicode.com/posts/"
+                                 :auto-upload="false"
+                                 :on-change="handleChangeCertification"
                       >
                         <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
                         <div slot="tip" class="el-upload__tip">上传文件格式为.jpg、.jpeg、.png、.gif，且不超过 2MB</div>
                       </el-upload>
-                    </div>
+                    </div>-->
                     <div slot="footer" class="dialog-footer">
                       <el-button @click="dialogVisible = false">取 消</el-button>
                       <el-button type="primary" @click="submitCertification">确 定</el-button>
@@ -242,11 +252,10 @@
             <el-dialog v-model="dialogVisible" title="医师认证" width="50%">
               <div style="text-align: center;">
                 <p>请上传您的医师资格证照片</p>
-                <el-upload
-                    class="upload-demo"
-                    action="https://jsonplaceholder.typicode.com/posts/"
-                    :auto-upload="false"
-                    :on-change="handleChangeCertification"
+                <el-upload class="upload-demo"
+                           action="https://jsonplaceholder.typicode.com/posts/"
+                           :auto-upload="false"
+                           :on-change="handleChangeCertification"
                 >
                   <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
                   <div slot="tip" class="el-upload__tip">上传文件格式为.jpg、.jpeg、.png、.gif，且不超过 2MB</div>
@@ -255,11 +264,10 @@
               <br><br>
               <div style="text-align: center;">
                 <p>请上传您的执业证照片</p>
-                <el-upload
-                    class="upload-demo"
-                    action="https://jsonplaceholder.typicode.com/posts/"
-                    :auto-upload="false"
-                    :on-change="handleChangeCertification"
+                <el-upload class="upload-demo"
+                           action="https://jsonplaceholder.typicode.com/posts/"
+                           :auto-upload="false"
+                           :on-change="handleChangeCertification"
                 >
                   <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
                   <div slot="tip" class="el-upload__tip">上传文件格式为.jpg、.jpeg、.png、.gif，且不超过 2MB</div>
@@ -337,7 +345,7 @@
             <el-table :data="CoinRecordList"
 
                       :default-sort="{ prop: 'Time', order: 'ascending' }"
-                      height="250" style="width: 100%" class="table">
+                      height="250" style="width: 100%" class="table" empty-text="您暂时没有杏仁币记录~">
               <el-table-column prop="Time" label="时间" width="150" />
               <el-table-column prop="Num" label="变化" width="120" />
               <el-table-column prop="Reason" label="原因" width="150"/>
@@ -405,7 +413,7 @@ export default {
   components: {UserInfoCard, NewsBlockList, PostCard},
   data(){
     return{
-        isSelf: true,
+      isSelf: true,
 
       isFollowed: false,
       followMap: new Map(), // 用来匹配关注列表的已关注和+关注
@@ -425,8 +433,9 @@ export default {
 
       //用户上传的，要传给数据库的一些数据
       file:null, //上传的文件对象
-      qualificationCertificate:null,//医师资格证照片
-      practiceCertificate:null,//执业证照片
+      doctorPic: null, // 医师资格证照片
+      businessPic: null, // 执业证照片
+      uploadedPhotos: 0 ,// 已上传的照片数量
       photoUpload:false,   //头像上传，初始为false
 
       isCurrentUser:false,
@@ -475,6 +484,7 @@ export default {
     },
   },
   methods:{
+ 
     refresh(){
       let userIdNum = parseInt(this.$route.params.userId ? this.$route.params.userId: 0);
     console.log(userIdNum);
@@ -482,7 +492,6 @@ export default {
       this.$router.replace("/error");
       return;
     }
-    console.log("此时refresh的id"+userIdNum)
     axios.post('/api/UserInfo/Details',{user_id: userIdNum})
         .then(response => {
           const responseData = response.data.data.userInfo;
@@ -668,34 +677,32 @@ export default {
             ElMessage.error("上传失败！");
           });
     },
-    handleChangeCertification(file,fileList){
-      console.log(file,fileList);
-      // 判断是医师资格证照片还是执业证照片
-      if (fileList.length == 1) {
-        console.log("l1")
-        this.qualificationCertificate = file.raw; // 医师资格证照片
-      } 
-      else if (fileList.length == 2) {
-        console.log("l2")
-        this.practiceCertificate = file.raw; // 执业证照片
-      }
+    handleChangeDoctor(file,fileList){
+      console.log(file, fileList);
+      console.log("医师资格证照片");
+      this.doctorPic = file.raw;
     },
-    /*将用户上传的医师资格证照片传给后端数据库*/
+    handleChangeBusiness(file,fileList){
+      console.log(file, fileList);
+      console.log("执业证照片");
+      this.businessPic = file.raw;
+    },
+    //将用户上传的医师资格证照片传给后端数据库
     submitCertification(){
-      // 创建一个 FormData 对象
+    // 创建一个 FormData 对象
       const formData = new FormData();
-      // 添加医师资格证照片
-      if (this.qualificationCertificate) {
+     // 添加医师资格证照片
+      if (this.doctorPic) {
         console.log("que")
-        formData.set('qualificationCertificate', this.qualificationCertificate);
+        formData.set('doctorPic', this.doctorPic);
       }
       // 添加执业证照片
-      if (this.practiceCertificate) {
+      if (this.businessPic) {
         console.log("pra")
-        formData.set('practiceCertificate', this.practiceCertificate);
+        formData.set('businessPic', this.businessPic);
       }
       console.log(formData);
-      // 发起一个 POST 请求，将 formData 发送给后端服务器
+     // 发起一个 POST 请求，将 formData 发送给后端服务器
       axios.post('/api/UserInfo/uploadDoctorApproval', formData)
           .then(response => {
             console.log(response.data);
@@ -727,6 +734,8 @@ export default {
             if(response.data.data.status == true){
               ElMessage.success("更改成功！");
               this.photoUpload = false;
+              this.userInfo.avatarUrl=response.data.data.url;
+              globalData.userInfo.avatar_url=response.data.data.url;
             }
             else{
               ElMessage.error("更改失败！");
