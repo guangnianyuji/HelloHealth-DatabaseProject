@@ -14,20 +14,15 @@ import ReportButton from "@/components/postBoardView/ReportButton.vue";
 import TipTapEditorReadonly from "@/components/postView/TipTapEditorReadonly.vue";
 import axios from "axios";
 import SetSolutionButton from "@/components/postBoardView/SetSolutionButton.vue";
+import DeleteButton from "@/components/postBoardView/DeleteButton.vue";
+import router from "@/router";
 
 const prop = defineProps({
     floorInfo:Object,
-    title:String,
-    postId:String,
-    isBounty:Boolean,
-    bountyValue:Number,
-    solution:Number,
-    starInfo: Object,
-    isSolution: Boolean,
-    canSetSolution: Boolean
+    postInfo: Object,
 })
 
-const isSolutionReal = ref(prop.isSolution);
+const isSolutionReal = ref(prop.postInfo.solution === prop.floorInfo.comment_id);
 
 const emits = defineEmits(['replyClicked','firstFloorReplyClicked','goToSolutionClicked','solutionSet'])
 
@@ -57,7 +52,7 @@ const openReplyBar = () =>{
         return;
     }
 
-    if(prop.title){
+    if(prop.floorInfo.floor_number===1){
         emits("firstFloorReplyClicked")
         return
     }
@@ -107,10 +102,17 @@ const onReplySubmit = (content,reply_user_info,handler) =>{
 
 const newComments = ref([])
 
+const deleted = ref(false)
+const onMeDeleted = () => {
+    deleted.value = true
+    if(prop.floorInfo.floor_number===1)
+        router.push("/forum")
+}
+
 </script>
 
 <template>
-    <div class="floorWrapper">
+    <div class="floorWrapper" v-if="!deleted">
         <div class="userInfoWrapper">
             <div class="header">
                 <UserInfoCard :user-info="floorInfo.author"></UserInfoCard>
@@ -131,12 +133,12 @@ const newComments = ref([])
         </div>
         <div class="contentWrapper">
             <div class="floorNumberIndicator">#{{floorInfo.floor_number}}</div>
-            <div v-if="title" class="title">{{title}}</div>
-            <el-tag v-if="title && isBounty && solution !== -1" class="bountyTag">
-                <span>赏金{{bountyValue}}杏仁币，</span>
+            <div v-if="floorInfo.floor_number===1" class="title">{{postInfo.title}}</div>
+            <el-tag v-if="floorInfo.floor_number===1 && postInfo.is_bounty && postInfo.solution !== -1" class="bountyTag">
+                <span>赏金{{postInfo.bounty_value}}杏仁币，</span>
                 <span @click="emits('goToSolutionClicked')" class="scrollToSolutionButton">点击查看最佳答案</span>
             </el-tag>
-            <el-tag v-if="title && isBounty && solution === -1" class="bountyTag" type="warning">正在进行悬赏！赏金{{bountyValue}}杏仁币。</el-tag>
+            <el-tag v-if="floorInfo.floor_number===1 && postInfo.is_bounty && postInfo.solution === -1" class="bountyTag" type="warning">正在进行悬赏！赏金{{postInfo.bounty_value}}杏仁币。</el-tag>
             <el-tag v-if="isSolutionReal" class="bountyTag">
                 <div style="display: flex; align-items: center;">
                     <i class="fi fi-sr-badge centerIcon"></i><span>最佳答案</span>
@@ -150,35 +152,41 @@ const newComments = ref([])
                     {{floorInfo.post_time}}
                 </div>
                 <div class="rewards">
-                    <el-popover placement="top" :width="'auto'" trigger="click">
+                    <el-popover placement="top" trigger="click">
                         <template #reference>
                             <i class="fi fi-rr-menu-dots centerIcon replyButton"></i>
                         </template>
-                        <ReportButton :comment_id="floorInfo.comment_id"></ReportButton>
+                        <div style="text-align: center">
+                            <ReportButton :comment_id="floorInfo.comment_id"></ReportButton>
+                            <DeleteButton
+                                v-if="(floorInfo.author.user_id===globalData.userInfo.user_id || postInfo.floors[0].author.user_id === globalData.userInfo.user_id) && !isSolutionReal"
+                                :comment_id="floorInfo.comment_id" :is-first-floor="floorInfo.floor_number===1" :is-floor="true" @deleted="onMeDeleted">
+                            </DeleteButton>
+                        </div>
                     </el-popover>
                     <SetSolutionButton
                         :comment_id="floorInfo.comment_id"
                         :comment_user_name="floorInfo.author.user_name"
                         @solution-set="isSolutionReal=true;emits('solutionSet',floorInfo.comment_id)"
-                        v-if="canSetSolution">
+                        v-if="floorInfo.floor_number>1 && postInfo.is_bounty && postInfo.solution === -1 && postInfo.floors[0].author.user_id === globalData.userInfo.user_id">
                     </SetSolutionButton>
                     <LikeButton :comment_id="floorInfo.comment_id" :like-info="floorInfo.reward.like"></LikeButton>
                     <CoinButton :comment_id="floorInfo.comment_id" :coin-info="floorInfo.reward.coin">
                     </CoinButton>
-                    <StarButton v-if="title" :post_id="postId" :star-info="starInfo"></StarButton>
+                    <StarButton v-if="floorInfo.floor_number===1" :post_id="postInfo.post_id" :star-info="postInfo.star"></StarButton>
 
                     <div class="replyButton" @click="openReplyBar">
                         评论
                     </div>
                 </div>
             </div>
-            <div v-if="showReplyBar && !title">
+            <div v-if="showReplyBar && floorInfo.floor_number!==1">
                 <ReplyBar @replySubmit="onReplySubmit"></ReplyBar>
             </div>
 
-            <div class="commentsHolder" v-if="!title">
-                <FloorComment ref="comments" v-for="item in floorInfo.comments" :comment-info="item" :floor_id="floorInfo.comment_id" @replyClicked="onCommentReplyClicked" @replySent="onReplySubmit"></FloorComment>
-                <FloorComment ref="comments" v-for="item in newComments" :comment-info="item" :floor_id="floorInfo.comment_id" @replyClicked="onCommentReplyClicked" @replySent="onReplySubmit"></FloorComment>
+            <div class="commentsHolder" v-if="floorInfo.floor_number!==1">
+                <FloorComment ref="comments" v-for="item in floorInfo.comments" :comment-info="item" :floor_id="floorInfo.comment_id" @replyClicked="onCommentReplyClicked" @replySent="onReplySubmit" :post-info="prop.postInfo"></FloorComment>
+                <FloorComment ref="comments" v-for="item in newComments" :comment-info="item" :floor_id="floorInfo.comment_id" @replyClicked="onCommentReplyClicked" @replySent="onReplySubmit" :post-info="prop.postInfo"></FloorComment>
             </div>
         </div>
     </div>
