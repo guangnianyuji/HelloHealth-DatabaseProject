@@ -6,15 +6,18 @@ import globalData from "@/global/global"
 import {ElMessage} from "element-plus";
 import ReportButton from "@/components/postBoardView/ReportButton.vue";
 import LikeButton from "@/components/postBoardView/LikeButton.vue";
-import axios from "axios";
+import DeleteButton from "@/components/postBoardView/DeleteButton.vue";
 
 const prop = defineProps({
     commentInfo: Object,
-    floor_id: Number
+    floor_id: Number,
+    postInfo: Object
 })
 const emits = defineEmits(["replyClicked","replySent"])
 
 const showComment = ref(false)
+
+const deleted = ref(false)
 
 defineExpose({
     showComment,
@@ -37,14 +40,17 @@ const onReplySubmit = (content,_,handler) =>{
     emits("replySent",content,prop.commentInfo.author,handler);
 }
 
+const onMeDeleted = () => {
+    deleted.value =  true
+}
+
 </script>
 
 <template>
-<div class="commentWrapper">
+<div class="commentWrapper" v-if="!deleted">
     <UserInfoCard :user-info="commentInfo.author"></UserInfoCard>
     <div class="content">
         <p>
-            <!--TODO:要变成能点击的样式，等个人界面做好-->
             <span v-if="commentInfo.comment_user_id!==-1">
             回复 {{commentInfo.comment_user_name}} :
             </span>
@@ -67,7 +73,10 @@ const onReplySubmit = (content,_,handler) =>{
                 <template #reference>
                     <i class="fi fi-rr-menu-dots centerIcon replyButton"></i>
                 </template>
-                <ReportButton :comment_id="commentInfo.comment_id"></ReportButton>
+                <div style="text-align: center">
+                    <ReportButton :comment_id="commentInfo.comment_id"></ReportButton>
+                    <DeleteButton v-if="globalData.userInfo.user_id === postInfo.floors[0].author.user_id || globalData.userInfo.user_id === commentInfo.author.user_id" :comment_id="commentInfo.comment_id" @deleted="onMeDeleted"></DeleteButton>
+                </div>
             </el-popover>
         </div>
     </div>
