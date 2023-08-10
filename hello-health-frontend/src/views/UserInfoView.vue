@@ -319,7 +319,7 @@
             我的杏仁币：
           </div>
           <div style="color:green;font-size: 22px;">
-            {{ numOfCoin }}
+            {{ displayCoin }}
           </div>
           <el-button class="coinButton" v-if="isLogin" link @click="goToCoinDetail">
             杏仁币详情>>
@@ -352,7 +352,6 @@
             </el-row>
             <el-row>
               <div style="font-size: 14px;color: grey;margin-left: 2px;">
-
                 杏仁币是本平台中专用的虚拟货币，取自“杏林春暖 ，悬壶济世”之意。
               </div>
             </el-row>
@@ -415,6 +414,8 @@ export default {
       userInfo:{},     //用户基本信息，包含numOfCoin,isCertified等信息
       userPosts: [],   // 用户上传的帖子
       isLogin:true ,    //判断正在操控的用户是否处于登陆状态
+      CoinRecordList:[],  //硬币记录
+      CoinNum:0,  //硬币数量
 
       //本页面需要的一些变量，不用从数据库获取
       isEdit:false, //是否允许编辑信息
@@ -456,7 +457,8 @@ export default {
           this.followList.forEach(user => {
             this.followMap.set(user.user_id, true)
           })
-
+          //获取硬币记录数据
+          this.getCoinRecord();
         })
         .catch(error => {
           console.error(error)
@@ -478,6 +480,13 @@ export default {
         return this.userInfo.userName;
       } else {
         return '未登录';
+      }
+    },
+    displayCoin() {
+      if(this.isLogin) {
+        return this.CoinNum;
+      } else {
+        return '请先登录';
       }
     },
     //判断是否是本人在查看信息页面，来判断该用户是否可对信息进行修改
@@ -689,7 +698,16 @@ export default {
       }).then(res => {
         this.userPosts= res.data.data.post_list;
       })
-    }
+    },
+    getCoinRecord()
+            {
+                const apiUrl = "/api/HB/record";
+                axios.get(apiUrl)
+                .then(res => {
+                this.CoinRecordList = res.data.data.coinRecordList;    // 获取全部硬币记录列表
+                this.CoinNum=res.data.data.coinNum         // 硬币数
+          })
+            }
   }
 }
 

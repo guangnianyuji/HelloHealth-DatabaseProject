@@ -257,11 +257,12 @@ export default
             },
             getCoinRecord()
             {
-                const apiUrl = "/api/coinRecord";
+                const apiUrl = "/api/HB/record";
                 axios.get(apiUrl)
                 .then(res => {
                 this.CoinRecordList = res.data.data.coinRecordList;    // 获取全部硬币记录列表
                 this.RecordNum = this.CoinRecordList.length;          // 总记录数
+                this.CoinNum=res.data.data.coinNum         // 硬币数
                 console.log("123"+JSON.stringfy(this.CoinRecordList));
           })
             }
