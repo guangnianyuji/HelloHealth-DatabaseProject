@@ -95,6 +95,7 @@ axios.get("/api/UserInfo").then(response => {
     globalData.login = true;
     userInfo.data = responseObj
     globalData.userInfo = userInfo.data
+    console.log('目前登录的id'+globalData.userInfo.user_id)
 }).catch(error => {
     error.defaultHandler();
 })
