@@ -103,7 +103,7 @@ function updatePostCollectionList() {
         currentPage: currentPage.value,
         pageSize: pageSize.value
     };
-    axios.post('/api/PostCollection', requestPostCollection).then(res => {
+    axios.post('/api/Forum/PostCollection', requestPostCollection).then(res => {
         list.value = res.json.list;
         total.value = parseInt(res.json.total);
         cancelled.value = [];
@@ -122,7 +122,7 @@ function changeStar(id) {
     operate: 1,
     post_id: id
   }
-  axios.post('/api/Post/Star', requestCancelPostStar).then(res => {
+  axios.post('/api/Forum/Star', requestCancelPostStar).then(res => {
       if (cancelled.value[id]) {
           ElMessage({
               showClose: true,
