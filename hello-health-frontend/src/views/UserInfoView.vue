@@ -16,13 +16,13 @@
                     <div style="text-align: center;">
                       <p>请上传头像</p>
                       <el-upload
-                         :limit="1"
-                         
                           class="upload-demo"
                           action="https://jsonplaceholder.typicode.com/posts/"
                           :auto-upload="false"
                           :on-change="handleChange"
                           accept="image/jpg,image/jpeg,image/png,image/gif"
+                         :multiple="false"
+                         :file-list="fileList"
                       >
                         <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
                         <div slot="tip" class="el-upload__tip">上传文件格式为.jpg、.jpeg、.png、.gif，且不超过 2MB</div>
@@ -80,6 +80,9 @@
                                  action="https://jsonplaceholder.typicode.com/posts/"
                                  :auto-upload="false"
                                  :on-change="handleChangeDoctor"
+                                 :multiple="false"
+                                 :file-list="fileList"
+                                 accept="image/jpg,image/jpeg,image/png,image/gif"
                       >
                         <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
                         <div slot="tip" class="el-upload__tip">上传文件格式为.jpg、.jpeg、.png、.gif，且不超过 2MB</div>
@@ -89,23 +92,14 @@
                                  action="https://jsonplaceholder.typicode.com/posts/"
                                  :auto-upload="false"
                                  :on-change="handleChangeBusiness"
+                                 :multiple="false"
+                                 :file-list="fileList"
+                                 accept="image/jpg,image/jpeg,image/png,image/gif"
                       >
                         <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
                         <div slot="tip" class="el-upload__tip">上传文件格式为.jpg、.jpeg、.png、.gif，且不超过 2MB</div>
                       </el-upload>
                     </div>
-                    <!--<br><br>
-                    <div style="text-align: center;">
-                      <p>请上传您的执业证照片</p>
-                      <el-upload class="upload-demo"
-                                 action="https://jsonplaceholder.typicode.com/posts/"
-                                 :auto-upload="false"
-                                 :on-change="handleChangeCertification"
-                      >
-                        <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-                        <div slot="tip" class="el-upload__tip">上传文件格式为.jpg、.jpeg、.png、.gif，且不超过 2MB</div>
-                      </el-upload>
-                    </div>-->
                     <div slot="footer" class="dialog-footer">
                       <el-button @click="dialogVisible = false">取 消</el-button>
                       <el-button type="primary" @click="submitCertification">确 定</el-button>
@@ -251,23 +245,27 @@
             <el-button type="primary" @click="dialogVisible = true">编辑</el-button>
             <el-dialog v-model="dialogVisible" title="医师认证" width="50%">
               <div style="text-align: center;">
-                <p>请上传您的医师资格证照片</p>
+                <p>请上传您的医师资格证照片和执业证照片</p>
+                <br><br>
                 <el-upload class="upload-demo"
                            action="https://jsonplaceholder.typicode.com/posts/"
                            :auto-upload="false"
-                           :on-change="handleChangeCertification"
+                           :on-change="handleChangeDoctor"
+                           :multiple="false"
+                           :file-list="fileList"
+                           accept="image/jpg,image/jpeg,image/png,image/gif"
                 >
                   <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
                   <div slot="tip" class="el-upload__tip">上传文件格式为.jpg、.jpeg、.png、.gif，且不超过 2MB</div>
+                  <br><br>
                 </el-upload>
-              </div>
-              <br><br>
-              <div style="text-align: center;">
-                <p>请上传您的执业证照片</p>
                 <el-upload class="upload-demo"
                            action="https://jsonplaceholder.typicode.com/posts/"
                            :auto-upload="false"
-                           :on-change="handleChangeCertification"
+                           :on-change="handleChangeBusiness"
+                           :multiple="false"
+                           :file-list="fileList"
+                           accept="image/jpg,image/jpeg,image/png,image/gif"
                 >
                   <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
                   <div slot="tip" class="el-upload__tip">上传文件格式为.jpg、.jpeg、.png、.gif，且不超过 2MB</div>
@@ -437,6 +435,7 @@ export default {
       businessPic: null, // 执业证照片
       uploadedPhotos: 0 ,// 已上传的照片数量
       photoUpload:false,   //头像上传，初始为false
+      fileList:[],
 
       isCurrentUser:false,
       CoinRecordList:[]
@@ -484,7 +483,7 @@ export default {
     },
   },
   methods:{
- 
+
     refresh(){
       let userIdNum = parseInt(this.$route.params.userId ? this.$route.params.userId: 0);
     console.log(userIdNum);
@@ -680,11 +679,17 @@ export default {
     handleChangeDoctor(file,fileList){
       console.log(file, fileList);
       console.log("医师资格证照片");
+      if (fileList.length > 1) {
+        fileList.splice(0, fileList.length - 1); // 只保留最后一个文件
+      }
       this.doctorPic = file.raw;
     },
     handleChangeBusiness(file,fileList){
       console.log(file, fileList);
       console.log("执业证照片");
+      if (fileList.length > 1) {
+        fileList.splice(0, fileList.length - 1); // 只保留最后一个文件
+      }
       this.businessPic = file.raw;
     },
     //将用户上传的医师资格证照片传给后端数据库
@@ -719,6 +724,9 @@ export default {
           });
     },
     handleChange(file,fileList){
+      if (fileList.length > 1) {
+        fileList.splice(0, fileList.length - 1); // 只保留最后一个文件
+      }
       console.log(file,fileList);
       this.file = file.raw
     },
