@@ -49,6 +49,22 @@
                       </el-card>
                     </div>
                   </el-dialog>
+                  <el-dialog title="我的粉丝" v-model="myFansVisible" @close="search">
+                    <div class="user-cards">
+                      <el-card class="user-card" v-for="user in fansList" :key="user.user_id">
+                        <div class="user-info">
+                          <UserInfoCard :user-info="user" @click="goUserPage(user.user_id)"></UserInfoCard>
+                          <el-button
+                              :type="fansMap.get(user.user_id) ? 'default' : 'primary'"
+                              style="margin: 20px"
+                              @click="onFollowBtnClick(user.user_id)"
+                          >
+                            {{ fansMap.get(user.user_id) ? '已关注' : '+关注' }}
+                          </el-button>
+                        </div>
+                      </el-card>
+                    </div>
+                  </el-dialog>
                 </template>
               </div>
             </el-aside>
@@ -64,7 +80,9 @@
                 {{ isFollowed ? '已关注' : '+ 关注' }}
               </el-button>
               <el-button v-else-if="isLogin && isCurrentUser" class="attention-list" @click="this.myFollowVisible = true">我的关注</el-button>
+              <el-button v-if="isLogin && isCurrentUser" class="attention-list" @click="this.myFansVisible = true">我的粉丝</el-button>
               <br><br><br>
+              
               <div>
                 <span>{{ authenInfo }}</span>
                 <template v-if="isLogin">
@@ -325,7 +343,7 @@
             我的杏仁币：
           </div>
           <div style="color:green;font-size: 22px;">
-            {{ numOfCoin }}
+            {{ CoinNum }}
           </div>
           <el-button class="coinButton" v-if="isLogin" link @click="goToCoinDetail">
             杏仁币详情>>
@@ -358,7 +376,6 @@
             </el-row>
             <el-row>
               <div style="font-size: 14px;color: grey;margin-left: 2px;">
-
                 杏仁币是本平台中专用的虚拟货币，取自“杏林春暖 ，悬壶济世”之意。
               </div>
             </el-row>
@@ -418,11 +435,17 @@ export default {
       myFollowVisible:false,
       followList:[],
 
+      isFans: false,
+      fansMap: new Map(), // 用来匹配粉丝列表的已关注和+关注
+      myFansVisible:false,
+      fansList:[],
       //从数据库获取的数据
       certification:{},   //认证信息
       userInfo:{},     //用户基本信息，包含numOfCoin,isCertified等信息
       userPosts: [],   // 用户上传的帖子
       isLogin:true ,    //判断正在操控的用户是否处于登陆状态
+      CoinRecordList:[],  //硬币记录
+      CoinNum:0,  //硬币数量
 
       //本页面需要的一些变量，不用从数据库获取
       isEdit:false, //是否允许编辑信息
@@ -761,7 +784,16 @@ export default {
       }).then(res => {
         this.userPosts= res.data.data.post_list;
       })
-    }
+    },
+    getCoinRecord()
+            {
+                const apiUrl = "/api/HB/record";
+                axios.get(apiUrl)
+                .then(res => {
+                this.CoinRecordList = res.data.data.coinRecordList;    // 获取全部硬币记录列表
+                this.CoinNum=res.data.data.coinNum         // 硬币数
+          })
+            }
   }
 }
 

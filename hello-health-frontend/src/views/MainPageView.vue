@@ -118,9 +118,8 @@
                                 HH找药
                             </div>
                             <div class="part-el-card-space cardDesc" >
-                                <p>系统全面的药品专栏库和科学权威药品信息。</p>
-                                <p>药品分类查找和搜索功能，药品收藏功能。</p>
-                                <p>囊括常见可靠的保健品和药膳，智能推荐药品。</p>
+                                <p>药品库的详细分类，结合智能推荐，为您快速定位查询所需药品。</p>
+                                <p>收藏您常用和感兴趣的药品，打造您的专属药品库。</p>
                             </div>
 
                             <div class="part-el-card-space" style="text-align: center;">
