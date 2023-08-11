@@ -219,6 +219,7 @@ const onMeDeleted = () => {
     margin-right: 10px;
     width: 300px;
     max-width: 300px;
+    min-width: 200px;
 }
 
 .userInfoWrapper .header{
