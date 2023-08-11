@@ -551,6 +551,7 @@ export default {
             axios.get("/api/HB/record")
             .then(response=>{
               this.CoinRecordList=response.data.data.coinRecordList;
+              this.CoinNum=response.data.data.coinNum;
             })
           }
         })
@@ -785,15 +786,6 @@ export default {
         this.userPosts= res.data.data.post_list;
       })
     },
-    getCoinRecord()
-            {
-                const apiUrl = "/api/HB/record";
-                axios.get(apiUrl)
-                .then(res => {
-                this.CoinRecordList = res.data.data.coinRecordList;    // 获取全部硬币记录列表
-                this.CoinNum=res.data.data.coinNum         // 硬币数
-          })
-            }
   }
 }
 
