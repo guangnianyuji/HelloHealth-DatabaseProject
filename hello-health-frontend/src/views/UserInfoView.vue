@@ -33,33 +33,33 @@
                       <el-button type="primary" @click="submitPhoto">确 定</el-button>
                     </div>
                   </el-dialog>
-                  <el-dialog title="我的关注" v-model="myFollowVisible" @close="search">
+                  <el-dialog title="我的关注" v-model="myFollowVisible" @close="refresh">
                     <div class="user-cards">
                       <el-card class="user-card" v-for="user in followList" :key="user">
                         <div class="user-info">
                           <UserInfoCard :user-info="user" @click="goUserPage(user.user_id)"></UserInfoCard>
                           <el-button
-                              :type="followMap.get(user.user_id) ? 'primary' : 'default'"
+                              :type="followMap.get(user.user_id) ? 'default':'primary' "
                               style="margin: 20px"
-                              @click="onFollowBtnClick(user.info.user_id)"
+                              @click="onFollowBtnClick(user.user_id)"
                           >
-                            {{ followMap.get(user.user_id) ? '+ 关注' : '已关注' }}
+                            {{ followMap.get(user.user_id) ? '已关注':'+ 关注'}}
                           </el-button>
                         </div>
                       </el-card>
                     </div>
                   </el-dialog>
-                  <el-dialog title="我的粉丝" v-model="myFansVisible" @close="search">
+                  <el-dialog title="我的粉丝" v-model="myFansVisible" @close="refresh">
                     <div class="user-cards">
                       <el-card class="user-card" v-for="user in fansList" :key="user.user_id">
                         <div class="user-info">
                           <UserInfoCard :user-info="user" @click="goUserPage(user.user_id)"></UserInfoCard>
                           <el-button
-                              :type="fansMap.get(user.user_id) ? 'default' : 'primary'"
+                              :type="followMap.get(user.user_id) ?'default':'primary' "
                               style="margin: 20px"
                               @click="onFollowBtnClick(user.user_id)"
                           >
-                            {{ fansMap.get(user.user_id) ? '已关注' : '+关注' }}
+                            {{ followMap.get(user.user_id) ? '已关注':'+ 关注' }}
                           </el-button>
                         </div>
                       </el-card>
@@ -79,8 +79,8 @@
               >
                 {{ isFollowed ? '已关注' : '+ 关注' }}
               </el-button>
-              <el-button v-else-if="isLogin && isCurrentUser" class="attention-list" @click="this.myFollowVisible = true">我的关注</el-button>
-              <el-button v-if="isLogin && isCurrentUser" class="attention-list" @click="this.myFansVisible = true">我的粉丝</el-button>
+              <el-button style="border-color:rgb(0,191,168)" v-else-if="isLogin && isCurrentUser" class="attention-list" @click="this.myFollowVisible = true">我的关注</el-button>
+              <el-button style="border-color:rgb(0,191,168)" v-if="isLogin && isCurrentUser" class="attention-list" @click="this.myFansVisible = true">我的粉丝</el-button>
               <br><br><br>
               
               <div>
@@ -436,7 +436,7 @@ export default {
       followList:[],
 
       isFans: false,
-      fansMap: new Map(), // 用来匹配粉丝列表的已关注和+关注
+      //fansMap: new Map(), // 用来匹配粉丝列表的已关注和+关注,用不到，直接用followMap不就行了
       myFansVisible:false,
       fansList:[],
       //从数据库获取的数据
@@ -533,8 +533,11 @@ export default {
           console.log(this.followList)
 
           this.followList.forEach(user => {
-            this.followMap.set(user.user_id, false)
+            this.followMap.set(user.user_id, true)
           })
+
+          this.fansList=response.data.data.fansList;
+          
 
               /* 获取用户发布的帖子 */
           this.fetchUserPosts(this.userInfo.userID);
@@ -565,32 +568,6 @@ export default {
 
     goUserPage(userId){
       this.$router.push("/user/"+userId)
-    },
-    search(){
-      let userIdNum = parseInt(this.$route.params.userId ? this.$route.params.userId: 0);
-      this.myFollowVisible=false;
-      if(isNaN(userIdNum)){
-        this.$router.replace("/error");
-        return;
-      }
-      axios.post('/api/UserInfo/Details',{user_id: userIdNum})
-          .then(response => {
-
-            // this.isLogin = globalData.isLogin; // 获取用户登录状态 change
-            this.followList = response.data.data.followList;
-            this.isFollowed = response.data.data.isFollowed;
-
-            console.log(this.followList)
-
-            this.followList.forEach(user => {
-              this.followMap.set(user.info.user_id, false)
-            })
-
-          })
-          .catch(error => {
-            if(error.network) return;
-            error.defaultHandler();
-          });
     },
     onFollowBtnClick(userId) {
 
@@ -854,7 +831,7 @@ export default {
 /*”去认证“按钮样式*/
 .certificated-button{
   background-color: white;
-  border-color: antiquewhite;
+  border-color: rgb(238, 137, 4);
   color: #c45656;
 
   margin-left:60px;
