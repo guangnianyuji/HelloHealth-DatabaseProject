@@ -20,6 +20,7 @@ import router from "@/router";
 const prop = defineProps({
     floorInfo:Object,
     postInfo: Object,
+    postId: Number
 })
 
 const isSolutionReal = ref(prop.postInfo.solution === prop.floorInfo.comment_id);
@@ -173,7 +174,7 @@ const onMeDeleted = () => {
                     <LikeButton :comment_id="floorInfo.comment_id" :like-info="floorInfo.reward.like"></LikeButton>
                     <CoinButton :comment_id="floorInfo.comment_id" :coin-info="floorInfo.reward.coin">
                     </CoinButton>
-                    <StarButton v-if="floorInfo.floor_number===1" :post_id="postInfo.post_id" :star-info="postInfo.star"></StarButton>
+                    <StarButton v-if="floorInfo.floor_number===1" :post_id="postId" :star-info="postInfo.star"></StarButton>
 
                     <div class="replyButton" @click="openReplyBar">
                         评论

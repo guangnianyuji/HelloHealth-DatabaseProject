@@ -9,9 +9,9 @@ import {ElMessage} from "element-plus";
 import WritePostButton from "@/components/postBoardView/WritePostButton.vue";
 const router = useRoute()
 
-let postId = router.params.postId;
+let postId = parseInt(router.params.postId);
 watch(router,(old,newRoute)=>{
-    postId = newRoute.params.postId;
+    postId = parseInt(router.params.postId);
     if(typeof(newRoute.params.postId) !== "undefined")
         reloadPost();
 })
@@ -132,6 +132,7 @@ const gotoSpecificFloor = ()=>{
         <post-floor v-if="postInfo.data.floors && postInfo.data.floors.length>0"
                     :floor-info="postInfo.data.floors[0]"
                     :post-info="postInfo.data"
+                    :post-id="postId"
                     @firstFloorReplyClicked="openCommentEditor"
                     @goToSolutionClicked="scrollToSolution"
         >
@@ -139,6 +140,7 @@ const gotoSpecificFloor = ()=>{
         <post-floor v-for="(floor,index) in floorsWithoutFirst"
                     :floor-info="floor"
                     :post-info="postInfo.data"
+                    :post-id="postId"
                     :class="{solutionFloor:postInfo.data.solution===floor.comment_id}"
                     ref="floors"
                     @replyClicked="closeAllFloorReplyBar"
