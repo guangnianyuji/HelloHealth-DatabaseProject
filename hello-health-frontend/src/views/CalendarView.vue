@@ -4,7 +4,9 @@ import 'bootstrap/dist/css/bootstrap.css';
 import '@fortawesome/fontawesome-free/css/all.css'; // needs additional webpack config!
 
 import _ from 'lodash' //导入loadsh插件
+import axios from 'axios';
 import { defineComponent } from 'vue'
+
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
@@ -30,7 +32,9 @@ export default defineComponent({
                 startTime: '',
                 endDate: '',
                 endTime: '',
-                priority: ''
+                priority: '',
+                color:'',
+                eventVisible: true,
             },
             rules: {
                 title: [
@@ -48,9 +52,14 @@ export default defineComponent({
                 endTime: [
                     { required: true, message: '请选择结束时间', trigger: 'change' }
                 ],
-                remark: [
-                    { required: true, message: '请填写事项优先级', trigger: 'blur' }
+                priority: [
+                    { required: true, message: '请填写事项优先级', trigger: 'change' }
                 ]
+            },
+            priorityColorMap: {
+                lowPriority: '#3b82f6',
+                middlePriority: '#FBBF24',
+                highPriority: '#EC4899'
             },
             calendarOptions: {
                 plugins: [
@@ -66,6 +75,7 @@ export default defineComponent({
                     right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
                 },
                 themeSystem: 'bootstrap',
+                //initialDate: moment().format('YYYY-MM-DD'), // 自定义设置背景颜色时一定要初始化日期时间
                 initialView: 'dayGridMonth',
                 //initialEvents: INITIAL_EVENTS, // alternatively, use the `events` setting to fetch from a feed
                 editable: true,
@@ -81,6 +91,7 @@ export default defineComponent({
                 handleWindowResize: true,//是否随浏览器窗口大小变化而自动变化
                 eventLimit: true,       //数据条数太多时，限制各自里显示的数据条数（多余的以“+2more”格式显示），默认false不限制,支持输入数字设定固定的显示条数
                 locale: zhCnLocale,     // 设置语言
+
                 eventColor: "#78C2AD",  // 修改日程背景色
                 events: [],
                 /* you can update a remote database when these fire:
@@ -98,6 +109,15 @@ export default defineComponent({
             this.calendarOptions.weekends = !this.calendarOptions.weekends // update a property
         },
 
+        /*
+        getEventColor(info) {
+            const priority = info.events.extendedProps.priority;
+            events.extendedProps.color = this.priorityColorMap[priority];
+            console.log(priority);
+            console.log(this.priorityColorMap[priority]);
+            return this.priorityColorMap[priority];
+        },*/
+
         // 日期加1天
         addDate(date, days) {
             var d = new Date(date);
@@ -106,7 +126,7 @@ export default defineComponent({
             let endD = d.getDate() < 10 ? '0' + d.getDate() : d.getDate();
             return `${d.getFullYear()}-${mon}-${endD}`;
         },
-        // 获取会议事件title
+        // 获取事件title
         getTitle(date1, date2) {
             let start = date1.substring(11, 16);
             let end = date2.substring(11, 16);
@@ -122,7 +142,7 @@ export default defineComponent({
         getHoursMin(value) {
             return value.substring(11, 16);
         },
-        // 处理会议时间格式
+        // 处理时间格式
         dealWithTime(date) {
             let newDate = /\d{4}-\d{1,2}-\d{1,2}/g.exec(date)[0];
             return newDate;
@@ -169,6 +189,25 @@ export default defineComponent({
             console.log(selectInfo, '事件4');
             console.log(this.dialogVisible);
             this.dialogVisible = !this.dialogVisible;
+            // 判断过去时间不能新增
+            /*
+            if ((moment(selectInfo.endStr).valueOf() - moment(selectInfo.startStr).valueOf() > 86400000 &&
+                moment(selectInfo.startStr).valueOf() < moment(moment().format('YYYY-MM-DD')).valueOf() &&
+                selectInfo.view.type === 'dayGridMonth') ||
+                ((selectInfo.view.type === 'timeGridWeek' || selectInfo.view.type === 'timeGridDay') &&
+                    moment(selectInfo.startStr).valueOf() < moment(moment().format('YYYY-MM-DD')).valueOf() &&
+                    (selectInfo.allDay ? (moment(selectInfo.endStr).valueOf() - moment(selectInfo.startStr).valueOf() > 86400000)
+                        : (moment(selectInfo.end).valueOf() - moment(selectInfo.start).valueOf() > 1800000))
+                )) {
+                this.$confirm({
+                    title: '提示',
+                    content: '过去时间不能进行新增!',
+                    okText: '确定',
+                    cancelText: '取消',
+                    onOk() {
+                    }
+                })
+            }*/
         },
 
         /*
@@ -188,14 +227,57 @@ export default defineComponent({
             this.canUserEdit = !this.canUserEdit;
         },
 
+        addEventFromForm() {
+            const event = {
+                title: this.form.title,
+                start: new Date(`${this.form.startDate} ${this.form.startTime}`),
+                end: new Date(`${this.form.endDate} ${this.form.endTime}`),
+                priority: this.form.priority,
+                color: this.form.priority === 'lowPriority' ? '#78C2AD' : (this.form.priority === 'middlePriority' ? '#FBBF24' : '#EC4899' ),
+                // You can add other properties as needed
+            };
+            console.log(this.form.startDate);
+            console.log(this.form.startTime);
+            console.log(this.form.endDate);
+            console.log(this.form.endTime);
+            console.log(event.start);
+            console.log(event.end);
+            console.log(event.color);
+            this.calendarOptions.events.push(event);
+        },
+
+        formatTime(date) {
+            const options = {
+                year: 'numeric',
+                month: 'numeric',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            };
+
+            return new Intl.DateTimeFormat('en-US', options).format(date);
+        },
+
         // 提交数据
         submitForm(formName) {
-            this.$refs[formName].validate((valid) => {
+            this.$refs[formName].validate(async (valid) => {
                 if (valid) {
-                    this.form.startDate = `${this.form.startDate} ${this.form.startTime}`;
-                    this.form.endDate = `${this.form.endDate} ${this.form.endTime}`;
-                    console.log(this.form, '数据');
-                    this.dialogVisible = false;
+                    this.form.startDate = `${this.form.startDate}`;
+                    this.form.endDate = `${this.form.endDate}`;
+
+                    try {
+                        const response = await axios.post('https://mock.apifox.cn/m1/2961538-0-default/api/events', this.form);
+                        if (response.data.errorCode === 200) {
+                            this.dialogVisible = false;
+                            this.addEventFromForm(); // 调用添加事件的方法
+                            // ...
+                        } else {
+                            console.error('Failed to create event:', response.data);
+                        }
+                    } catch (error) {
+                        console.error('API Error:', error);
+                    }
                 } else {
                     console.log('error submit!!');
                     return false;
@@ -223,7 +305,7 @@ export default defineComponent({
     <div class='CalendarView'>
         <div class='mainCalendar'>
             <FullCalendar class='calendar' ref="fullCalendar" :options='calendarOptions'>
-                
+
             </FullCalendar>
             <div class="tags-container">
                 <el-button class="modeChange" type="primary" @click="toggleEdit">
@@ -266,11 +348,13 @@ export default defineComponent({
                 </label>
             </div>
             <div class='sidebar-section'>
-                <div class="TodoList">To-do List【共{{ currentEvents.length }}个待办事项】</div>
-                <div class="events" v-for='event in currentEvents' :key='event.id'>
+                <div class="TodoList">To-do List【共{{ calendarOptions.events.length }}个待办事项】</div>
+                <div class="events" v-for='event in calendarOptions.events' :key='event.title'>
                     <div class="time">
-                        <div class="lowPriority"></div>
-                        <div class="eventTime">{{ event.startStr }}</div>
+                        <div
+                            :class="[event.priority === 'highPriority' ? 'highPriority' : (event.priority === 'middlePriority' ? 'middlePriority' : 'lowPriority')]">
+                        </div>
+                        <div class="eventTime">{{ formatTime(event.start) }} - {{ formatTime(event.end) }}</div>
                     </div>
                     <div class="eventTodo">{{ event.title }}</div>
                 </div>
@@ -278,7 +362,7 @@ export default defineComponent({
         </div>
 
         <!--日程新增弹窗start-->
-        <el-dialog title="健康事项新增" :visible.sync='dialogVisible' :before-close="close" width="45%">
+        <el-dialog title="健康事项新增" v-model='dialogVisible' :before-close="close" width="45%">
             <el-form :model="form" :rules="rules" ref="form" label-width="120px" size="small" class="demo-ruleForm">
 
                 <el-form-item label="事项主题" prop="title">
@@ -288,7 +372,7 @@ export default defineComponent({
                 <el-form-item label="开始时间" required>
                     <el-col :span="11">
                         <el-form-item prop="startDate" style="margin-bottom: 0">
-                            <el-date-picker type="date" format="yyyy-MM-dd" value-format="yyyy-MM-dd" placeholder="选择日期"
+                            <el-date-picker type="date" format="YYYY/MM/DD" value-format="YYYY-MM-DD" placeholder="选择日期"
                                 v-model="form.startDate" style="width: 100%;">
                             </el-date-picker>
                         </el-form-item>
@@ -309,7 +393,7 @@ export default defineComponent({
                 <el-form-item label="结束时间" required>
                     <el-col :span="11">
                         <el-form-item prop="endDate" style="margin-bottom: 0">
-                            <el-date-picker type="date" format="yyyy-MM-dd" value-format="yyyy-MM-dd" placeholder="选择日期"
+                            <el-date-picker type="date" format="YYYY/MM/DD" value-format="YYYY-MM-DD" placeholder="选择日期"
                                 v-model="form.endDate" style="width: 100%;">
                             </el-date-picker>
                         </el-form-item>
@@ -327,7 +411,7 @@ export default defineComponent({
                         </el-form-item>
                     </el-col>
                 </el-form-item>
-                <el-form-item label="优先级">
+                <el-form-item label="优先级" required>
                     <el-select v-model="form.priority" placeholder="请选择事项优先级">
                         <el-option label="高优先级" value="highPriority"></el-option>
                         <el-option label="中优先级" value="middlePriority"></el-option>
@@ -541,14 +625,14 @@ el-dialog {
 }
 
 .tags-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px;
 }
 
 .tag {
-  margin-left: 10px; /* Add your desired spacing value here */
+    margin-left: 10px;
+    /* Add your desired spacing value here */
 }
-
 </style>
