@@ -461,7 +461,6 @@ export default {
       fileList:[],
 
       isCurrentUser:false,
-      CoinRecordList:[]
     }
   },
   

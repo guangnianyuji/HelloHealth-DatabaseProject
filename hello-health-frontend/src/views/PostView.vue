@@ -53,7 +53,18 @@ const reloadPost = ()=>{
 }
 reloadPost();
 
-
+const onUserFollowStateToggled = (nowState, userId, changeFollowNumber) => {
+    for(let floorInfo of postInfo.data.floors){
+        if(floorInfo.author.user_id === userId){
+            floorInfo.author.followed = nowState;
+            if(changeFollowNumber)
+                if(nowState)
+                    floorInfo.author.follower++;
+                else
+                    floorInfo.author.follower--;
+        }
+    }
+}
 
 const closeAllFloorReplyBar = () =>{
     for(let floor of floors.value){
@@ -135,6 +146,7 @@ const gotoSpecificFloor = ()=>{
                     :post-id="postId"
                     @firstFloorReplyClicked="openCommentEditor"
                     @goToSolutionClicked="scrollToSolution"
+                    @userFollowStateToggled="onUserFollowStateToggled"
         >
         </post-floor>
         <post-floor v-for="(floor,index) in floorsWithoutFirst"
@@ -145,6 +157,7 @@ const gotoSpecificFloor = ()=>{
                     ref="floors"
                     @replyClicked="closeAllFloorReplyBar"
                     @solution-set="onSolutionSet"
+                    @userFollowStateToggled="onUserFollowStateToggled"
                     >
         </post-floor>
     </div>
