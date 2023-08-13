@@ -20,11 +20,12 @@ import router from "@/router";
 const prop = defineProps({
     floorInfo:Object,
     postInfo: Object,
+    postId: Number
 })
 
 const isSolutionReal = ref(prop.postInfo.solution === prop.floorInfo.comment_id);
 
-const emits = defineEmits(['replyClicked','firstFloorReplyClicked','goToSolutionClicked','solutionSet'])
+const emits = defineEmits(['replyClicked','firstFloorReplyClicked','goToSolutionClicked','solutionSet',"userFollowStateToggled"])
 
 const comments = ref()
 
@@ -109,6 +110,40 @@ const onMeDeleted = () => {
         router.push("/forum")
 }
 
+const onFollowClicked = () => {
+    axios.post("/api/UserInfo/followUser",{followUserID: prop.floorInfo.author.user_id,}).then((res)=>{
+        emits("userFollowStateToggled", true, prop.floorInfo.author.user_id, true)
+        ElMessage.success("已关注"+prop.floorInfo.author.user_name)
+    }).catch(error => {
+        if(error.network) return;
+        switch (error.errorCode){
+            case 118:
+                ElMessage.error("已关注该用户")
+                emits("userFollowStateToggled", true, prop.floorInfo.author.user_id, false)
+                break;
+            default:
+                error.defaultHandler("关注用户失败");
+        }
+    })
+}
+
+const onUnfollowClicked = () => {
+    axios.post("/api/UserInfo/unfollowUser",{followUserID: prop.floorInfo.author.user_id,}).then((res)=>{
+        emits("userFollowStateToggled", false, prop.floorInfo.author.user_id, true)
+        ElMessage.success("已关注取消关注"+prop.floorInfo.author.user_name)
+    }).catch(error => {
+        if(error.network) return;
+        switch (error.errorCode){
+            case 118:
+                ElMessage.error("已不再关注该用户")
+                emits("userFollowStateToggled", false, prop.floorInfo.author.user_id, false)
+                break;
+            default:
+                error.defaultHandler("取消关注用户失败");
+        }
+    })
+}
+
 </script>
 
 <template>
@@ -117,11 +152,11 @@ const onMeDeleted = () => {
             <div class="header">
                 <UserInfoCard :user-info="floorInfo.author"></UserInfoCard>
                 <div v-if="globalData.userInfo.user_id !== floorInfo.author.user_id">
-                    <el-button type="primary" v-if="floorInfo.author.followed">
-                        <i class="fi fi-rr-plus addIcon"></i><span>关注</span>
-                    </el-button>
-                    <el-button type="info" plain v-else>
+                    <el-button v-if="floorInfo.author.followed" @click="onUnfollowClicked">
                         <i class="fi fi-rr-minus addIcon"></i><span>已关注</span>
+                    </el-button>
+                    <el-button type="primary" v-else @click="onFollowClicked">
+                        <i class="fi fi-rr-plus addIcon"></i><span>关注</span>
                     </el-button>
                 </div>
             </div>
@@ -173,7 +208,7 @@ const onMeDeleted = () => {
                     <LikeButton :comment_id="floorInfo.comment_id" :like-info="floorInfo.reward.like"></LikeButton>
                     <CoinButton :comment_id="floorInfo.comment_id" :coin-info="floorInfo.reward.coin">
                     </CoinButton>
-                    <StarButton v-if="floorInfo.floor_number===1" :post_id="postInfo.post_id" :star-info="postInfo.star"></StarButton>
+                    <StarButton v-if="floorInfo.floor_number===1" :post_id="postId" :star-info="postInfo.star"></StarButton>
 
                     <div class="replyButton" @click="openReplyBar">
                         评论
@@ -219,6 +254,7 @@ const onMeDeleted = () => {
     margin-right: 10px;
     width: 300px;
     max-width: 300px;
+    min-width: 200px;
 }
 
 .userInfoWrapper .header{

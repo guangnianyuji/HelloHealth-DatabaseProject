@@ -28,7 +28,6 @@ const click = () => {
 
 <template>
     <div class="avatarHolder" @click="click">
-        <!--TODO:要变成能点击的样式，等个人界面做好-->
         <el-avatar class="avatar" :size="50" :src="userInfo.avatar_url" :class="{showAvatarBorder: showAvatarBorder}"/>
         <div class="userInfoHolder">
             <div class="userName">{{ userInfo.user_name }}</div>
@@ -40,7 +39,7 @@ const click = () => {
 <style scoped>
 
 .avatarHolder{
-    display: flex;
+    display: inline-flex;
     align-items: center;
     flex-direction: row;
     cursor: pointer;

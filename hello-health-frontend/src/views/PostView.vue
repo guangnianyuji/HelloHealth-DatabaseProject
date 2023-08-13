@@ -9,9 +9,9 @@ import {ElMessage} from "element-plus";
 import WritePostButton from "@/components/postBoardView/WritePostButton.vue";
 const router = useRoute()
 
-let postId = router.params.postId;
+let postId = parseInt(router.params.postId);
 watch(router,(old,newRoute)=>{
-    postId = newRoute.params.postId;
+    postId = parseInt(router.params.postId);
     if(typeof(newRoute.params.postId) !== "undefined")
         reloadPost();
 })
@@ -53,7 +53,18 @@ const reloadPost = ()=>{
 }
 reloadPost();
 
-
+const onUserFollowStateToggled = (nowState, userId, changeFollowNumber) => {
+    for(let floorInfo of postInfo.data.floors){
+        if(floorInfo.author.user_id === userId){
+            floorInfo.author.followed = nowState;
+            if(changeFollowNumber)
+                if(nowState)
+                    floorInfo.author.follower++;
+                else
+                    floorInfo.author.follower--;
+        }
+    }
+}
 
 const closeAllFloorReplyBar = () =>{
     for(let floor of floors.value){
@@ -132,17 +143,21 @@ const gotoSpecificFloor = ()=>{
         <post-floor v-if="postInfo.data.floors && postInfo.data.floors.length>0"
                     :floor-info="postInfo.data.floors[0]"
                     :post-info="postInfo.data"
+                    :post-id="postId"
                     @firstFloorReplyClicked="openCommentEditor"
                     @goToSolutionClicked="scrollToSolution"
+                    @userFollowStateToggled="onUserFollowStateToggled"
         >
         </post-floor>
         <post-floor v-for="(floor,index) in floorsWithoutFirst"
                     :floor-info="floor"
                     :post-info="postInfo.data"
+                    :post-id="postId"
                     :class="{solutionFloor:postInfo.data.solution===floor.comment_id}"
                     ref="floors"
                     @replyClicked="closeAllFloorReplyBar"
                     @solution-set="onSolutionSet"
+                    @userFollowStateToggled="onUserFollowStateToggled"
                     >
         </post-floor>
     </div>
