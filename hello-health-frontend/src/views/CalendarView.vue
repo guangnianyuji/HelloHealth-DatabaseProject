@@ -5,7 +5,7 @@ import '@fortawesome/fontawesome-free/css/all.css'; // needs additional webpack 
 
 import _ from 'lodash' //导入loadsh插件
 import axios from 'axios';
-import { defineComponent } from 'vue'
+import { defineComponent } from 'vue';
 
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
@@ -33,7 +33,7 @@ export default defineComponent({
                 endDate: '',
                 endTime: '',
                 priority: '',
-                color:'',
+                color: '',
                 eventVisible: true,
             },
             rules: {
@@ -74,6 +74,7 @@ export default defineComponent({
                     center: 'title',
                     right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
                 },
+                height: 'auto',
                 themeSystem: 'bootstrap',
                 //initialDate: moment().format('YYYY-MM-DD'), // 自定义设置背景颜色时一定要初始化日期时间
                 initialView: 'dayGridMonth',
@@ -190,7 +191,6 @@ export default defineComponent({
             console.log(this.dialogVisible);
             this.dialogVisible = !this.dialogVisible;
             // 判断过去时间不能新增
-            /*
             if ((moment(selectInfo.endStr).valueOf() - moment(selectInfo.startStr).valueOf() > 86400000 &&
                 moment(selectInfo.startStr).valueOf() < moment(moment().format('YYYY-MM-DD')).valueOf() &&
                 selectInfo.view.type === 'dayGridMonth') ||
@@ -207,7 +207,7 @@ export default defineComponent({
                     onOk() {
                     }
                 })
-            }*/
+            }
         },
 
         /*
@@ -233,7 +233,7 @@ export default defineComponent({
                 start: new Date(`${this.form.startDate} ${this.form.startTime}`),
                 end: new Date(`${this.form.endDate} ${this.form.endTime}`),
                 priority: this.form.priority,
-                color: this.form.priority === 'lowPriority' ? '#78C2AD' : (this.form.priority === 'middlePriority' ? '#FBBF24' : '#EC4899' ),
+                color: this.form.priority === 'lowPriority' ? '#78C2AD' : (this.form.priority === 'middlePriority' ? '#FBBF24' : '#EC4899'),
                 // You can add other properties as needed
             };
             console.log(this.form.startDate);
@@ -284,6 +284,7 @@ export default defineComponent({
                 }
             });
         },
+        //关闭弹窗，重置表单
         resetForm(formName) {
             this.dialogVisible = false;
             this.$refs[formName].resetFields();
@@ -291,10 +292,14 @@ export default defineComponent({
         //关闭弹窗，重置表单
         close() {
             this.$confirm('确认关闭？')
-                .then(_ => {
-                    done();
+                .then(() => {
+                    // 点击确认关闭时执行的代码
+                    this.dialogVisible = false;
+                    this.$refs.formName.resetFields();
                 })
-                .catch(_ => { });
+                .catch(() => {
+                    // 点击取消时不需要执行任何代码
+                });
         },
     }
 })
