@@ -12,7 +12,6 @@
                 class="search-box"
                 placeholder="根据关键词查找新闻"
                 :suffix-icon="Search"
-                @input="getNewsList"
             />
           </el-col>
         </el-row>
@@ -71,7 +70,7 @@ export default {
       if (this.filteredNewsList && this.total > 0) {
         let start = (this.page - 1) * this.pageSize;
         let end = start + this.pageSize;
-        return this.newsList.slice(start, end);
+        return this.filteredNewsList.slice(start, end);
       } else {
         return []; // 如果 newsList 未定义或为空，返回空数组
       }
@@ -81,6 +80,7 @@ export default {
         return this.newsList;
       }
       const keyword = this.input.toLowerCase();
+      this.total = this.newsList.filter(news => news.title.toLowerCase().includes(keyword)).length;
       return this.newsList.filter(news => news.title.toLowerCase().includes(keyword));
     },
   },
@@ -91,8 +91,8 @@ export default {
     },
     getNewsList() {
       const apiUrl = this.selectedTagId
-          ? `/api/Flash/newsByTag?id=${this.selectedTagId}`
-          : "/api/Flash/newsByTag?id=";
+          ? `/api/Flash/newsByTag/${this.selectedTagId}`
+          : "/api/Flash/newsByTag/";
       axios.get(apiUrl)
           .then(res => {
             this.newsList = res.data.data.newsList;    // 获取全部新闻列表
