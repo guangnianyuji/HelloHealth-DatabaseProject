@@ -28,6 +28,7 @@ export default defineComponent({
         return {
             dialogVisible: false,
             form: {
+                eventID: '',
                 title: '',
                 startDate: '',
                 startTime: '',
@@ -35,6 +36,7 @@ export default defineComponent({
                 endTime: '',
                 priority: '',
                 color: '',
+                finished: false,
                 eventVisible: true,
             },
             rules: {
@@ -109,15 +111,6 @@ export default defineComponent({
         handleWeekendsToggle() {
             this.calendarOptions.weekends = !this.calendarOptions.weekends // update a property
         },
-
-        /*
-        getEventColor(info) {
-            const priority = info.events.extendedProps.priority;
-            events.extendedProps.color = this.priorityColorMap[priority];
-            console.log(priority);
-            console.log(this.priorityColorMap[priority]);
-            return this.priorityColorMap[priority];
-        },*/
 
         // 日期加1天
         addDate(date, days) {
@@ -235,12 +228,22 @@ export default defineComponent({
         },
 
         addEventFromForm() {
+            // Get the maximum existing eventID
+            const existingEventIDs = this.calendarOptions.events.map(event => event.eventID);
+            const maxEventID = existingEventIDs.length > 0 ? Math.max(...existingEventIDs) : 0;
+
+            // Generate the new eventID based on the maximum existing eventID
+            const newEventID = maxEventID + 1;
+
             const event = {
+                eventID: newEventID,
                 title: this.form.title,
                 start: new Date(`${this.form.startDate} ${this.form.startTime}`),
                 end: new Date(`${this.form.endDate} ${this.form.endTime}`),
                 priority: this.form.priority,
                 color: this.form.priority === 'lowPriority' ? '#3b82f6' : (this.form.priority === 'middlePriority' ? '#FBBF24' : '#EC4899'),
+                eventVisible: true,
+                finished: false,
                 // You can add other properties as needed
             };
             console.log(this.form.startDate);
@@ -280,6 +283,13 @@ export default defineComponent({
             const tempTime = this.form.startTime;
             this.form.startTime = this.form.endTime;
             this.form.endTime = tempTime;
+        },
+
+        // 
+        updateEventFinished(event) {
+            // 更新事件的 finished 属性
+            event.finished = !event.finished;
+            // 可以在这里执行其他逻辑，比如保存更新到数据库等
         },
 
         // 提交数据
@@ -328,6 +338,7 @@ export default defineComponent({
         },
     },  // end of methods
     computed: {
+        // 事项添加的时间检查
         maxStartTime() {
             if (this.form.startDate === this.form.endDate) {
                 return this.form.endTime;
@@ -339,6 +350,48 @@ export default defineComponent({
                 return this.form.startTime;
             }
             return null; // No minimum time restriction
+        },
+
+        // 事项排序
+        sortedEvents() {
+            // 按照规则对事件进行排序
+            const unFinishedEvents = this.calendarOptions.events.filter(event => !event.finished);
+            const finishedEvents = this.calendarOptions.events.filter(event => event.finished);
+
+            const compareEvents = (a, b) => {
+                // 1. 未完成的排在前，完成的排在末
+                if (a.finished !== b.finished) {
+                    return a.finished ? 1 : -1;
+                }
+
+                // 2. 按照开始时间排序
+                const startComparison = a.start - b.start;
+                if (startComparison !== 0) {
+                    return startComparison;
+                }
+
+                // 3. 相同开始时间的事件，按照优先级排序
+                const priorityOrder = {
+                    highPriority: 0,
+                    middlePriority: 1,
+                    lowPriority: 2,
+                };
+                return priorityOrder[a.priority] - priorityOrder[b.priority];
+            };
+
+            // 判断并返回合适的排序结果
+            if (unFinishedEvents.length === 0) {
+                return finishedEvents.sort(compareEvents);
+            } else if (finishedEvents.length === 0) {
+                return unFinishedEvents.sort(compareEvents);
+            } else {
+                return [...unFinishedEvents, ...finishedEvents].sort(compareEvents);
+            }
+        },  // end of sortedEvents
+
+        // 统计未完成总数
+        unfinishedEvents() {
+            return this.calendarOptions.events.filter(event => !event.finished);
         },
     },  // end of computed
     watch: {
@@ -421,15 +474,25 @@ export default defineComponent({
                 </label>
             </div>
             <div class='sidebar-section'>
-                <div class="TodoList">To-do List【共{{ calendarOptions.events.length }}个待办事项】</div>
-                <div class="events" v-for='event in calendarOptions.events' :key='event.title'>
+                <div class="TodoList">To-do List【共{{ unfinishedEvents.length }}个待办事项】</div>
+                <div class="events" v-if="sortedEvents.length > 0" v-for='event in sortedEvents' :key='event.eventID'>
                     <div class="time">
                         <div
                             :class="[event.priority === 'highPriority' ? 'highPriority' : (event.priority === 'middlePriority' ? 'middlePriority' : 'lowPriority')]">
                         </div>
                         <div class="eventTime">{{ formatTime(event.start) }} - {{ formatTime(event.end) }}</div>
+                        <label class="checkboxContainer">
+                            <input :checked="event.finished" type="checkbox" @change="updateEventFinished(event)">
+                            <span class="checkbox"></span>
+                        </label>
                     </div>
-                    <div class="eventTodo">{{ event.title }}</div>
+                    <div class="eventTodo">
+                        {{ event.title }}
+                    </div>
+
+                </div>
+                <div v-else>
+                    暂无待办事项
                 </div>
             </div>
         </div>
@@ -700,5 +763,38 @@ el-dialog {
 .tag {
     margin-left: 10px;
     /* Add your desired spacing value here */
+}
+
+/* checkbox 设置 */
+.checkboxContainer {
+    display: block;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+input[type='checkbox'] {
+    position: absolute;
+    transform: scale(0);
+}
+
+input[type='checkbox']:checked~.checkbox {
+    transform: rotate(45deg);
+    width: 14px;
+    margin-left: 5px;
+    border-color: #24c78e;
+    border-width: 5px;
+    border-top-color: transparent;
+    border-left-color: transparent;
+    border-radius: 0;
+}
+
+.checkbox {
+    display: block;
+    width: inherit;
+    height: inherit;
+    border: solid 3px #2a2a2ab7;
+    border-radius: 6px;
+    transition: all 0.375s;
 }
 </style>
