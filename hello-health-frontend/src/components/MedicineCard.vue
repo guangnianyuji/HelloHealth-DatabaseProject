@@ -206,7 +206,7 @@ export default {
       } else {
         axios
           .post(
-            `/api/Medicine/addCollection?user_id=${userInfo.user_id}&medicine_id=${medicineId.value}`
+            `/api/Medicine/addCollection?medicine_id=${medicineId.value}`
           )
           .then((res) => {
             console.log(res);
@@ -236,7 +236,7 @@ export default {
     const unCollect = () => {
       axios
       .post(
-            `/api/Medicine/removeCollection?user_id=${userInfo.user_id}&medicine_id=${medicineId.value}`
+            `/api/Medicine/removeCollection?medicine_id=${medicineId.value}`
           )
         .then((res) => {
           if (res.data.errorCode === 200) {
