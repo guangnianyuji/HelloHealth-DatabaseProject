@@ -60,7 +60,7 @@ export default defineComponent({
             priorityColorMap: {
                 lowPriority: '#3b82f6',
                 middlePriority: '#FBBF24',
-                highPriority: '#EC4899'
+                highPriority: '#EC4899',
             },
             calendarOptions: {
                 plugins: [
@@ -205,6 +205,13 @@ export default defineComponent({
                     // Handle the user's cancellation if needed
                 });
             } else {
+                // Clear the form fields
+                this.form.title = '';
+                this.form.startDate = selectInfo.startStr;
+                this.form.startTime = '10:00';
+                this.form.endDate = selectInfo.startStr;
+                this.form.endTime = '12:00';
+                this.form.priority = '';
                 // The selected date is not in the past, toggle the dialog
                 this.dialogVisible = !this.dialogVisible;
             }
@@ -233,7 +240,7 @@ export default defineComponent({
                 start: new Date(`${this.form.startDate} ${this.form.startTime}`),
                 end: new Date(`${this.form.endDate} ${this.form.endTime}`),
                 priority: this.form.priority,
-                color: this.form.priority === 'lowPriority' ? '#78C2AD' : (this.form.priority === 'middlePriority' ? '#FBBF24' : '#EC4899'),
+                color: this.form.priority === 'lowPriority' ? '#3b82f6' : (this.form.priority === 'middlePriority' ? '#FBBF24' : '#EC4899'),
                 // You can add other properties as needed
             };
             console.log(this.form.startDate);
@@ -246,6 +253,7 @@ export default defineComponent({
             this.calendarOptions.events.push(event);
         },
 
+        // 格式化时间
         formatTime(date) {
             const options = {
                 year: 'numeric',
@@ -257,6 +265,21 @@ export default defineComponent({
             };
 
             return new Intl.DateTimeFormat('en-US', options).format(date);
+        },
+
+        // 交换日期或时间
+        swapStartEnd() {
+            const tempDate = this.form.startDate;
+            const tempTime = this.form.startTime;
+            this.form.startDate = this.form.endDate;
+            this.form.startTime = this.form.endTime;
+            this.form.endDate = tempDate;
+            this.form.endTime = tempTime;
+        },
+        swapStartEndTimes() {
+            const tempTime = this.form.startTime;
+            this.form.startTime = this.form.endTime;
+            this.form.endTime = tempTime;
         },
 
         // 提交数据
@@ -303,7 +326,50 @@ export default defineComponent({
                     // 点击取消时不需要执行任何代码
                 });
         },
-    }
+    },  // end of methods
+    computed: {
+        maxStartTime() {
+            if (this.form.startDate === this.form.endDate) {
+                return this.form.endTime;
+            }
+            return null; // No minimum time restriction
+        },
+        minEndTime() {
+            if (this.form.startDate === this.form.endDate) {
+                return this.form.startTime;
+            }
+            return null; // No minimum time restriction
+        },
+    },  // end of computed
+    watch: {
+        'form.startDate': function (newStartDate) {
+            // If endDate is earlier than newStartDate, swap them
+            if (this.form.endDate && this.form.endDate < newStartDate) {
+                this.swapStartEnd();
+            }
+            // If dates are the same but startTime is later than endTime, swap them
+            if (this.form.endDate === newStartDate && this.form.endTime < this.form.startTime) {
+                this.swapStartEndTimes();
+            }
+        },
+        'form.endDate': function (newEndDate) {
+            const currentDate = moment().startOf('day'); // Get the current date without time
+            const selectedEndDate = moment(newEndDate);
+            // If newEndDate is earlier than currentDate, set it to currentDate
+            if (selectedEndDate.isBefore(currentDate, 'day')) {
+                this.form.endDate = currentDate.format('YYYY-MM-DD');
+            } else {
+                // If newEndDate is earlier than startDate, swap them
+                if (this.form.startDate > newEndDate) {
+                    this.swapStartEnd();
+                }
+                // If dates are the same but endTime is earlier than startTime, swap them
+                if (this.form.startDate === newEndDate && this.form.startTime > this.form.endTime) {
+                    this.swapStartEndTimes();
+                }
+            }
+        },
+    },  // end of watch
 })
 
 </script>
@@ -387,11 +453,8 @@ export default defineComponent({
                     <el-col class="line" :span="2">-</el-col>
                     <el-col :span="11">
                         <el-form-item prop="startTime" style="margin-bottom: 0">
-                            <el-time-select placeholder="选择时间" v-model="form.startTime" :picker-options="{
-                                start: '00:00',
-                                step: '00:30',
-                                end: '23:30 ',
-                            }" style="width: 100%;">
+                            <el-time-select placeholder="选择时间" v-model="form.startTime" start="00:00" step="00:30"
+                                end="23:30" :max-time="maxStartTime" style="width: 100%;">
                             </el-time-select>
                         </el-form-item>
                     </el-col>
@@ -408,21 +471,17 @@ export default defineComponent({
                     <el-col class="line" :span="2">-</el-col>
                     <el-col :span="11">
                         <el-form-item prop="endTime" style="margin-bottom: 0">
-                            <el-time-select placeholder="选择时间" v-model="form.endTime" :picker-options="{
-                                start: '00:00',
-                                step: '00:30',
-                                end: '23:30 ',
-                                minTime: form.startTime
-                            }" style="width: 100%;">
+                            <el-time-select placeholder="选择时间" v-model="form.endTime" start="00:00" step="00:30" end="23:30"
+                                :min-time="minEndTime" style="width: 100%;">
                             </el-time-select>
                         </el-form-item>
                     </el-col>
                 </el-form-item>
                 <el-form-item label="优先级" required>
                     <el-select v-model="form.priority" placeholder="请选择事项优先级">
-                        <el-option label="高优先级" value="highPriority"></el-option>
-                        <el-option label="中优先级" value="middlePriority"></el-option>
                         <el-option label="低优先级" value="lowPriority"></el-option>
+                        <el-option label="中优先级" value="middlePriority"></el-option>
+                        <el-option label="高优先级" value="highPriority"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item>
