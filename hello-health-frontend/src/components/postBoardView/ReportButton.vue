@@ -1,20 +1,26 @@
 <template>
-    <div>
-     <el-tooltip class="box-item" placement="top" content="举报">
-        
-    <span
-      style="text-align: left; margin-right: 8px">
-      <i class="fi fi-rr-shield-exclamation" @click="report"></i>
+    <span class="wrapper">
+        <el-tooltip class="box-item" placement="top" content="举报">
+        <span style="text-align: left; margin-right: 8px">
+          <i class="fi fi-rr-shield-exclamation" @click="report"></i>
+        </span>
+        </el-tooltip>
     </span>
-        
-    </el-tooltip>
-    </div>
 </template>
+
+<style scoped>
+.wrapper{
+    cursor: pointer;
+}
+
+.wrapper:hover{
+    color: var(--el-color-primary);
+}
+</style>
 
 <script>
 import { ElMessageBox } from 'element-plus'
 import { ElMessage } from 'element-plus'
-import { reactive } from 'vue';
 import axios from "axios";
 import globalData from "@/global/global"
 export default{
@@ -38,23 +44,18 @@ export default{
                 })
                  .then(({ value }) => {
                      
-                    axios.post("/api/Comment/Report",
-                      reactive({
-                         
+                    axios.post("/api/Forum/Report",
+                      {
                         user_id:globalData.userInfo.user_id,
                         comment_id:this.comment_id,
                         reason:value
-                       }))
+                       })
                        .then((res)=>{
-                        if(res.data.data.status)
-                        {
-                            ElMessage.success("举报信息提交成功！");
-                        }
-                         else
-                         {
-                            ElMessage.error("抱歉，举报信息提交失败，请再次尝试");
-                         }
-                      }) 
+                           ElMessage.success("举报信息提交成功！");
+                      }).catch(error => {
+                          if(error.network) return;
+                          error.defaultHandler("举报信息提交失败")
+                    })
                     }
                 ).catch(()=>{})
         }

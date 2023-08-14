@@ -77,14 +77,14 @@ const router = createRouter({
                 name: "otherView",
                 component: () => import("@/views/UserInfoView.vue")
             },{
-                path: "detail",
+                path: "coinDetail",
                 name: "coinView",
                 component: ()=>import("@/components/CoinView.vue"),
             },
             {
                 path: "UserAgreement",
                 name: "UserAgreement",
-                component: ()=>import("@/pages/UserAgreementPage.vue"),
+                component: ()=>import("@/views/UserAgreementView.vue"),
             }]
         },
         { path: '/:pathMatch(.*)*', name: 'NotFound', component: ()=>import("@/pages/ErrorPage.vue") },

@@ -9,10 +9,11 @@ import {ElMessage} from "element-plus";
 import WritePostButton from "@/components/postBoardView/WritePostButton.vue";
 const router = useRoute()
 
-let postId = router.params.postId;
+let postId = parseInt(router.params.postId);
 watch(router,(old,newRoute)=>{
-    postId = newRoute.params.postId;
-    reloadPost();
+    postId = parseInt(router.params.postId);
+    if(typeof(newRoute.params.postId) !== "undefined")
+        reloadPost();
 })
 const postInfo = reactive({
     data:{}
@@ -35,28 +36,35 @@ const openCommentEditor = () =>{
 }
 
 const reloadPost = ()=>{
-    axios.get("/api/PostInfo/"+ postId)
+    axios.get("/api/Forum/PostInfo/"+ postId)
         .then((res) => {
-                let responseObj = res.data;
-                if(responseObj.errorCode!==200){
-                    ElMessage.error("错误代码："+ responseObj.errorCode);
-                    return;
-                }
-                if(!responseObj.data.status){
-                    ElMessage.error("帖子加载失败："+ responseObj.data.errorType);
-                    return;
-                }
-
-                postInfo.data = responseObj.data;
-                nextTick(gotoSpecificFloor);
-            }
-        ).catch((reason)=>{
-        alert(reason)
+            postInfo.data = res.json;
+            nextTick(gotoSpecificFloor);
+        }).catch((error)=>{
+        if(error.network) return;
+        switch (error.errorCode) {
+            case 111:
+                ElMessage.error("帖子还在审核")
+                break;
+            default:
+                error.defaultHandler("帖子加载出错");
+        }
     })
 }
 reloadPost();
 
-
+const onUserFollowStateToggled = (nowState, userId, changeFollowNumber) => {
+    for(let floorInfo of postInfo.data.floors){
+        if(floorInfo.author.user_id === userId){
+            floorInfo.author.followed = nowState;
+            if(changeFollowNumber)
+                if(nowState)
+                    floorInfo.author.follower++;
+                else
+                    floorInfo.author.follower--;
+        }
+    }
+}
 
 const closeAllFloorReplyBar = () =>{
     for(let floor of floors.value){
@@ -65,27 +73,30 @@ const closeAllFloorReplyBar = () =>{
 }
 
 const editor = ref();
-const submitNewComment = async() => {
+
+// 发送楼层
+const submitNewComment = () => {
     if(editor.value.editor.state.doc.textContent.length < 15) {
         ElMessage.error('请输入更多内容。');
         return;
     }
-    let response = await axios.post("/api/SendFloor",{
+    axios.post("/api/Forum/SendFloor",{
         content:JSON.stringify(editor.value.editor.getJSON()),
         post_id:postId
+    }).then(res => {
+        ElMessage.success('发送成功，请等待审核通过。');
+        dialogVisible.value = false;
+        editor.value.editor.commands.clearContent();
+    }).catch(error => {
+        if(error.network) return;
+        switch (error.errorCode) {
+            case 114:
+                ElMessage.error("非认证用户不能回复悬赏贴")
+                break;
+            default:
+                error.defaultHandler("发送失败");
+        }
     })
-    let responseObj = response.data;
-    if(responseObj.errorCode!==200) {
-        ElMessage.error('发送失败，错误码：' + responseObj.errorCode);
-        return;
-    }
-    if(responseObj.data.status!==true) {
-        ElMessage.error('发送失败：' + responseObj.data.msg);
-        return;
-    }
-    ElMessage.success('发送成功，请等待审核通过。');
-    dialogVisible.value = false;
-    editor.value.editor.commands.clearContent();
 }
 
 const onSolutionSet = (comment_id) => {
@@ -131,27 +142,23 @@ const gotoSpecificFloor = ()=>{
     <div class="viewWrapper">
         <post-floor v-if="postInfo.data.floors && postInfo.data.floors.length>0"
                     :floor-info="postInfo.data.floors[0]"
-                    :title="postInfo.data.title"
-                    :is-bounty="postInfo.data.is_bounty"
-                    :bounty-value="postInfo.data.bounty_value"
-                    :solution="postInfo.data.solution" @replyClicked="closeAllFloorReplyBar"
-                    :star-info="postInfo.data.star"
+                    :post-info="postInfo.data"
+                    :post-id="postId"
                     @firstFloorReplyClicked="openCommentEditor"
                     @goToSolutionClicked="scrollToSolution"
-                    floor="1">
+                    @userFollowStateToggled="onUserFollowStateToggled"
+        >
         </post-floor>
         <post-floor v-for="(floor,index) in floorsWithoutFirst"
                     :floor-info="floor"
+                    :post-info="postInfo.data"
+                    :post-id="postId"
+                    :class="{solutionFloor:postInfo.data.solution===floor.comment_id}"
                     ref="floors"
                     @replyClicked="closeAllFloorReplyBar"
                     @solution-set="onSolutionSet"
-                    :is-solution="postInfo.data.solution===floor.comment_id"
-                    :class="{solutionFloor:postInfo.data.solution===floor.comment_id}"
-                    :can-set-solution="postInfo.data.is_bounty &&
-                        postInfo.data.solution === -1 &&
-                        globalData.userInfo.user_id===postInfo.data.floors[0].author.user_id &&
-                        floor.author.user_id !== globalData.userInfo.user_id"
-                    :floor="floor.floor_number">
+                    @userFollowStateToggled="onUserFollowStateToggled"
+                    >
         </post-floor>
     </div>
 

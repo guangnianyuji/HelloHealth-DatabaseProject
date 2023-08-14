@@ -44,25 +44,14 @@ export default{
                     cancelButtonText: '取消',
                 })
                 .then(() => {
-
-                    axios.post("/api/Comment/SetSolution",
-                        reactive({
-                            user_id:globalData.userInfo.user_id,
-                            comment_id:this.comment_id,
-                        }))
-                        .then((res)=>{
-                            if(res.data.data.status)
-                            {
-                                ElMessage.success("设置最佳答案成功！");
-                                this.$emit("solutionSet")
-                            }
-                            else
-                            {
-                                ElMessage.error("抱歉，设置最佳答案失败，请稍后再试");
-                            }
-                        })
-                    }
-                ).catch(()=>{});
+                    axios.post("/api/Forum/SetSolution",{user_id:globalData.userInfo.user_id,comment_id:this.comment_id,}).then((res)=>{
+                        ElMessage.success("设置最佳答案成功！");
+                        this.$emit("solutionSet")
+                    }).catch(error => {
+                        if(error.network) return;
+                        error.defaultHandler("设置最佳答案失败")
+                    })
+                }).catch(()=>{});
         }
     }
 }

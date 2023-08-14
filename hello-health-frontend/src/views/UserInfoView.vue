@@ -21,6 +21,8 @@
                           :auto-upload="false"
                           :on-change="handleChange"
                           accept="image/jpg,image/jpeg,image/png,image/gif"
+                         :multiple="false"
+                         :file-list="fileList"
                       >
                         <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
                         <div slot="tip" class="el-upload__tip">上传文件格式为.jpg、.jpeg、.png、.gif，且不超过 2MB</div>
@@ -31,17 +33,33 @@
                       <el-button type="primary" @click="submitPhoto">确 定</el-button>
                     </div>
                   </el-dialog>
-                  <el-dialog title="我的关注" v-model="myFollowVisible" @close="search">
+                  <el-dialog title="我的关注" v-model="myFollowVisible" @close="refresh">
                     <div class="user-cards">
-                      <el-card class="user-card" v-for="user in followList" :key="user.user_id">
+                      <el-card class="user-card" v-for="user in followList" :key="user">
                         <div class="user-info">
                           <UserInfoCard :user-info="user" @click="goUserPage(user.user_id)"></UserInfoCard>
                           <el-button
-                              :type="followMap.get(user.user_id) ? 'default' : 'primary'"
+                              :type="followMap.get(user.user_id) ? 'default':'primary' "
                               style="margin: 20px"
                               @click="onFollowBtnClick(user.user_id)"
                           >
-                            {{ followMap.get(user.user_id) ? '已关注' : '+关注' }}
+                            {{ followMap.get(user.user_id) ? '已关注':'+ 关注'}}
+                          </el-button>
+                        </div>
+                      </el-card>
+                    </div>
+                  </el-dialog>
+                  <el-dialog title="我的粉丝" v-model="myFansVisible" @close="refresh">
+                    <div class="user-cards">
+                      <el-card class="user-card" v-for="user in fansList" :key="user.user_id">
+                        <div class="user-info">
+                          <UserInfoCard :user-info="user" @click="goUserPage(user.user_id)"></UserInfoCard>
+                          <el-button
+                              :type="followMap.get(user.user_id) ?'default':'primary' "
+                              style="margin: 20px"
+                              @click="onFollowBtnClick(user.user_id)"
+                          >
+                            {{ followMap.get(user.user_id) ? '已关注':'+ 关注' }}
                           </el-button>
                         </div>
                       </el-card>
@@ -61,8 +79,10 @@
               >
                 {{ isFollowed ? '已关注' : '+ 关注' }}
               </el-button>
-              <el-button v-else-if="isLogin && isCurrentUser" class="attention-list" @click="this.myFollowVisible = true">我的关注</el-button>
+              <el-button style="border-color:rgb(0,191,168)" v-else-if="isLogin && isCurrentUser" class="attention-list" @click="this.myFollowVisible = true">我的关注</el-button>
+              <el-button style="border-color:rgb(0,191,168)" v-if="isLogin && isCurrentUser" class="attention-list" @click="this.myFansVisible = true">我的粉丝</el-button>
               <br><br><br>
+              
               <div>
                 <span>{{ authenInfo }}</span>
                 <template v-if="isLogin">
@@ -72,25 +92,27 @@
                   <span v-else>{{ '未认证' }}</span>
                   <el-dialog v-model="dialogVisible" title="医师认证" width="50%">
                     <div style="text-align: center;">
-                      <p>请上传您的医师资格证照片</p>
-                      <el-upload
-                          class="upload-demo"
-                          action="https://jsonplaceholder.typicode.com/posts/"
-                          :auto-upload="false"
-                          :on-change="handleChangeCertification"
+                      <p>请上传您的医师资格证照片和执业证照片</p>
+                      <br><br>
+                      <el-upload class="upload-demo"
+                                 action="https://jsonplaceholder.typicode.com/posts/"
+                                 :auto-upload="false"
+                                 :on-change="handleChangeDoctor"
+                                 :multiple="false"
+                                 :file-list="fileList"
+                                 accept="image/jpg,image/jpeg,image/png,image/gif"
                       >
                         <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
                         <div slot="tip" class="el-upload__tip">上传文件格式为.jpg、.jpeg、.png、.gif，且不超过 2MB</div>
+                        <br><br>
                       </el-upload>
-                    </div>
-                    <br><br>
-                    <div style="text-align: center;">
-                      <p>请上传您的执业证照片</p>
-                      <el-upload
-                          class="upload-demo"
-                          action="https://jsonplaceholder.typicode.com/posts/"
-                          :auto-upload="false"
-                          :on-change="handleChangeCertification"
+                      <el-upload class="upload-demo"
+                                 action="https://jsonplaceholder.typicode.com/posts/"
+                                 :auto-upload="false"
+                                 :on-change="handleChangeBusiness"
+                                 :multiple="false"
+                                 :file-list="fileList"
+                                 accept="image/jpg,image/jpeg,image/png,image/gif"
                       >
                         <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
                         <div slot="tip" class="el-upload__tip">上传文件格式为.jpg、.jpeg、.png、.gif，且不超过 2MB</div>
@@ -240,25 +262,27 @@
             <el-button type="primary" @click="dialogVisible = true">编辑</el-button>
             <el-dialog v-model="dialogVisible" title="医师认证" width="50%">
               <div style="text-align: center;">
-                <p>请上传您的医师资格证照片</p>
-                <el-upload
-                    class="upload-demo"
-                    action="https://jsonplaceholder.typicode.com/posts/"
-                    :auto-upload="false"
-                    :on-change="handleChangeCertification"
+                <p>请上传您的医师资格证照片和执业证照片</p>
+                <br><br>
+                <el-upload class="upload-demo"
+                           action="https://jsonplaceholder.typicode.com/posts/"
+                           :auto-upload="false"
+                           :on-change="handleChangeDoctor"
+                           :multiple="false"
+                           :file-list="fileList"
+                           accept="image/jpg,image/jpeg,image/png,image/gif"
                 >
                   <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
                   <div slot="tip" class="el-upload__tip">上传文件格式为.jpg、.jpeg、.png、.gif，且不超过 2MB</div>
+                  <br><br>
                 </el-upload>
-              </div>
-              <br><br>
-              <div style="text-align: center;">
-                <p>请上传您的执业证照片</p>
-                <el-upload
-                    class="upload-demo"
-                    action="https://jsonplaceholder.typicode.com/posts/"
-                    :auto-upload="false"
-                    :on-change="handleChangeCertification"
+                <el-upload class="upload-demo"
+                           action="https://jsonplaceholder.typicode.com/posts/"
+                           :auto-upload="false"
+                           :on-change="handleChangeBusiness"
+                           :multiple="false"
+                           :file-list="fileList"
+                           accept="image/jpg,image/jpeg,image/png,image/gif"
                 >
                   <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
                   <div slot="tip" class="el-upload__tip">上传文件格式为.jpg、.jpeg、.png、.gif，且不超过 2MB</div>
@@ -318,7 +342,7 @@
             我的杏仁币：
           </div>
           <div style="color:green;font-size: 22px;">
-            {{ numOfCoin }}
+            {{ CoinNum }}
           </div>
           <el-button class="coinButton" v-if="isLogin" link @click="goToCoinDetail">
             杏仁币详情>>
@@ -336,7 +360,7 @@
             <el-table :data="CoinRecordList"
 
                       :default-sort="{ prop: 'Time', order: 'ascending' }"
-                      height="250" style="width: 100%" class="table">
+                      height="250" style="width: 100%" class="table" empty-text="您暂时没有杏仁币记录~">
               <el-table-column prop="Time" label="时间" width="150" />
               <el-table-column prop="Num" label="变化" width="120" />
               <el-table-column prop="Reason" label="原因" width="150"/>
@@ -351,7 +375,6 @@
             </el-row>
             <el-row>
               <div style="font-size: 14px;color: grey;margin-left: 2px;">
-
                 杏仁币是本平台中专用的虚拟货币，取自“杏林春暖 ，悬壶济世”之意。
               </div>
             </el-row>
@@ -431,16 +454,24 @@ export default {
   components: {UserInfoCard, NewsBlockList, PostCard, GoToPostLink},
   data(){
     return{
+      isSelf: true,
+
       isFollowed: false,
       followMap: new Map(), // 用来匹配关注列表的已关注和+关注
       myFollowVisible:false,
       followList:[],
 
+      isFans: false,
+      //fansMap: new Map(), // 用来匹配粉丝列表的已关注和+关注,用不到，直接用followMap不就行了
+      myFansVisible:false,
+      fansList:[],
       //从数据库获取的数据
       certification:{},   //认证信息
       userInfo:{},     //用户基本信息，包含numOfCoin,isCertified等信息
       userPosts: [],   // 用户上传的帖子
       isLogin:true ,    //判断正在操控的用户是否处于登陆状态
+      CoinRecordList:[],  //硬币记录
+      CoinNum:0,  //硬币数量
 
       //本页面需要的一些变量，不用从数据库获取
       isEdit:false, //是否允许编辑信息
@@ -449,9 +480,15 @@ export default {
 
       //用户上传的，要传给数据库的一些数据
       file:null, //上传的文件对象
-      qualificationCertificate:null,//医师资格证照片
-      practiceCertificate:null,//执业证照片
+      doctorPic: null, // 医师资格证照片
+      businessPic: null, // 执业证照片
+      uploadedPhotos: 0 ,// 已上传的照片数量
       photoUpload:false,   //头像上传，初始为false
+
+      fileList:[],
+
+      isCurrentUser:false,
+
 
       // 举报信息的数据
       reportList:[],
@@ -460,13 +497,57 @@ export default {
         {prop:'respond_date',label:"处理时间"},
         {prop:"report_status",label:"举报状态"},
       ]
+
     }
   },
-  //从数据库获取所需的用户信息
+  
+  watch: {
+    $route: {
+      handler: function(route) {
+         console.log("watch")
+        this.refresh()
+      },
+      immediate: true
+    }
+  },
+
+
+
   mounted() {
     console.log("mounted")
 
     let userIdNum = parseInt(this.$route.params.userId ? this.$route.params.userId: 0);
+    if(!this.$route.params.userId && !globalData.login){
+        this.$router.push("/login");
+        return;
+    }
+  },
+  //从数据库获取所需的用户信息
+  created() {
+    console.log("created")
+    this.refresh();
+  },
+
+
+  computed: {
+    //判断输出文字
+    authenInfo() {
+      return this.isLogin ? '认证信息：' : '未登录';
+    },
+    //根据操控页面的用户的登陆状态来判断是显示要查看的用户信息还是“未登录”字样
+    displayName() {
+      if(this.isLogin) {
+        return this.userInfo.userName;
+      } else {
+        return '未登录';
+      }
+    },
+  },
+  methods:{
+
+    refresh(){
+      let userIdNum = parseInt(this.$route.params.userId ? this.$route.params.userId: 0);
+    console.log(userIdNum);
     if(isNaN(userIdNum)){
       this.$router.replace("/error");
       return;
@@ -476,9 +557,9 @@ export default {
           const responseData = response.data.data.userInfo;
           this.userInfo = responseData
           // 将gender的值更改为数组
-          this.userInfo.gender = ["男", "女"]
+          //this.userInfo.gender = ["男", "女"]
           // 将gender的默认值设置为从数据库获取到的性别值
-          if (this.userInfo.gender !== '男' && this.userInfo.gender !== '女') {
+          if (this.userInfo.gender != '男' && this.userInfo.gender != '女') {
             this.userInfo.gender = '男'
           }
           const responseData2 = response.data.data.certification;
@@ -493,71 +574,37 @@ export default {
             this.followMap.set(user.user_id, true)
           })
 
+          this.fansList=response.data.data.fansList;
+          
+
+              /* 获取用户发布的帖子 */
+          this.fetchUserPosts(this.userInfo.userID);
+        //判断是否是本人在查看信息页面，来判断该用户是否可对信息进行修改
+ 
+          //return !this.$route.params.userId;
+          console.log(this.$route.params.userId)
+          console.log(globalData.userInfo.user_id)
+          let result=(!this.$route.params.userId)||(this.$route.params.userId==globalData.userInfo.user_id);
+          console.log(result)
+          this.isCurrentUser=result;
+          if(result)
+          {
+            axios.get("/api/HB/record")
+            .then(response=>{
+              this.CoinRecordList=response.data.data.coinRecordList;
+              this.CoinNum=response.data.data.coinNum;
+            })
+          }
         })
         .catch(error => {
-          console.error(error)
-        });
-    /* 获取用户发布的帖子 */
-    this.fetchUserPosts(this.userInfo.userID);
-
-    // 获取举报信息
-    axios.get(`/api/UserInfo/Report?userid=${globalData.userInfo.userId}`)
-        .then((res)=>{
-          this.reportList=res.data.data.reportList;
-          console.log(this.reportList)
-        })
-        .catch(error => {
-          console.error(error)
+            if(error.network) return;
+            error.defaultHandler();
         });
 
-  },
+    },
 
-  //进行一些必要的计算工作
-  computed: {
-    //判断输出文字
-    authenInfo() {
-      return this.isLogin ? '认证信息：' : '未登录';
-    },
-    //根据操控页面的用户的登陆状态来判断是显示要查看的用户信息还是“未登录”字样
-    displayName() {
-      if(this.isLogin) {
-        return this.userInfo.userName;
-      } else {
-        return '未登录';
-      }
-    },
-    //判断是否是本人在查看信息页面，来判断该用户是否可对信息进行修改
-    isCurrentUser() {
-      return !this.$route.params.userId;
-    }
-  },
-  methods:{
     goUserPage(userId){
       this.$router.push("/user/"+userId)
-    },
-    search(){
-      let userIdNum = parseInt(this.$route.params.userId ? this.$route.params.userId: 0);
-      if(isNaN(userIdNum)){
-        this.$router.replace("/error");
-        return;
-      }
-      axios.post('/api/UserInfo/Details',{user_id: userIdNum})
-          .then(response => {
-
-            // this.isLogin = globalData.isLogin; // 获取用户登录状态 change
-            this.followList = response.data.data.followList;
-            this.isFollowed = response.data.data.isFollowed;
-
-            console.log(this.followList)
-
-            this.followList.forEach(user => {
-              this.followMap.set(user.user_id, false)
-            })
-
-          })
-          .catch(error => {
-            console.error(error)
-          });
     },
     onFollowBtnClick(userId) {
 
@@ -577,7 +624,8 @@ export default {
               this.followMap.set(userId, false)
             })
             .catch(error => {
-              console.error(error);
+                if(error.network) return;
+                error.defaultHandler();
             });
       }
       else {
@@ -587,7 +635,8 @@ export default {
               this.isFollowed = false;
             })
             .catch(error => {
-              console.error(error);
+                if(error.network) return;
+                error.defaultHandler();
             });
       }
     },
@@ -601,7 +650,8 @@ export default {
               this.followMap.set(userId, true);
             })
             .catch(error => {
-              console.error(error);
+                if(error.network) return;
+                error.defaultHandler();
             });
       }
       else{
@@ -611,7 +661,8 @@ export default {
               this.isFollowed = true;
             })
             .catch(error => {
-              console.error(error);
+                if(error.network) return;
+                error.defaultHandler();
             });
       }
     },
@@ -625,7 +676,7 @@ export default {
     },
     /*跳转到杏仁币的流水页面函数*/
     goToCoinDetail(){
-      this.$router.push('/detail');
+      this.$router.push('/coinDetail');
     },
     showCertificationDialog() {
       // 显示认证框
@@ -650,7 +701,7 @@ export default {
             // 将下拉框选中的值保存到userInfo.birthday中
             //this.userInfo.birthday=this.userInfo.birthday;
             if (response.data.data.status == true) {
-              ElMessage.success("上传成功，请等待管理员审核！");
+              ElMessage.success("上传成功！");//这个管理员就不审核了
               // 保存成功后将isEdit变量设置为false，禁用编辑模式
               this.isEdit = false;
             } else {
@@ -663,28 +714,38 @@ export default {
             ElMessage.error("上传失败！");
           });
     },
-    handleChangeCertification(file,fileList){
-      console.log(file,fileList);
-      // 判断是医师资格证照片还是执业证照片
-      if (fileList.length === 1) {
-        this.qualificationCertificate = file.raw; // 医师资格证照片
-      } else if (fileList.length === 2) {
-        this.practiceCertificate = file.raw; // 执业证照片
+    handleChangeDoctor(file,fileList){
+      console.log(file, fileList);
+      console.log("医师资格证照片");
+      if (fileList.length > 1) {
+        fileList.splice(0, fileList.length - 1); // 只保留最后一个文件
       }
+      this.doctorPic = file.raw;
     },
-    /*将用户上传的医师资格证照片传给后端数据库*/
+    handleChangeBusiness(file,fileList){
+      console.log(file, fileList);
+      console.log("执业证照片");
+      if (fileList.length > 1) {
+        fileList.splice(0, fileList.length - 1); // 只保留最后一个文件
+      }
+      this.businessPic = file.raw;
+    },
+    //将用户上传的医师资格证照片传给后端数据库
     submitCertification(){
-      // 创建一个 FormData 对象
+    // 创建一个 FormData 对象
       const formData = new FormData();
-      // 添加医师资格证照片
-      if (this.qualificationCertificate) {
-        formData.append('qualificationCertificate', this.qualificationCertificate);
+     // 添加医师资格证照片
+      if (this.doctorPic) {
+        console.log("que")
+        formData.set('doctorPic', this.doctorPic);
       }
       // 添加执业证照片
-      if (this.practiceCertificate) {
-        formData.append('practiceCertificate', this.practiceCertificate);
+      if (this.businessPic) {
+        console.log("pra")
+        formData.set('businessPic', this.businessPic);
       }
-      // 发起一个 POST 请求，将 formData 发送给后端服务器
+      console.log(formData);
+     // 发起一个 POST 请求，将 formData 发送给后端服务器
       axios.post('/api/UserInfo/uploadDoctorApproval', formData)
           .then(response => {
             console.log(response.data);
@@ -701,6 +762,9 @@ export default {
           });
     },
     handleChange(file,fileList){
+      if (fileList.length > 1) {
+        fileList.splice(0, fileList.length - 1); // 只保留最后一个文件
+      }
       console.log(file,fileList);
       this.file = file.raw
     },
@@ -716,6 +780,8 @@ export default {
             if(response.data.data.status == true){
               ElMessage.success("更改成功！");
               this.photoUpload = false;
+              this.userInfo.avatarUrl=response.data.data.url;
+              globalData.userInfo.avatar_url=response.data.data.url;
             }
             else{
               ElMessage.error("更改失败！");
@@ -729,13 +795,13 @@ export default {
     /* 求获取用户发布的帖子 */
     fetchUserPosts(userID) {
       axios.post("/api/UserInfo/fetchUserPosts", {
-        params: {
-          userID
-        }
+
+        user_id:userID
+
       }).then(res => {
         this.userPosts= res.data.data.post_list;
       })
-    }
+    },
   }
 }
 
@@ -804,7 +870,7 @@ export default {
 /*”去认证“按钮样式*/
 .certificated-button{
   background-color: white;
-  border-color: antiquewhite;
+  border-color: rgb(238, 137, 4);
   color: #c45656;
 
   margin-left:60px;
