@@ -26,6 +26,7 @@
     "bootstrap": "^4.6.2",
     "bootswatch": "^5.3.1",
     "element-plus": "^2.3.7",
+    "moment": "^2.29.4",
     "tippy.js": "^6.3.7",
     "unplugin-element-plus": "^0.7.1",
     "vite-plugin-mock": "^3.0.0",

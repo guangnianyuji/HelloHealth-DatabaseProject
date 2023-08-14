@@ -6,6 +6,7 @@ import '@fortawesome/fontawesome-free/css/all.css'; // needs additional webpack 
 import _ from 'lodash' //导入loadsh插件
 import axios from 'axios';
 import { defineComponent } from 'vue';
+import moment from 'moment';
 
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
@@ -92,7 +93,6 @@ export default defineComponent({
                 handleWindowResize: true,//是否随浏览器窗口大小变化而自动变化
                 eventLimit: true,       //数据条数太多时，限制各自里显示的数据条数（多余的以“+2more”格式显示），默认false不限制,支持输入数字设定固定的显示条数
                 locale: zhCnLocale,     // 设置语言
-
                 eventColor: "#78C2AD",  // 修改日程背景色
                 events: [],
                 /* you can update a remote database when these fire:
@@ -188,25 +188,25 @@ export default defineComponent({
         handleDateSelect(selectInfo) {
             if (!this.canUserEdit) return;
             console.log(selectInfo, '事件4');
-            console.log(this.dialogVisible);
-            this.dialogVisible = !this.dialogVisible;
+
             // 判断过去时间不能新增
-            if ((moment(selectInfo.endStr).valueOf() - moment(selectInfo.startStr).valueOf() > 86400000 &&
-                moment(selectInfo.startStr).valueOf() < moment(moment().format('YYYY-MM-DD')).valueOf() &&
-                selectInfo.view.type === 'dayGridMonth') ||
-                ((selectInfo.view.type === 'timeGridWeek' || selectInfo.view.type === 'timeGridDay') &&
-                    moment(selectInfo.startStr).valueOf() < moment(moment().format('YYYY-MM-DD')).valueOf() &&
-                    (selectInfo.allDay ? (moment(selectInfo.endStr).valueOf() - moment(selectInfo.startStr).valueOf() > 86400000)
-                        : (moment(selectInfo.end).valueOf() - moment(selectInfo.start).valueOf() > 1800000))
-                )) {
-                this.$confirm({
-                    title: '提示',
-                    content: '过去时间不能进行新增!',
-                    okText: '确定',
-                    cancelText: '取消',
-                    onOk() {
-                    }
-                })
+            const selectedDate = moment(selectInfo.startStr);
+            const currentDate = moment();
+
+            if (selectedDate.isBefore(currentDate, 'day')) {
+                // The selected date is in the past
+                this.$confirm('过去时间不能进行新增!', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning',
+                }).then(() => {
+                    // Handle the user's choice if needed
+                }).catch(() => {
+                    // Handle the user's cancellation if needed
+                });
+            } else {
+                // The selected date is not in the past, toggle the dialog
+                this.dialogVisible = !this.dialogVisible;
             }
         },
 
@@ -265,6 +265,8 @@ export default defineComponent({
                 if (valid) {
                     this.form.startDate = `${this.form.startDate}`;
                     this.form.endDate = `${this.form.endDate}`;
+                    console.log(this.form.startDate);
+                    console.log(this.form.endDate);
 
                     try {
                         const response = await axios.post('https://mock.apifox.cn/m1/2961538-0-default/api/events', this.form);
