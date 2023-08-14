@@ -108,10 +108,6 @@ export default defineComponent({
         }
     },
     methods: {
-        handleWeekendsToggle() {
-            this.calendarOptions.weekends = !this.calendarOptions.weekends // update a property
-        },
-
         // 日期加1天
         addDate(date, days) {
             var d = new Date(date);
@@ -336,6 +332,15 @@ export default defineComponent({
                     // 点击取消时不需要执行任何代码
                 });
         },
+
+        // 删除事件
+        deleteEvent(eventID) {
+            // 在 events 数组中查找并删除具有给定 eventID 的事件
+            const index = this.calendarOptions.events.findIndex(event => event.eventID === eventID);
+            if (index !== -1) {
+                this.calendarOptions.events.splice(index, 1);
+            }
+        },
     },  // end of methods
     computed: {
         // 事项添加的时间检查
@@ -460,18 +465,12 @@ export default defineComponent({
             </div>
 
             <div class='sidebar-section'>
-                <h2>说明</h2>
+                <div class="health-calendar">说明</div>
                 <ul>
-                    <li>选择日期，系统将提示您创建一个新事件</li>
-                    <li>拖放和调整事件起止时间</li>
-                    <li>单击事件可将其删除</li>
+                    <li>选择日期或点击右上角+号，开始创建新事件</li>
+                    <li>点击日历右下方标签可以筛选事项</li>
+                    <li>List列表中可以删除事件或Check事件</li>
                 </ul>
-            </div>
-            <div class='sidebar-section'>
-                <label>
-                    <input type='checkbox' :checked='calendarOptions.weekends' @change='handleWeekendsToggle' />
-                    显示周末
-                </label>
             </div>
             <div class='sidebar-section'>
                 <div class="TodoList">To-do List【共{{ unfinishedEvents.length }}个待办事项】</div>
@@ -486,10 +485,10 @@ export default defineComponent({
                             <span class="checkbox"></span>
                         </label>
                     </div>
-                    <div class="eventTodo">
-                        {{ event.title }}
+                    <div class="eventTodo" style="display: flex; align-items: center; justify-content: space-between;">
+                        <div>{{ event.title }}</div>
+                        <el-button type="danger" size="small" @click="deleteEvent(event.eventID)" round>删除</el-button>
                     </div>
-
                 </div>
                 <div v-else>
                     暂无待办事项
@@ -703,7 +702,7 @@ li {
 }
 
 .eventTodo {
-    padding: 0px 20px 20px 20px;
+    padding: 0px 0px 20px 20px;
     flex-direction: row;
     gap: 10px;
     align-items: flex-start;
