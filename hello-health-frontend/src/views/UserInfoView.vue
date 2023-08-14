@@ -130,7 +130,6 @@
         </div>
       </el-card>
     </div>
-
     <!--展示信息的分栏，分栏3：基本信息-->
     <div v-if="isLogin">
       <el-card class="cardStyle">
@@ -412,6 +411,32 @@
         </el-container>
       </el-card>
     </div>
+    <!--展示信息的分栏，分栏6：举报信息-->
+    <div>
+      <el-card class="cardStyle" v-if="isLogin && isCurrentUser">
+        <el-descriptions
+            class="margin-top clickable"
+            title="我的举报"
+            :column="
+
+            3"
+            :size="size"
+            border
+        >
+        </el-descriptions>
+        <el-table :data="reportList" class="table">
+          <el-table-column v-for="item in reportCols"
+                           :key="item.label"
+                           :prop="item.prop"
+                           :label="item.label"/>
+          <el-table-column label="操作">
+            <template v-slot:default="scope">
+              <GoToPostLink :floor_number="scope.row.floor_number" :post_id="scope.row.post_id"></GoToPostLink>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-card>
+    </div>
   </div>
 </template>
 
@@ -422,10 +447,11 @@ import NewsBlockList from "@/components/NewsBlockList.vue";
 import globalData from "@/global/global";
 import { ElMessage } from "element-plus";
 import UserInfoCard from "@/components/UserInfoCard.vue";
+import GoToPostLink from "@/components/postView/GoToPostLink.vue";
 
 export default {
   name: "UserInfoPage",
-  components: {UserInfoCard, NewsBlockList, PostCard},
+  components: {UserInfoCard, NewsBlockList, PostCard, GoToPostLink},
   data(){
     return{
       isSelf: true,
@@ -458,9 +484,20 @@ export default {
       businessPic: null, // 执业证照片
       uploadedPhotos: 0 ,// 已上传的照片数量
       photoUpload:false,   //头像上传，初始为false
+
       fileList:[],
 
       isCurrentUser:false,
+
+
+      // 举报信息的数据
+      reportList:[],
+      reportCols: [
+        {prop:'report_date',label:"举报时间"},
+        {prop:'respond_date',label:"处理时间"},
+        {prop:"report_status",label:"举报状态"},
+      ]
+
     }
   },
   
@@ -477,6 +514,8 @@ export default {
 
 
   mounted() {
+    console.log("mounted")
+
     let userIdNum = parseInt(this.$route.params.userId ? this.$route.params.userId: 0);
     if(!this.$route.params.userId && !globalData.login){
         this.$router.push("/login");
@@ -561,8 +600,7 @@ export default {
             if(error.network) return;
             error.defaultHandler();
         });
-        
-     
+
     },
 
     goUserPage(userId){
@@ -757,7 +795,9 @@ export default {
     /* 求获取用户发布的帖子 */
     fetchUserPosts(userID) {
       axios.post("/api/UserInfo/fetchUserPosts", {
+
         user_id:userID
+
       }).then(res => {
         this.userPosts= res.data.data.post_list;
       })
