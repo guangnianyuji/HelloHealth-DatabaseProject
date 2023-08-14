@@ -108,7 +108,6 @@
         </div>
       </el-card>
     </div>
-
     <!--展示信息的分栏，分栏3：基本信息-->
     <div v-if="isLogin">
       <el-card class="cardStyle">
@@ -389,6 +388,32 @@
         </el-container>
       </el-card>
     </div>
+    <!--展示信息的分栏，分栏6：举报信息-->
+    <div>
+      <el-card class="cardStyle" v-if="isLogin && isCurrentUser">
+        <el-descriptions
+            class="margin-top clickable"
+            title="我的举报"
+            :column="
+
+            3"
+            :size="size"
+            border
+        >
+        </el-descriptions>
+        <el-table :data="reportList" class="table">
+          <el-table-column v-for="item in reportCols"
+                           :key="item.label"
+                           :prop="item.prop"
+                           :label="item.label"/>
+          <el-table-column label="操作">
+            <template v-slot:default="scope">
+              <GoToPostLink :floor_number="scope.row.floor_number" :post_id="scope.row.post_id"></GoToPostLink>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-card>
+    </div>
   </div>
 </template>
 
@@ -399,10 +424,11 @@ import NewsBlockList from "@/components/NewsBlockList.vue";
 import globalData from "@/global/global";
 import { ElMessage } from "element-plus";
 import UserInfoCard from "@/components/UserInfoCard.vue";
+import GoToPostLink from "@/components/postView/GoToPostLink.vue";
 
 export default {
   name: "UserInfoPage",
-  components: {UserInfoCard, NewsBlockList, PostCard},
+  components: {UserInfoCard, NewsBlockList, PostCard, GoToPostLink},
   data(){
     return{
       isFollowed: false,
@@ -426,16 +452,26 @@ export default {
       qualificationCertificate:null,//医师资格证照片
       practiceCertificate:null,//执业证照片
       photoUpload:false,   //头像上传，初始为false
+
+      // 举报信息的数据
+      reportList:[],
+      reportCols: [
+        {prop:'report_date',label:"举报时间"},
+        {prop:'respond_date',label:"处理时间"},
+        {prop:"report_status",label:"举报状态"},
+      ]
     }
   },
   //从数据库获取所需的用户信息
   mounted() {
+    console.log("mounted")
+
     let userIdNum = parseInt(this.$route.params.userId ? this.$route.params.userId: 0);
     if(isNaN(userIdNum)){
       this.$router.replace("/error");
       return;
     }
-    axios.get('/api/UserInfo/Details')
+    axios.post('/api/UserInfo/Details',{user_id: userIdNum})
         .then(response => {
           const responseData = response.data.data.userInfo;
           this.userInfo = responseData
@@ -463,6 +499,16 @@ export default {
         });
     /* 获取用户发布的帖子 */
     this.fetchUserPosts(this.userInfo.userID);
+
+    // 获取举报信息
+    axios.get(`/api/UserInfo/Report?userid=${globalData.userInfo.userId}`)
+        .then((res)=>{
+          this.reportList=res.data.data.reportList;
+          console.log(this.reportList)
+        })
+        .catch(error => {
+          console.error(error)
+        });
 
   },
 
@@ -682,7 +728,7 @@ export default {
     },
     /* 求获取用户发布的帖子 */
     fetchUserPosts(userID) {
-      axios.get("/api/fetchUserPosts", {
+      axios.post("/api/UserInfo/fetchUserPosts", {
         params: {
           userID
         }
