@@ -160,17 +160,38 @@ export default defineComponent({
         handleEventClick(calEvent) {
             console.log(calEvent, '事件2');
             this.dialogVisible = true;
+
+            // Set form properties based on the clicked event
+            this.form.title = calEvent.title;
+            this.form.startDate = this.formatFormDate(calEvent.start);
+            this.form.startTime = this.formatFormTime(calEvent.start);
+            this.form.endDate = this.formatFormDate(calEvent.end);
+            this.form.endTime = this.formatFormTime(calEvent.end);
+            this.form.priority = calEvent.priority;
             //let id = calEvent.event.id;
             //let info = this.subList.filter((item) => {
             //return item.id == id
             //});
+            /*
             this.$nextTick(() => {
                 this.form = _.cloneDeep(info[0]);
                 // 处理时间回显
                 this.getShowTime(this.form.beginDate, this.form.endDate);
                 console.log(info[0], '数据')
-            });
+            });*/
         },
+        formatFormDate(date) {
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        },
+        formatFormTime(date) {
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            return `${hours}:${minutes}`;
+        },
+
         handleEvents(events) {
             console.log(events, '事件3');
         },
@@ -197,13 +218,39 @@ export default defineComponent({
                 // Clear the form fields
                 this.form.title = '';
                 this.form.startDate = selectInfo.startStr;
-                this.form.startTime = '10:00';
-                this.form.endDate = selectInfo.startStr;
-                this.form.endTime = '12:00';
+                this.form.endDate = selectInfo.endStr;
+
+                // Extract time parts and keep only hours and minutes
+                if (selectInfo.view.type === 'dayGridMonth') {
+                    // Set startTime and endTime to 00:00 for month view
+                    this.form.startTime = '00:00';
+                    this.form.endTime = '00:00';
+                } else {
+                    // For other views, extract and set time parts
+                    const startTimeParts = selectInfo.startStr.split('T')[1].split('+')[0].split(':');
+                    const endTimeParts = selectInfo.endStr.split('T')[1].split('+')[0].split(':');
+                    this.form.startTime = startTimeParts.slice(0, 2).join(':');
+                    this.form.endTime = endTimeParts.slice(0, 2).join(':');
+                }
+
                 this.form.priority = '';
                 // The selected date is not in the past, toggle the dialog
-                this.dialogVisible = !this.dialogVisible;
+                this.dialogVisible = true;
             }
+        },
+
+        addEvent() {
+            const currentDate = moment().startOf('day'); // Get the current date without time
+            // Clear the form fields
+            this.form.title = '';
+            this.form.startDate = currentDate.format('YYYY-MM-DD');
+            this.form.endDate = currentDate.format('YYYY-MM-DD');
+            // Extract time parts and keep only hours and minutes
+            this.form.startTime = '10:00';
+            this.form.endTime = '12:00';
+            this.form.priority = '';
+            // The selected date is not in the past, toggle the dialog
+            this.dialogVisible = true;
         },
 
         /*
@@ -242,18 +289,12 @@ export default defineComponent({
                 finished: false,
                 // You can add other properties as needed
             };
-            console.log(this.form.startDate);
-            console.log(this.form.startTime);
-            console.log(this.form.endDate);
-            console.log(this.form.endTime);
-            console.log(event.start);
-            console.log(event.end);
-            console.log(event.color);
             this.calendarOptions.events.push(event);
         },
 
         // 格式化时间
         formatTime(date) {
+            console.log(date);
             const options = {
                 year: 'numeric',
                 month: 'numeric',
@@ -436,21 +477,19 @@ export default defineComponent({
     <div class='CalendarView'>
         <div class='mainCalendar'>
             <FullCalendar class='calendar' ref="fullCalendar" :options='calendarOptions'>
-
             </FullCalendar>
+            <br>
             <div class="tags-container">
                 <el-button class="modeChange" type="primary" @click="toggleEdit">
                     模式:{{ canUserEdit ? '修改' : '查看' }}
                 </el-button>
 
                 <div class="tag-tip">
-                    <el-tag type="danger" class="tag">高优先级</el-tag>
-                    <el-tag type="warning" class="tag">中优先级</el-tag>
-                    <el-tag type="success" class="tag">低优先级</el-tag>
+                    <el-tag class="btn btn-danger btn-sm">高优先级</el-tag>
+                    <el-tag class="btn btn-warning btn-sm">中优先级</el-tag>
+                    <el-tag class="btn btn-info btn-sm">低优先级</el-tag>
                 </div>
             </div>
-
-
         </div>
 
         <div class='sidebar'>
@@ -459,7 +498,7 @@ export default defineComponent({
                     <div class="health-calendar">Health Calendar</div>
                 </div>
 
-                <el-button class="addEvent-button" @click="dialogVisible = true" type="success" plain>
+                <el-button class="addEvent-button" @click="addEvent" type="success" plain>
                     <i class="fi fi-rr-plus"></i>
                 </el-button>
             </div>
@@ -468,7 +507,6 @@ export default defineComponent({
                 <div class="health-calendar">说明</div>
                 <ul>
                     <li>选择日期或点击右上角+号，开始创建新事件</li>
-                    <li>点击日历右下方标签可以筛选事项</li>
                     <li>List列表中可以删除事件或Check事件</li>
                 </ul>
             </div>
@@ -759,7 +797,7 @@ el-dialog {
     margin: 10px;
 }
 
-.tag {
+.btn {
     margin-left: 10px;
     /* Add your desired spacing value here */
 }
