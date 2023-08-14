@@ -151,7 +151,7 @@ const onUnfollowClicked = () => {
         <div class="userInfoWrapper">
             <div class="header">
                 <UserInfoCard :user-info="floorInfo.author"></UserInfoCard>
-                <div v-if="globalData.userInfo.user_id !== floorInfo.author.user_id">
+                <div v-if="globalData.login && globalData.userInfo.user_id !== floorInfo.author.user_id">
                     <el-button v-if="floorInfo.author.followed" @click="onUnfollowClicked">
                         <i class="fi fi-rr-minus addIcon"></i><span>已关注</span>
                     </el-button>
