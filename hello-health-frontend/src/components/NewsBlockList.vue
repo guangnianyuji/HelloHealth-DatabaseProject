@@ -58,7 +58,6 @@ export default {
       newsList: [],  // 全部新闻列表
       page: 1,       // 当前页码
       pageSize: 4,   // 每页新闻数
-      total: 0,       // 总新闻数
       input: ""
     }
   },
@@ -66,13 +65,13 @@ export default {
     Search() {
       return Search
     },
-    currentNewsList() {  // 计算当前页新闻列表，自动计算的，不用调用
-      if (this.filteredNewsList && this.total > 0) {
+    currentNewsList() {
+      if (this.filteredNewsList && this.filteredNewsListTotal > 0) {
         let start = (this.page - 1) * this.pageSize;
         let end = start + this.pageSize;
         return this.filteredNewsList.slice(start, end);
       } else {
-        return []; // 如果 newsList 未定义或为空，返回空数组
+        return [];
       }
     },
     filteredNewsList() {
@@ -80,8 +79,10 @@ export default {
         return this.newsList;
       }
       const keyword = this.input.toLowerCase();
-      this.total = this.newsList.filter(news => news.title.toLowerCase().includes(keyword)).length;
       return this.newsList.filter(news => news.title.toLowerCase().includes(keyword));
+    },
+    filteredNewsListTotal() {
+      return this.filteredNewsList.length;
     },
   },
   methods: {
@@ -96,7 +97,6 @@ export default {
       axios.get(apiUrl)
           .then(res => {
             this.newsList = res.data.data.newsList;    // 获取全部新闻列表
-            this.total = this.newsList.length;         // 总新闻数
           })
     }
   },
