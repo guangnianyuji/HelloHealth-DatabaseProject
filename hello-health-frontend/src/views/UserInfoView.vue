@@ -546,6 +546,7 @@ export default {
   methods:{
 
     refresh(){
+      this.fetchReport()
       let userIdNum = parseInt(this.$route.params.userId ? this.$route.params.userId: 0);
     console.log(userIdNum);
     if(isNaN(userIdNum)){
@@ -575,12 +576,12 @@ export default {
           })
 
           this.fansList=response.data.data.fansList;
-          
+
 
               /* 获取用户发布的帖子 */
           this.fetchUserPosts(this.userInfo.userID);
         //判断是否是本人在查看信息页面，来判断该用户是否可对信息进行修改
- 
+
           //return !this.$route.params.userId;
           console.log(this.$route.params.userId)
           console.log(globalData.userInfo.user_id)
