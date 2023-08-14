@@ -47,14 +47,14 @@ export default
         changeLike() {//op为0，只查询；op为1 要操作
 
 
-            axios.post("/api/Comment/Like",
+            axios.post("/api/Forum/Like",
                 {
                     operate: 1,
                     comment_id: this.comment_id
                 },{doNotShowLoadingScreen: true})
                 .then((res) => {
-                    this.is_liked = res.data.data.status;
-                    this.like_num = res.data.data.comment_like_num;
+                    this.is_liked = res.json.status;
+                    this.like_num = res.json.comment_like_num;
                     let message;
                     if (this.is_liked === true) {
                         message = "点赞成功！"
@@ -66,7 +66,9 @@ export default
                         message: message,
                         type: 'success',
                     })
-                });
+                }).catch(error => {
+                    error.defaultHandler("操作失败")
+            });
         },
     },
     created(){

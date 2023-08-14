@@ -30,10 +30,10 @@
                 </el-col>
                 <!--ref是为了在创建时能执行语句，不是用来绑定引用-->
                 <el-col :span="6">
-                    <like-button :comment_id="post_info.post_id" :likeInfo="post_info.reward.like"/>
+                    <like-button :comment_id="post_info.post_first_comment_id" :likeInfo="post_info.reward.like"/>
                 </el-col>
                 <el-col :span="6">
-                    <coin-button :comment_id="post_info.post_id" :coinInfo="post_info.reward.coin"/>
+                    <coin-button :comment_id="post_info.post_first_comment_id" :coinInfo="post_info.reward.coin"/>
                 </el-col>
             </el-row>
         </section>
