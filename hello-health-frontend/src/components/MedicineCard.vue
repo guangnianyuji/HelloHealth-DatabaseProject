@@ -206,7 +206,7 @@ export default {
       } else {
         axios
           .post(
-            `/api/Medicine/medicineCollection/addCollection?user_id=${userInfo.user_id}&medicine_id=${medicineId.value}`
+            `/api/Medicine/addCollection?user_id=${userInfo.user_id}&medicine_id=${medicineId.value}`
           )
           .then((res) => {
             console.log(res);
@@ -236,7 +236,7 @@ export default {
     const unCollect = () => {
       axios
       .post(
-            `/api/Medicine/medicineCollection/removeCollection?user_id=${userInfo.user_id}&medicine_id=${medicineId.value}`
+            `/api/Medicine/removeCollection?user_id=${userInfo.user_id}&medicine_id=${medicineId.value}`
           )
         .then((res) => {
           if (res.data.errorCode === 200) {
@@ -348,7 +348,7 @@ export default {
       const medicine_Id = this.$route.query.medicine_id;
       if (medicine_Id) {
         axios
-          .get(`/api/Medicine/medicineCard?medicine_id=${medicine_Id}`)
+          .post(`/api/Medicine/medicineCard?medicine_id=${medicine_Id}`)
           .then((res) => {
             const response = res.data;
             if (response.errorCode === 200) {
