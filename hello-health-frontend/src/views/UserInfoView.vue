@@ -594,6 +594,9 @@ export default {
               this.CoinRecordList=response.data.data.coinRecordList;
               this.CoinNum=response.data.data.coinNum;
             })
+
+            /* 举报信息 */
+            this.fetchReport()
           }
         })
         .catch(error => {
@@ -802,6 +805,14 @@ export default {
         this.userPosts= res.data.data.post_list;
       })
     },
+    fetchReport(){
+      // 获取举报信息
+      axios.get(`/api/UserInfo/Report?userid=${globalData.userInfo.userId}`)
+          .then((res)=>{
+            this.reportList=res.data.data.reportList;
+            console.log(this.reportList)
+          })
+    }
   }
 }
 
