@@ -88,6 +88,7 @@ export default defineComponent({
                 dayMaxEvents: true,
                 weekends: true,
                 navLinks: true,
+                nowIndicator: true, // 是否显示时间指示器
                 //dateClick: this.handleDateClick, // ToDo
                 select: this.handleDateSelect,
                 eventClick: this.handleEventClick,
@@ -162,23 +163,13 @@ export default defineComponent({
             this.dialogVisible = true;
 
             // Set form properties based on the clicked event
-            this.form.title = calEvent.title;
+            this.form.title = calEvent.event.title;
+            console.log(calEvent.event.title);
             this.form.startDate = this.formatFormDate(calEvent.start);
             this.form.startTime = this.formatFormTime(calEvent.start);
             this.form.endDate = this.formatFormDate(calEvent.end);
             this.form.endTime = this.formatFormTime(calEvent.end);
-            this.form.priority = calEvent.priority;
-            //let id = calEvent.event.id;
-            //let info = this.subList.filter((item) => {
-            //return item.id == id
-            //});
-            /*
-            this.$nextTick(() => {
-                this.form = _.cloneDeep(info[0]);
-                // 处理时间回显
-                this.getShowTime(this.form.beginDate, this.form.endDate);
-                console.log(info[0], '数据')
-            });*/
+            this.form.priority = calEvent.event.priority;
         },
         formatFormDate(date) {
             const year = date.getFullYear();
@@ -218,15 +209,16 @@ export default defineComponent({
                 // Clear the form fields
                 this.form.title = '';
                 this.form.startDate = selectInfo.startStr;
-                this.form.endDate = selectInfo.endStr;
-
+                
                 // Extract time parts and keep only hours and minutes
                 if (selectInfo.view.type === 'dayGridMonth') {
                     // Set startTime and endTime to 00:00 for month view
-                    this.form.startTime = '00:00';
-                    this.form.endTime = '00:00';
+                    this.form.endDate = selectInfo.startStr;
+                    this.form.startTime = '10:00';
+                    this.form.endTime = '12:00';
                 } else {
                     // For other views, extract and set time parts
+                    this.form.endDate = selectInfo.endStr;
                     const startTimeParts = selectInfo.startStr.split('T')[1].split('+')[0].split(':');
                     const endTimeParts = selectInfo.endStr.split('T')[1].split('+')[0].split(':');
                     this.form.startTime = startTimeParts.slice(0, 2).join(':');
@@ -239,6 +231,7 @@ export default defineComponent({
             }
         },
 
+        // 右上角+号添加事件
         addEvent() {
             const currentDate = moment().startOf('day'); // Get the current date without time
             // Clear the form fields
@@ -270,6 +263,7 @@ export default defineComponent({
             this.canUserEdit = !this.canUserEdit;
         },
 
+        // 从表单提取信息添加为事件
         addEventFromForm() {
             // Get the maximum existing eventID
             const existingEventIDs = this.calendarOptions.events.map(event => event.eventID);
@@ -384,6 +378,10 @@ export default defineComponent({
         },
     },  // end of methods
     computed: {
+        // 表单标题
+        dialogTitle() {
+            return this.canUserEdit ? '健康事项新增' : '健康事项';
+        },
         // 事项添加的时间检查
         maxStartTime() {
             if (this.form.startDate === this.form.endDate) {
@@ -483,12 +481,6 @@ export default defineComponent({
                 <el-button class="modeChange" type="primary" @click="toggleEdit">
                     模式:{{ canUserEdit ? '修改' : '查看' }}
                 </el-button>
-
-                <div class="tag-tip">
-                    <el-tag class="btn btn-danger btn-sm">高优先级</el-tag>
-                    <el-tag class="btn btn-warning btn-sm">中优先级</el-tag>
-                    <el-tag class="btn btn-info btn-sm">低优先级</el-tag>
-                </div>
             </div>
         </div>
 
@@ -535,18 +527,18 @@ export default defineComponent({
         </div>
 
         <!--日程新增弹窗start-->
-        <el-dialog title="健康事项新增" v-model='dialogVisible' :before-close="close" width="45%">
+        <el-dialog :title="dialogTitle" v-model='dialogVisible' :before-close="close" width="45%">
             <el-form :model="form" :rules="rules" ref="form" label-width="120px" size="small" class="demo-ruleForm">
 
                 <el-form-item label="事项主题" prop="title">
-                    <el-input v-model="form.title"></el-input>
+                    <el-input v-model="form.title" :disabled="!canUserEdit"></el-input>
                 </el-form-item>
 
                 <el-form-item label="开始时间" required>
                     <el-col :span="11">
                         <el-form-item prop="startDate" style="margin-bottom: 0">
                             <el-date-picker type="date" format="YYYY/MM/DD" value-format="YYYY-MM-DD" placeholder="选择日期"
-                                v-model="form.startDate" style="width: 100%;">
+                                v-model="form.startDate" style="width: 100%;" :disabled="!canUserEdit">
                             </el-date-picker>
                         </el-form-item>
                     </el-col>
@@ -554,7 +546,7 @@ export default defineComponent({
                     <el-col :span="11">
                         <el-form-item prop="startTime" style="margin-bottom: 0">
                             <el-time-select placeholder="选择时间" v-model="form.startTime" start="00:00" step="00:30"
-                                end="23:30" :max-time="maxStartTime" style="width: 100%;">
+                                end="23:30" :max-time="maxStartTime" style="width: 100%;" :disabled="!canUserEdit">
                             </el-time-select>
                         </el-form-item>
                     </el-col>
@@ -564,7 +556,7 @@ export default defineComponent({
                     <el-col :span="11">
                         <el-form-item prop="endDate" style="margin-bottom: 0">
                             <el-date-picker type="date" format="YYYY/MM/DD" value-format="YYYY-MM-DD" placeholder="选择日期"
-                                v-model="form.endDate" style="width: 100%;">
+                                v-model="form.endDate" style="width: 100%;" :disabled="!canUserEdit">
                             </el-date-picker>
                         </el-form-item>
                     </el-col>
@@ -572,13 +564,13 @@ export default defineComponent({
                     <el-col :span="11">
                         <el-form-item prop="endTime" style="margin-bottom: 0">
                             <el-time-select placeholder="选择时间" v-model="form.endTime" start="00:00" step="00:30" end="23:30"
-                                :min-time="minEndTime" style="width: 100%;">
+                                :min-time="minEndTime" style="width: 100%;" :disabled="!canUserEdit">
                             </el-time-select>
                         </el-form-item>
                     </el-col>
                 </el-form-item>
                 <el-form-item label="优先级" required>
-                    <el-select v-model="form.priority" placeholder="请选择事项优先级">
+                    <el-select v-model="form.priority" placeholder="请选择事项优先级" :disabled="!canUserEdit">
                         <el-option label="低优先级" value="lowPriority"></el-option>
                         <el-option label="中优先级" value="middlePriority"></el-option>
                         <el-option label="高优先级" value="highPriority"></el-option>
@@ -586,7 +578,7 @@ export default defineComponent({
                 </el-form-item>
                 <el-form-item>
                     <el-button @click="resetForm('form')">取消</el-button>
-                    <el-button type="primary" @click="submitForm('form')">提交</el-button>
+                    <el-button v-if="canUserEdit" type="primary" @click="submitForm('form')">提交</el-button>
                 </el-form-item>
             </el-form>
         </el-dialog>
