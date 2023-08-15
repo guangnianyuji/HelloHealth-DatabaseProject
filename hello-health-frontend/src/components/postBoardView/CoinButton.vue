@@ -65,37 +65,40 @@ export default {
                     })
                         .then(({value}) => {
                             coinValue = value;
-                            axios.post("/api/Comment/Coin", {
+                            axios.post("/api/Forum/Coin", {
                                 operate: op,
                                 comment_id: this.comment_id,
                                 coin_value: coinValue
                             })
                                 .then((res) => {
-                                    this.is_coined = res.data.data.status;
-                                    this.coin_num = res.data.data.comment_coin_num;
-                                    coin_status = res.data.data.coin_status;//投币是否成功
-                                })
-                            if (op === 1) {
-                                if (coin_status) {
+                                   
+                                    this.is_coined = res.json.status;
+                                    this.coin_num = res.json.comment_coin_num;
+                                    console.log(this.coin_num)
                                     ElMessage({
                                         message: "投币成功！",
                                         type: "success",
 
                                     })
-                                } else {
-                                    ElMessage({
-                                        message: "币数不足，投币失败！",
-                                        type: "error",
-
-                                    })
-                                }
-                            }
+                                }).catch(error => {
+                                    if(error.network) return false;
+                                    switch (error.errorCode){
+                                        case 116:
+                                            ElMessage.error("币数不足，投币失败！")
+                                            break;
+                                        case 117:
+                                            ElMessage.error("不能给自己投币！")
+                                            break;
+                                        default:
+                                            error.defaultHandler("投币失败")
+                                    }
+                            })
 
                         }).catch(()=>{})
                 }
 
                 // op为0代表不操作，只重新获取硬币数
-                // axios.post("/api/Comment/Coin", {
+                // axios.post("/api/Forum/Coin", {
                 //     operate: op,
                 //     comment_id: this.comment_id,
                 //     coin_value: coinValue

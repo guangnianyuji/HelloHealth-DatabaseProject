@@ -68,8 +68,8 @@ export default {
     },
     getNewsList() {
       const apiUrl = this.selectedTagId
-          ? `https://mock.apifox.cn/m1/2961538-0-default/api/newsByTag?id=${this.selectedTagId}&title=`
-          : "https://mock.apifox.cn/m1/2961538-0-default/api/newsByTag?id=&title=";
+          ? `/api/Flash/newsByTag?id=${this.selectedTagId}&title=`
+          : "/api/Flash/newsByTag?id=&title=";
       axios.get(apiUrl)
           .then(res => {
             this.newsList = res.data.data.newsList;    // 获取全部新闻列表

@@ -45,29 +45,33 @@ export default
                 this.changeStar();
             },
             changeStar() {
-                axios.post("/api/Post/Star",{
+                axios.post("/api/Forum/Star",{
                     operate: 1,
-                    post_id: this.post_id
-                },{doNotShowLoadingScreen: true})
-                    .then((res)=>{
-                        this.is_stared=res.data.data.status;
-                        this.star_num=res.data.data.post_star_num;
-                        let message;
-                        if(this.is_stared===true) {
-                            message="收藏帖子成功！"
-                        } else {
-                            message="取消收藏成功！"
-                        }
-                        ElMessage({
-                            showClose: true,
-                            message:message,
-                            type: 'success',
-                        })
-                    }) ;
+                    post_id: parseInt(this.post_id)
+                },{doNotShowLoadingScreen: true}).then((res)=>{
+                    this.is_stared=res.json.status;
+                    this.star_num=res.json.post_star_num;
+                    let message;
+                    if(this.is_stared===true) {
+                        message="收藏帖子成功！"
+                    } else {
+                        message="取消收藏成功！"
+                    }
+                    ElMessage({
+                        showClose: true,
+                        message:message,
+                        type: 'success',
+                    })
+                }).catch(error => {
+                    if(error.network) return;
+                    error.defaultHandler("操作失败");
+                })
 
             }
         },
     created(){
+        console.log(this.post_id)
+        console.log(this.starInfo)
         this.is_stared = this.starInfo.status;
         this.star_num = this.starInfo.num;
     }
