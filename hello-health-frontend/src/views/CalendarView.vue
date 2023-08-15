@@ -7,7 +7,9 @@ import _ from 'lodash' //导入loadsh插件
 import axios from 'axios';
 import { defineComponent } from 'vue';
 import moment from 'moment';
+import { ElMessage, ElMessageBox } from 'element-plus'
 
+import globalData from "@/global/global"
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
@@ -159,6 +161,11 @@ export default defineComponent({
 
         // 日历日程点击事件
         handleEventClick(calEvent) {
+            if(!globalData.login)
+            {
+                ElMessage.error('请先登录!')
+                return;
+            }
             console.log(calEvent, '事件2');
             this.dialogVisible = true;
 
@@ -184,9 +191,19 @@ export default defineComponent({
         },
 
         handleEvents(events) {
+            if(!globalData.login)
+            {
+                ElMessage.error('请先登录!')
+                return;
+            }
             console.log(events, '事件3');
         },
         handleDateSelect(selectInfo) {
+            if(!globalData.login)
+            {
+                ElMessage.error('请先登录!')
+                return;
+            }
             if (!this.canUserEdit) return;
             console.log(selectInfo, '事件4');
 
@@ -233,6 +250,11 @@ export default defineComponent({
 
         // 右上角+号添加事件
         addEvent() {
+            if(!globalData.login)
+            {
+                ElMessage.error('请先登录!')
+                return;
+            }
             const currentDate = moment().startOf('day'); // Get the current date without time
             // Clear the form fields
             this.form.title = '';
