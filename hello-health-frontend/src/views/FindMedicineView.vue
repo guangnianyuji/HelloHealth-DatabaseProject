@@ -13,7 +13,6 @@ const brand = ref(0)
 const form = ref(0)
 const insurance = ref(0)
 const recipe = ref(0)
-const input = ref('')
 // Filtered data based on selected options
 //const filteredData = ref(tableData)
 export default {
@@ -27,8 +26,9 @@ export default {
             form,
             insurance,
             recipe,
-            input,
-            tableData: [], // 初始化为空数组
+            search_value: '',
+            constData: [],  // 总列表，不可动
+            tableData: [],  // 初始化为空数组，总列表基础上的搜索、筛选列表
             //filteredData, // Use the filteredData instead of tableData in the template
             medicine: [
                 {
@@ -156,10 +156,11 @@ export default {
     },
     // TODO 增加api
     mounted() {
-        axios.get('/api/Medicine/medicineList?type_array=')
+        axios.get('https://mock.apifox.cn/m1/2961538-0-default/api/Medicine/medicineList')
             .then(response => {
                 if (response.data.errorCode === 200) {
                     this.tableData = response.data.data.medicine_list; // Assuming the response contains the medicine data
+                    this.constData = response.data.data.medicine_list; 
                     //const filteredData = this.tableData;
                     //const responseData = response.data.data.medicine_list;
                     //this.tableData = responseData; // 将获取的数据赋值给tableData数组
@@ -173,6 +174,30 @@ export default {
     },
 
     methods: {
+        handleEnterKey() {
+            console.log('Enter key pressed');
+            this.search(); // Call the search method here
+        },
+        search() {
+            console.log("Filtered Table Data:", this.tableData); // Check the value of filteredTableData
+            if (this.tableData) {
+                //在标签筛选过的基础上进行搜索
+                const filteredData = this.constData.filter((item) => {
+                    // Filter by search_value
+                    if (this.search_value !== '') {// 如果搜索框不为空,则进行筛选,否则返回全部数据
+                        if (!item.medicine_ch_name.includes(this.search_value))
+                            return false;
+                        else
+                            return true;
+                    }
+                    else // 如果搜索框为空,则返回全部数据
+                        return true;
+                });
+                console.log("Filtered Data:", filteredData); // Check the filtered data
+                this.tableData = filteredData; // 更新filteredTableData
+            }
+            return [];
+        },
         CardButtonClicked(row) {
             const medicineId = row.medicine_id;
             this.$router.push(`/medicineCard?medicine_id=${medicineId}`);
@@ -185,9 +210,6 @@ export default {
         }
     },
     computed: {
-        Search() {
-            return Search
-        },
         filteredTableData() {
             if (this.tableData) {
                 const filteredData = this.tableData.filter((item) => {
@@ -262,7 +284,14 @@ export default {
 
             return this.filteredTableData.slice(start, end);
         },
-    },
+    },  // end of computed
+    watch: {
+        search_value: {
+            handler: 'search', // This will call the search method whenever search_value changes
+            immediate: true // This will trigger the handler immediately after adding the watch
+        }
+    },  // end of watch
+
 }
 </script>
 
@@ -357,7 +386,8 @@ export default {
                 </el-row>
                 <el-row class="result_title">
                     <el-col>
-                        <el-input v-model="input" class="search-box" placeholder="Please Input" :suffix-icon="Search" />
+                        <el-input class="search-box" v-model="search_value" clearable @keyup.enter.native="handleEnterKey"
+                            placeholder="请输入药品中文名称" :suffix-icon="Search"/>
                     </el-col>
                     <el-col style="padding-top: 5px">
                         <div>查询结果共{{ this.filteredTableData.length }}条</div>
@@ -589,4 +619,5 @@ export default {
     margin-left: 30%;
     margin-top: 20px;
     margin-bottom: 40px;
-}</style>
+}
+</style>
