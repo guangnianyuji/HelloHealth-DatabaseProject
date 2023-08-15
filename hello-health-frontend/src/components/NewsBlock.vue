@@ -78,10 +78,7 @@ export default {
   },
   methods: {
     goFullContent() {
-      this.$router.push({
-        name: 'detailedNews',
-        query: {flash_id: this.$props.flash_id}
-      })
+      this.$router.push("/news/"+this.$props.flash_id);
     },
   }
 }
@@ -110,6 +107,7 @@ export default {
   height: 10px;
 }
 .flash-title {
+  font-size: 15px;
   position: relative;
   text-decoration: none;            /* 移除默认的下划线 */
 }

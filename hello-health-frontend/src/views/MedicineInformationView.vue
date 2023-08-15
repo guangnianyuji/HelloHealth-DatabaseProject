@@ -5,7 +5,6 @@
 
 <template>
     <div class="MedicineInformationView">
-        <BackButton />
         <MedicineCard />
     </div>
 </template>
