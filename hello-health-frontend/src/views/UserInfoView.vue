@@ -580,7 +580,7 @@ export default {
     },
     unfollow(userId) {
       if(userId){
-        axios.post("/api/UserInfo/unfollowUser", { thisUserID: globalData.userInfo.userId ,followUserID: userId })
+        axios.post("/api/UserInfo/unfollowUser", { followUserID: userId })
             .then(response => {
               //如果后端返回的状态码是200，那么将isFollowed设置为false
               this.followMap.set(userId, false)
@@ -591,7 +591,7 @@ export default {
             });
       }
       else {
-        axios.post("/api/UserInfo/unfollowUser", {thisUserID: globalData.userInfo.userId ,followUserID: this.userInfo.userID})
+        axios.post("/api/UserInfo/unfollowUser", {followUserID: this.userInfo.userID})
             .then(response => {
               //如果后端返回的状态码是200，那么将isFollowed设置为false
               this.isFollowed = false;
@@ -606,7 +606,7 @@ export default {
     followUser(userId) {
 
       if(userId){
-        axios.post("/api/UserInfo/followUser", { thisUserID: globalData.userInfo.userId ,followUserID: userId })
+        axios.post("/api/UserInfo/followUser", {followUserID: userId })
             .then(response => {
               //如果后端返回的状态码是200，那么将isFollowed设置为true
               this.followMap.set(userId, true);
@@ -617,7 +617,7 @@ export default {
             });
       }
       else{
-        axios.post("/api/UserInfo/followUser", {thisUserID: globalData.userInfo.userId ,followUserID: this.userInfo.userID})
+        axios.post("/api/UserInfo/followUser", {followUserID: this.userInfo.userID})
             .then(response => {
               //如果后端返回的状态码是200，那么将isFollowed设置为true
               this.isFollowed = true;

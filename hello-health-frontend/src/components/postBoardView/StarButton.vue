@@ -70,6 +70,8 @@ export default
             }
         },
     created(){
+        console.log(this.post_id)
+        console.log(this.starInfo)
         this.is_stared = this.starInfo.status;
         this.star_num = this.starInfo.num;
     }
