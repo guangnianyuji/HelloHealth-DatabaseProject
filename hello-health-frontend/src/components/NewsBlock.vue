@@ -115,7 +115,7 @@ export default {
   content: "";
   position: absolute;
   left: 0;
-  bottom: -10px;                    /* 调整下划线与文字的距离 */
+  top: 1.2em;                    /* 调整下划线与文字的距离 */
   width: 100%;
   height: 1px;                      /* 设置默认粗细 */
   background-color: #333;

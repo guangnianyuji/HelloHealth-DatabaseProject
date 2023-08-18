@@ -1,6 +1,6 @@
 <script>
 // import the third-party stylesheets directly from your JS
-import 'bootstrap/dist/css/bootstrap.css';
+// import 'bootstrap/dist/css/bootstrap.css';
 import '@fortawesome/fontawesome-free/css/all.css'; // needs additional webpack config!
 
 import _ from 'lodash' //导入loadsh插件
@@ -17,8 +17,8 @@ import listPlugin from '@fullcalendar/list'
 import interactionPlugin from '@fullcalendar/interaction'
 import { INITIAL_EVENTS, createEventId } from './event-utils'
 import { Calendar } from '@fullcalendar/core';
-import bootstrapPlugin from '@fullcalendar/bootstrap';
-import "bootswatch/dist/minty/bootstrap.min.css";
+// import bootstrapPlugin from '@fullcalendar/bootstrap';
+// import "bootswatch/dist/minty/bootstrap.min.css";
 import zhCnLocale from '@fullcalendar/core/locales/zh-cn';
 
 export default defineComponent({
@@ -72,7 +72,7 @@ export default defineComponent({
                     timeGridPlugin,
                     listPlugin,
                     interactionPlugin, // needed for dateClick
-                    bootstrapPlugin,
+                    // bootstrapPlugin,
                 ],
                 headerToolbar: {
                     left: 'prev,today,next',
@@ -80,7 +80,7 @@ export default defineComponent({
                     right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
                 },
                 height: 'auto',
-                themeSystem: 'bootstrap',
+                // themeSystem: 'bootstrap',
                 //initialDate: moment().format('YYYY-MM-DD'), // 自定义设置背景颜色时一定要初始化日期时间
                 initialView: 'dayGridMonth',
                 //initialEvents: INITIAL_EVENTS, // alternatively, use the `events` setting to fetch from a feed
@@ -113,9 +113,9 @@ export default defineComponent({
     methods: {
         // 日期加1天
         addDate(date, days) {
-            var d = new Date(date);
+            let d = new Date(date);
             d.setDate(d.getDate() + days);
-            var mon = (d.getMonth() + 1) < 10 ? "0" + (d.getMonth() + 1) : d.getMonth() + 1;
+            let mon = (d.getMonth() + 1) < 10 ? "0" + (d.getMonth() + 1) : d.getMonth() + 1;
             let endD = d.getDate() < 10 ? '0' + d.getDate() : d.getDate();
             return `${d.getFullYear()}-${mon}-${endD}`;
         },
@@ -171,11 +171,10 @@ export default defineComponent({
 
             // Set form properties based on the clicked event
             this.form.title = calEvent.event.title;
-            console.log(calEvent.event.title);
-            this.form.startDate = this.formatFormDate(calEvent.start);
-            this.form.startTime = this.formatFormTime(calEvent.start);
-            this.form.endDate = this.formatFormDate(calEvent.end);
-            this.form.endTime = this.formatFormTime(calEvent.end);
+            this.form.startDate = this.formatFormDate(calEvent.event.start);
+            this.form.startTime = this.formatFormTime(calEvent.event.start);
+            this.form.endDate = this.formatFormDate(calEvent.event.end);
+            this.form.endTime = this.formatFormTime(calEvent.event.end);
             this.form.priority = calEvent.event.priority;
         },
         formatFormDate(date) {
@@ -213,15 +212,7 @@ export default defineComponent({
 
             if (selectedDate.isBefore(currentDate, 'day')) {
                 // The selected date is in the past
-                this.$confirm('过去时间不能进行新增!', '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning',
-                }).then(() => {
-                    // Handle the user's choice if needed
-                }).catch(() => {
-                    // Handle the user's cancellation if needed
-                });
+                ElMessage.error('过去时间不能进行新增!')
             } else {
                 // Clear the form fields
                 this.form.title = '';
@@ -230,7 +221,10 @@ export default defineComponent({
                 // Extract time parts and keep only hours and minutes
                 if (selectInfo.view.type === 'dayGridMonth') {
                     // Set startTime and endTime to 00:00 for month view
-                    this.form.endDate = selectInfo.startStr;
+                    console.log(selectInfo.end)
+                    selectInfo.end.setDate(selectInfo.end.getDate()-1)
+                    console.log(selectInfo.end)
+                    this.form.endDate = this.formatFormDate(selectInfo.end)
                     this.form.startTime = '10:00';
                     this.form.endTime = '12:00';
                 } else {
@@ -351,8 +345,7 @@ export default defineComponent({
                 if (valid) {
                     this.form.startDate = `${this.form.startDate}`;
                     this.form.endDate = `${this.form.endDate}`;
-                    console.log(this.form.startDate);
-                    console.log(this.form.endDate);
+                    if(!this.form.priority) this.form.priority = "lowPriority"
 
                     try {
                         const response = await axios.post('https://mock.apifox.cn/m1/2961538-0-default/api/events', this.form);
@@ -379,15 +372,8 @@ export default defineComponent({
         },
         //关闭弹窗，重置表单
         close() {
-            this.$confirm('确认关闭？')
-                .then(() => {
-                    // 点击确认关闭时执行的代码
-                    this.dialogVisible = false;
-                    this.$refs.formName.resetFields();
-                })
-                .catch(() => {
-                    // 点击取消时不需要执行任何代码
-                });
+            this.dialogVisible = false;
+            this.$refs.form.resetFields();
         },
 
         // 删除事件
@@ -674,7 +660,7 @@ export default defineComponent({
 }
 
 .TodoList {
-    color: #3b82f6;
+    color: var(--board, rgba(0, 191, 168, 0.6));
     text-align: left;
     font: 700 13px/20px "Inter", sans-serif;
     position: relative;
@@ -685,12 +671,12 @@ export default defineComponent({
     padding: 8px;
 }
 
-ul {
+.sidebar-section ul {
     margin: 0;
     padding: 0 0 0 1.5em;
 }
 
-li {
+.sidebar-section li {
     margin: 1.5em 0;
     padding: 0;
 }
@@ -713,6 +699,10 @@ li {
     align-self: stretch;
     flex-shrink: 0;
     position: relative;
+}
+
+.line {
+    text-align: center;
 }
 
 .highPriority {
@@ -847,5 +837,26 @@ input[type='checkbox']:checked~.checkbox {
     border: solid 3px #2a2a2ab7;
     border-radius: 6px;
     transition: all 0.375s;
+}
+.modeChange {
+    margin: auto;
+}
+
+</style>
+
+<style>
+:root{
+    --fc-button-bg-color: #78c2ad;
+    --fc-button-border-color: #78c2ad;
+    --fc-button-hover-bg-color: #a9d7ca;
+    --fc-button-hover-border-color: #a9d7ca;
+    --fc-button-active-bg-color: #609b8a;
+    --fc-button-active-border-color: #5a9282;
+    --fc-event-bg-color: #3788d8;
+    --fc-event-border-color: #3788d8;
+}
+.fc .fc-button-primary:not(:disabled):focus, .fc .fc-button-primary:not(:disabled):active:focus{
+    box-shadow: #5a928280 0 0 0 0.2rem !important;
+
 }
 </style>
