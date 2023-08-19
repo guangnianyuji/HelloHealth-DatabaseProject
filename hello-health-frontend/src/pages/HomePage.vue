@@ -68,10 +68,12 @@ let userInfo = reactive({
 
 const isLogin = ref(false);
 const loadComplete = ref(true);
+const gotUserInfo = ref(false)
 
 axios.get("/api/UserInfo").then(response => {
     let responseObj = response.json
     isLogin.value = responseObj.login;
+    gotUserInfo.value = true
     if(!responseObj.login) return;
     menus.v = [
         {"title":"首页","icon":"fi-rr-home","path":"/"},
@@ -95,8 +97,8 @@ axios.get("/api/UserInfo").then(response => {
     globalData.login = true;
     userInfo.data = responseObj
     globalData.userInfo = userInfo.data
-    console.log('目前登录的id'+globalData.userInfo.user_id)
 }).catch(error => {
+    if(error.network) return
     error.defaultHandler();
 })
 
@@ -191,7 +193,7 @@ watch(router.currentRoute, () => {
             </div>
 
             <div class="content">
-                <RouterView></RouterView>
+                <RouterView v-if="gotUserInfo"></RouterView>
             </div>
         </div>
     </div>
