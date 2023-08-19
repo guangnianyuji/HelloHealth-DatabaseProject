@@ -50,6 +50,13 @@ axios.interceptors.response.use(function (response) {
         return response
     }
 }, function (error) {
+    loadingScreen.endLoading()
+    if(error.code === "ERR_NETWORK"){
+        error.network = true;
+        ElMessage.error("网络错误，请检查网络连接")
+        error.defaultHandler = () => {}
+        return Promise.reject(error);
+    }
     if(error.network === false){
         return Promise.reject(error);
     }

@@ -147,7 +147,7 @@ const onUnfollowClicked = () => {
 </script>
 
 <template>
-    <div class="floorWrapper" v-if="!deleted">
+    <div class="floorWrapper" v-if="!deleted" :floor="floorInfo.floor_number">
         <div class="userInfoWrapper">
             <div class="header">
                 <UserInfoCard :user-info="floorInfo.author"></UserInfoCard>

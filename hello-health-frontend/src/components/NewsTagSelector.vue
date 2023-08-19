@@ -14,8 +14,8 @@
         <el-row class="buttonContainer" :gutter="10">
           <!-- 第一层循环，遍历所有的 group -->
           <div v-for="group in tagList" :key="group.group_id">
-            <h1 class="parent-tag">
-              {{ group.group_name }}:</h1> <!-- 显示 group 的名字 -->
+            <span class="parent-tag">
+              {{ group.group_name }}:</span> <!-- 显示 group 的名字 -->
             <!-- 第二层循环，遍历当前 group 下的所有 tag -->
             <el-row :gutter="5">
               <el-col :span="12" v-for="tag in group.tags" :key="tag.tag_id">
