@@ -1,13 +1,5 @@
 <script>
-// import the third-party stylesheets directly from your JS
-// import 'bootstrap/dist/css/bootstrap.css';
 import '@fortawesome/fontawesome-free/css/all.css'; // needs additional webpack config!
-
-import _ from 'lodash' //导入loadsh插件
-import axios from 'axios';
-import { defineComponent } from 'vue';
-import moment from 'moment';
-import { ElMessage, ElMessageBox } from 'element-plus'
 
 import globalData from "@/global/global"
 import FullCalendar from '@fullcalendar/vue3'
@@ -15,13 +7,13 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import listPlugin from '@fullcalendar/list'
 import interactionPlugin from '@fullcalendar/interaction'
-import { INITIAL_EVENTS, createEventId } from './event-utils'
-import { Calendar } from '@fullcalendar/core';
-// import bootstrapPlugin from '@fullcalendar/bootstrap';
-// import "bootswatch/dist/minty/bootstrap.min.css";
 import zhCnLocale from '@fullcalendar/core/locales/zh-cn';
+import {ElMessage} from "element-plus";
+import {computed} from "vue";
+import axios from "axios";
+import moment from "moment/moment";
 
-export default defineComponent({
+export default {
     name: "CalendarView",
     components: {
         FullCalendar,
@@ -39,7 +31,6 @@ export default defineComponent({
                 priority: '',
                 color: '',
                 finished: false,
-                eventVisible: true,
             },
             rules: {
                 title: [
@@ -72,7 +63,6 @@ export default defineComponent({
                     timeGridPlugin,
                     listPlugin,
                     interactionPlugin, // needed for dateClick
-                    // bootstrapPlugin,
                 ],
                 headerToolbar: {
                     left: 'prev,today,next',
@@ -80,10 +70,7 @@ export default defineComponent({
                     right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
                 },
                 height: 'auto',
-                // themeSystem: 'bootstrap',
-                //initialDate: moment().format('YYYY-MM-DD'), // 自定义设置背景颜色时一定要初始化日期时间
                 initialView: 'dayGridMonth',
-                //initialEvents: INITIAL_EVENTS, // alternatively, use the `events` setting to fetch from a feed
                 editable: true,
                 selectable: true,
                 selectMirror: true,
@@ -94,12 +81,15 @@ export default defineComponent({
                 //dateClick: this.handleDateClick, // ToDo
                 select: this.handleDateSelect,
                 eventClick: this.handleEventClick,
-                eventsSet: this.handleEvents,
+                // eventsSet: this.handleEvents,
+                eventDrop: this.handleEventDrop,
                 handleWindowResize: true,//是否随浏览器窗口大小变化而自动变化
-                eventLimit: true,       //数据条数太多时，限制各自里显示的数据条数（多余的以“+2more”格式显示），默认false不限制,支持输入数字设定固定的显示条数
+                dayMaxEventRows: true,       //数据条数太多时，限制各自里显示的数据条数（多余的以“+2more”格式显示），默认false不限制,支持输入数字设定固定的显示条数
                 locale: zhCnLocale,     // 设置语言
                 eventColor: "#78C2AD",  // 修改日程背景色
-                events: [],
+                events: computed(()=>{
+                    return this.allEvents.filter(e => { return !e.finished})
+                })
                 /* you can update a remote database when these fire:
                 eventAdd:
                 eventChange:
@@ -107,75 +97,22 @@ export default defineComponent({
                 */
             },
             canUserEdit: false,
-            currentEvents: [],
+            allEvents: []
         }
     },
     methods: {
-        // 日期加1天
-        addDate(date, days) {
-            let d = new Date(date);
-            d.setDate(d.getDate() + days);
-            let mon = (d.getMonth() + 1) < 10 ? "0" + (d.getMonth() + 1) : d.getMonth() + 1;
-            let endD = d.getDate() < 10 ? '0' + d.getDate() : d.getDate();
-            return `${d.getFullYear()}-${mon}-${endD}`;
-        },
-        // 获取事件title
-        getTitle(date1, date2) {
-            let start = date1.substring(11, 16);
-            let end = date2.substring(11, 16);
-            return `${start}~${end}`;
-        },
-        getShowTime(beginDate, endDate) {
-            this.form.startDate = this.dealWithTime(beginDate);
-            this.form.startTime = this.getHoursMin(beginDate);
-            this.form.endDate = this.dealWithTime(endDate);
-            this.form.endTime = this.getHoursMin(endDate);
-        },
-        // 获取时分时间
-        getHoursMin(value) {
-            return value.substring(11, 16);
-        },
-        // 处理时间格式
-        dealWithTime(date) {
-            let newDate = /\d{4}-\d{1,2}-\d{1,2}/g.exec(date)[0];
-            return newDate;
-        },
-        /*
-        handleDateSelect(selectInfo) {
-            if (!this.canUserEdit) return;
-            let title = prompt('请输入提醒事项的标题：')
-            let calendarApi = selectInfo.view.calendar
+        // 日期相关的辅助函数区域
+        formatTime(date) {
+            const options = {
+                year: 'numeric',
+                month: 'numeric',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            };
 
-            calendarApi.unselect() // clear date selection
-
-            if (title) {
-                calendarApi.addEvent({
-                    id: createEventId(),
-                    title,
-                    start: selectInfo.startStr,
-                    end: selectInfo.endStr,
-                    allDay: selectInfo.allDay
-                })
-            }
-        },*/
-
-        // 日历日程点击事件
-        handleEventClick(calEvent) {
-            if(!globalData.login)
-            {
-                ElMessage.error('请先登录!')
-                return;
-            }
-            console.log(calEvent, '事件2');
-            this.dialogVisible = true;
-
-            // Set form properties based on the clicked event
-            this.form.title = calEvent.event.title;
-            this.form.startDate = this.formatFormDate(calEvent.event.start);
-            this.form.startTime = this.formatFormTime(calEvent.event.start);
-            this.form.endDate = this.formatFormDate(calEvent.event.end);
-            this.form.endTime = this.formatFormTime(calEvent.event.end);
-            this.form.priority = calEvent.event.priority;
+            return new Intl.DateTimeFormat('zh-CN', options).format(date);
         },
         formatFormDate(date) {
             const year = date.getFullYear();
@@ -188,14 +125,88 @@ export default defineComponent({
             const minutes = date.getMinutes().toString().padStart(2, '0');
             return `${hours}:${minutes}`;
         },
+        getFormEndDateObj(){
+            return new Date(`${this.form.endDate} ${this.form.endTime}`)
+        },
+        getFormStartDateObj(){
+            return new Date(`${this.form.startDate} ${this.form.startTime}`)
+        },
+        setFormTime(startDate, endDate){
+            this.form.startDate = this.formatFormDate(startDate);
+            this.form.startTime = this.formatFormTime(startDate);
+            if(endDate){
+                this.form.endDate = this.formatFormDate(endDate);
+                this.form.endTime = this.formatFormTime(endDate);
+            }else{
+                this.form.endDate = this.formatFormDate(startDate);
+                this.form.endTime = this.formatFormTime(startDate);
+            }
 
-        handleEvents(events) {
+        },
+        // 日期相关的辅助函数区域结束
+
+        toggleEdit() {
+            this.canUserEdit = !this.canUserEdit;
+        },
+        addEvent() {
             if(!globalData.login)
             {
                 ElMessage.error('请先登录!')
                 return;
             }
-            console.log(events, '事件3');
+            // Clear the form fields
+            this.form.title = '';
+            this.form.eventID = '-1';
+            this.setFormTime(new Date(), new Date())
+            this.form.priority = '';
+            // The selected date is not in the past, toggle the dialog
+            this.dialogVisible = true;
+        },
+        // 删除事件
+        deleteEvent(event) {
+            // 在 events 数组中查找并删除具有给定 eventID 的事件
+            axios.post("/api/removeEvent",{id:parseInt(event.id)})
+                .then(res => {
+                    const index = this.allEvents.findIndex(e => e.id === event.id);
+                    if (index !== -1)
+                        this.allEvents.splice(index, 1);
+                })
+                .catch(error => {
+                    if(error.network) return;
+                    switch (error.errorCode){
+                        case 404:
+                            ElMessage.error("指定的健康事项未找到");
+                            break
+                        default:
+                            error.defaultHandler("提交健康日历数据失败")
+                    }
+                })
+
+
+        },
+        // 日历日程点击事件
+        handleEventClick(calEvent) {
+            if(!globalData.login)
+            {
+                ElMessage.error('请先登录!')
+                return;
+            }
+            this.dialogVisible = true;
+
+            // Set form properties based on the clicked event
+            this.form.eventID = calEvent.event.id
+            this.form.title = calEvent.event.title;
+            this.setFormTime(calEvent.event.start, calEvent.event.end)
+            this.form.priority = (()=>{
+                for(let event of this.calendarOptions.events){
+                    if(event.id === calEvent.event.id) return event.priority
+                }
+                return false
+            })()
+        },
+        async handleEventDrop(dropEventInfo){
+            let success = await this.uploadEventChange(dropEventInfo.event)
+            if(!success) dropEventInfo.revert();
         },
         handleDateSelect(selectInfo) {
             if(!globalData.login)
@@ -204,7 +215,6 @@ export default defineComponent({
                 return;
             }
             if (!this.canUserEdit) return;
-            console.log(selectInfo, '事件4');
 
             // 判断过去时间不能新增
             const selectedDate = moment(selectInfo.startStr);
@@ -215,15 +225,14 @@ export default defineComponent({
                 ElMessage.error('过去时间不能进行新增!')
             } else {
                 // Clear the form fields
+                this.form.eventID = '-1';
                 this.form.title = '';
                 this.form.startDate = selectInfo.startStr;
-                
+
                 // Extract time parts and keep only hours and minutes
                 if (selectInfo.view.type === 'dayGridMonth') {
                     // Set startTime and endTime to 00:00 for month view
-                    console.log(selectInfo.end)
                     selectInfo.end.setDate(selectInfo.end.getDate()-1)
-                    console.log(selectInfo.end)
                     this.form.endDate = this.formatFormDate(selectInfo.end)
                     this.form.startTime = '10:00';
                     this.form.endTime = '12:00';
@@ -241,154 +250,94 @@ export default defineComponent({
                 this.dialogVisible = true;
             }
         },
-
-        // 右上角+号添加事件
-        addEvent() {
-            if(!globalData.login)
-            {
-                ElMessage.error('请先登录!')
-                return;
-            }
-            const currentDate = moment().startOf('day'); // Get the current date without time
-            // Clear the form fields
-            this.form.title = '';
-            this.form.startDate = currentDate.format('YYYY-MM-DD');
-            this.form.endDate = currentDate.format('YYYY-MM-DD');
-            // Extract time parts and keep only hours and minutes
-            this.form.startTime = '10:00';
-            this.form.endTime = '12:00';
-            this.form.priority = '';
-            // The selected date is not in the past, toggle the dialog
-            this.dialogVisible = true;
-        },
-
-        /*
-        handleEventClick(clickInfo) {
-            if (!this.canUserEdit) return;
-            if (confirm(`请确认是否删除事项 '${clickInfo.event.title}'`)) {
-                clickInfo.event.remove()
-            }
-        },
-        
-        handleEvents(events) {
-            this.currentEvents = events;
-            console.log(events, '事件3');
-        },
-        */
-        toggleEdit() {
-            this.canUserEdit = !this.canUserEdit;
-        },
-
-        // 从表单提取信息添加为事件
-        addEventFromForm() {
-            // Get the maximum existing eventID
-            const existingEventIDs = this.calendarOptions.events.map(event => event.eventID);
-            const maxEventID = existingEventIDs.length > 0 ? Math.max(...existingEventIDs) : 0;
-
-            // Generate the new eventID based on the maximum existing eventID
-            const newEventID = maxEventID + 1;
-
-            const event = {
-                eventID: newEventID,
-                title: this.form.title,
-                start: new Date(`${this.form.startDate} ${this.form.startTime}`),
-                end: new Date(`${this.form.endDate} ${this.form.endTime}`),
-                priority: this.form.priority,
-                color: this.form.priority === 'lowPriority' ? '#3b82f6' : (this.form.priority === 'middlePriority' ? '#FBBF24' : '#EC4899'),
-                eventVisible: true,
-                finished: false,
-                // You can add other properties as needed
-            };
-            this.calendarOptions.events.push(event);
-        },
-
-        // 格式化时间
-        formatTime(date) {
-            console.log(date);
-            const options = {
-                year: 'numeric',
-                month: 'numeric',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false
-            };
-
-            return new Intl.DateTimeFormat('en-US', options).format(date);
-        },
-
-        // 交换日期或时间
-        swapStartEnd() {
-            const tempDate = this.form.startDate;
-            const tempTime = this.form.startTime;
-            this.form.startDate = this.form.endDate;
-            this.form.startTime = this.form.endTime;
-            this.form.endDate = tempDate;
-            this.form.endTime = tempTime;
-        },
-        swapStartEndTimes() {
-            const tempTime = this.form.startTime;
-            this.form.startTime = this.form.endTime;
-            this.form.endTime = tempTime;
-        },
-
-        // 
-        updateEventFinished(event) {
+        // 调节事件的完成状态
+        async updateEventFinished(event) {
             // 更新事件的 finished 属性
-            event.finished = !event.finished;
-            // 可以在这里执行其他逻辑，比如保存更新到数据库等
+            await this.uploadEventChange({id:event.id, finished: !event.finished})
         },
-
         // 提交数据
-        submitForm(formName) {
+        async submitForm(formName) {
             this.$refs[formName].validate(async (valid) => {
                 if (valid) {
                     this.form.startDate = `${this.form.startDate}`;
                     this.form.endDate = `${this.form.endDate}`;
                     if(!this.form.priority) this.form.priority = "lowPriority"
-
-                    try {
-                        const response = await axios.post('https://mock.apifox.cn/m1/2961538-0-default/api/events', this.form);
-                        if (response.data.errorCode === 200) {
-                            this.dialogVisible = false;
-                            this.addEventFromForm(); // 调用添加事件的方法
-                            // ...
-                        } else {
-                            console.error('Failed to create event:', response.data);
-                        }
-                    } catch (error) {
-                        console.error('API Error:', error);
-                    }
+                    let success = await this.uploadEventChange({
+                        id: this.form.eventID,
+                        title: this.form.title,
+                        start: this.getFormStartDateObj(),
+                        end: this.getFormEndDateObj(),
+                        priority: this.form.priority,
+                    })
+                    if(success) this.dialogVisible = false;
                 } else {
                     console.log('error submit!!');
                     return false;
                 }
             });
         },
-        //关闭弹窗，重置表单
-        resetForm(formName) {
-            this.dialogVisible = false;
-            this.$refs[formName].resetFields();
-        },
-        //关闭弹窗，重置表单
-        close() {
-            this.dialogVisible = false;
-            this.$refs.form.resetFields();
-        },
-
-        // 删除事件
-        deleteEvent(eventID) {
-            // 在 events 数组中查找并删除具有给定 eventID 的事件
-            const index = this.calendarOptions.events.findIndex(event => event.eventID === eventID);
-            if (index !== -1) {
-                this.calendarOptions.events.splice(index, 1);
+        // 传入事件的id、更改的部分，时间全部要转为时间戳
+        async uploadEventChange(updatedEventPart){
+            let newCompleteEvent = undefined;
+            let oldEvent = undefined;
+            if(updatedEventPart.id === "-1"){
+                updatedEventPart.id = -1;
+                newCompleteEvent = updatedEventPart;
+            }else{
+                for (let event of this.allEvents) {
+                    if(event.id === updatedEventPart.id){
+                        oldEvent = event;
+                        newCompleteEvent = {
+                            id: parseInt(updatedEventPart.id),
+                            start: updatedEventPart.start ? updatedEventPart.start : event.start,
+                            end: updatedEventPart.end ? updatedEventPart.end : event.end,
+                            title: updatedEventPart.title ? updatedEventPart.title : event.title,
+                            priority: updatedEventPart.priority ? updatedEventPart.priority : event.priority,
+                            finished: typeof updatedEventPart === "undefined" ? event.finished : updatedEventPart.finished
+                        }
+                        break;
+                    }
+                }
             }
-        },
-    },  // end of methods
+            if(!newCompleteEvent) {
+                ElMessage.error("健康事项不存在，请尝试刷新页面");
+                return false
+            }
+            try{
+                let res = await axios.post('/api/editEvent',newCompleteEvent)
+                if(!oldEvent){
+                    oldEvent = {id: res.json.new_id+""}
+                    this.allEvents.push(oldEvent)
+                }
+                oldEvent.start = newCompleteEvent.start
+                oldEvent.end = newCompleteEvent.end
+                oldEvent.title = newCompleteEvent.title
+                oldEvent.finished = newCompleteEvent.finished
+                oldEvent.priority = newCompleteEvent.priority
+                oldEvent.color = this.priorityColorMap[oldEvent.priority]
+                return true
+            }catch(error){
+                if(error.network) return false;
+                switch (error.errorCode){
+                    case 404:
+                        ElMessage.error("指定的健康事项未找到");
+                        break
+                    default:
+                        error.defaultHandler("提交健康日历数据失败")
+                }
+                return false;
+            }
+        }
+    },
     computed: {
         // 表单标题
         dialogTitle() {
-            return this.canUserEdit ? '健康事项新增' : '健康事项';
+            if(!this.canUserEdit)
+                return '健康事项详情';
+            if(this.form.eventID === '-1')
+                return '新增健康事项'
+            else
+                return '修改健康事项'
         },
         // 事项添加的时间检查
         maxStartTime() {
@@ -407,8 +356,8 @@ export default defineComponent({
         // 事项排序
         sortedEvents() {
             // 按照规则对事件进行排序
-            const unFinishedEvents = this.calendarOptions.events.filter(event => !event.finished);
-            const finishedEvents = this.calendarOptions.events.filter(event => event.finished);
+            const unFinishedEvents = this.allEvents.filter(event => !event.finished);
+            const finishedEvents = this.allEvents.filter(event => event.finished);
 
             const compareEvents = (a, b) => {
                 // 1. 未完成的排在前，完成的排在末
@@ -443,39 +392,37 @@ export default defineComponent({
 
         // 统计未完成总数
         unfinishedEvents() {
-            return this.calendarOptions.events.filter(event => !event.finished);
-        },
-    },  // end of computed
-    watch: {
-        'form.startDate': function (newStartDate) {
-            // If endDate is earlier than newStartDate, swap them
-            if (this.form.endDate && this.form.endDate < newStartDate) {
-                this.swapStartEnd();
-            }
-            // If dates are the same but startTime is later than endTime, swap them
-            if (this.form.endDate === newStartDate && this.form.endTime < this.form.startTime) {
-                this.swapStartEndTimes();
-            }
-        },
-        'form.endDate': function (newEndDate) {
-            const currentDate = moment().startOf('day'); // Get the current date without time
-            const selectedEndDate = moment(newEndDate);
-            // If newEndDate is earlier than currentDate, set it to currentDate
-            if (selectedEndDate.isBefore(currentDate, 'day')) {
-                this.form.endDate = currentDate.format('YYYY-MM-DD');
-            } else {
-                // If newEndDate is earlier than startDate, swap them
-                if (this.form.startDate > newEndDate) {
-                    this.swapStartEnd();
+            return this.allEvents.filter(event => !event.finished);
+        }
+    },
+    mounted() {
+        if(!globalData.login)
+        {
+            ElMessage.error('请先登录!')
+            return;
+        }
+        axios.get("/api/getEvents")
+            .then(res => {
+                this.allEvents = []
+                for(let event of res.json.events){
+                    this.allEvents.push({
+                        title: event.title,
+                        start: new Date(event.start),
+                        end: new Date(event.end),
+                        id: event.id + '',
+                        priority: event.priority,
+                        color: this.priorityColorMap[event.priority],
+                        finished: event.finished,
+                        visible: event.finished,
+                    })
                 }
-                // If dates are the same but endTime is earlier than startTime, swap them
-                if (this.form.startDate === newEndDate && this.form.startTime > this.form.endTime) {
-                    this.swapStartEndTimes();
-                }
-            }
-        },
-    },  // end of watch
-})
+            })
+            .catch(error => {
+                if(error.network) return;
+                error.defaultHandler();
+            })
+    },
+}
 
 </script>
 
@@ -498,7 +445,7 @@ export default defineComponent({
                     <div class="health-calendar">Health Calendar</div>
                 </div>
 
-                <el-button class="addEvent-button" @click="addEvent" type="success" plain>
+                <el-button v-if="canUserEdit" class="addEvent-button" @click="addEvent" type="success" plain>
                     <i class="fi fi-rr-plus"></i>
                 </el-button>
             </div>
@@ -512,20 +459,19 @@ export default defineComponent({
             </div>
             <div class='sidebar-section'>
                 <div class="TodoList">To-do List【共{{ unfinishedEvents.length }}个待办事项】</div>
-                <div class="events" v-if="sortedEvents.length > 0" v-for='event in sortedEvents' :key='event.eventID'>
+                <div class="events" v-if="sortedEvents.length > 0" v-for='event in sortedEvents'>
                     <div class="time">
                         <div
                             :class="[event.priority === 'highPriority' ? 'highPriority' : (event.priority === 'middlePriority' ? 'middlePriority' : 'lowPriority')]">
                         </div>
                         <div class="eventTime">{{ formatTime(event.start) }} - {{ formatTime(event.end) }}</div>
-                        <label class="checkboxContainer">
-                            <input :checked="event.finished" type="checkbox" @change="updateEventFinished(event)">
+                        <label class="checkboxContainer" :class="{checked: event.finished}" @click="updateEventFinished(event)">
                             <span class="checkbox"></span>
                         </label>
                     </div>
                     <div class="eventTodo" style="display: flex; align-items: center; justify-content: space-between;">
                         <div>{{ event.title }}</div>
-                        <el-button type="danger" size="small" @click="deleteEvent(event.eventID)" round>删除</el-button>
+                        <el-button type="danger" size="small" @click="deleteEvent(event)" round>删除</el-button>
                     </div>
                 </div>
                 <div v-else>
@@ -535,7 +481,7 @@ export default defineComponent({
         </div>
 
         <!--日程新增弹窗start-->
-        <el-dialog :title="dialogTitle" v-model='dialogVisible' :before-close="close" width="45%">
+        <el-dialog :title="dialogTitle" v-model='dialogVisible' width="45%">
             <el-form :model="form" :rules="rules" ref="form" label-width="120px" size="small" class="demo-ruleForm">
 
                 <el-form-item label="事项主题" prop="title">
@@ -814,13 +760,8 @@ el-dialog {
     cursor: pointer;
 }
 
-input[type='checkbox'] {
-    position: absolute;
-    transform: scale(0);
-}
-
-input[type='checkbox']:checked~.checkbox {
-    transform: rotate(45deg);
+.checkboxContainer.checked .checkbox {
+    transform: rotate(45deg) scale(0.707);
     width: 14px;
     margin-left: 5px;
     border-color: #24c78e;
