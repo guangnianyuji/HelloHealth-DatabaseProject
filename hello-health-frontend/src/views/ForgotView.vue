@@ -144,7 +144,7 @@ const sendVerificationCode = async () => {
         }
     }, 1000);
 
-    axios.post('/api/SendVerificationCode', requestVerificationCode).then(response => {
+    axios.post('/api/Register/SendVerificationCode', requestVerificationCode).then(response => {
         isError.value = false
         errorMsg.value = ''
         ElMessage.success("发送成功。")
