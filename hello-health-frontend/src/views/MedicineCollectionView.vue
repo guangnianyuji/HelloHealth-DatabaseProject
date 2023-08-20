@@ -277,18 +277,12 @@
             content: null,
             span: 1,
           },
-          {
-            id: 'medicine_collection_num',
-            label: "收藏总数",
-            content: null,
-            span: 1,
-          },
         ],
       }
     },
     // TODO 增加api
-    mounted() {
-      axios.get('/api/medicineList')
+    created() {
+      axios.get('/api/Medicine/collectionList')
           .then(response => {
             if (response.data.errorCode === 200) {
               this.tableData = response.data.data.medicine_list; // Assuming the response contains the medicine data
@@ -299,12 +293,13 @@
           .catch(error => {
             console.error(error);
           });
+          console.log(this.tableData)
     },
   
     methods: {
       BriefCardClicked(item) {
         const medicineId = item.medicine_id;
-        this.$router.push(`/medicineCard?medicine_id=${medicineId}`);
+        this.$router.push(`/Medicine/medicineCard?medicine_id=${medicineId}`);
       },
     },
     computed: {
