@@ -7,6 +7,7 @@
 import { ref } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import axios from "axios";
+import StarMedicineButton from "@/components/StarMedicineButton.vue";
 
 const category = ref(0)
 const brand = ref(0)
@@ -17,6 +18,7 @@ const recipe = ref(0)
 //const filteredData = ref(tableData)
 export default {
     name: "FindMedicineView",
+    components:{StarMedicineButton},
     data() {
         return {
             currentPage: 1,
@@ -156,11 +158,12 @@ export default {
     },
     // TODO 增加api
     mounted() {
-        axios.get('https://mock.apifox.cn/m1/2961538-0-default/api/Medicine/medicineList')
+        axios.get('api/Medicine/medicineList')
             .then(response => {
                 if (response.data.errorCode === 200) {
                     this.tableData = response.data.data.medicine_list; // Assuming the response contains the medicine data
                     this.constData = response.data.data.medicine_list; 
+                    console.log(response.data.data.medicine_list)
                     //const filteredData = this.tableData;
                     //const responseData = response.data.data.medicine_list;
                     //this.tableData = responseData; // 将获取的数据赋值给tableData数组
@@ -171,6 +174,7 @@ export default {
             .catch(error => {
                 console.error(error);
             });
+            console.log(this.tableData)
     },
 
     methods: {
@@ -259,12 +263,14 @@ export default {
                                 break;
                         }
                     }
-                    // Filter by prescription medicine
-                    if (this.recipe !== 0 && item.is_prescription_medicine !== (this.recipe === 1 ? '处方药物' : '非处方药物')) {
+                    //后端返回的是 是  / 否
+
+                    // Filter by medical insurance medicine
+                    if (this.insurance !== 0 && item.is_medical_insurance_medicine !== (this.insurance === 1 ? '是' : '否')) {
                         return false;
                     }
-                    // Filter by medical insurance medicine
-                    if (this.insurance !== 0 && item.is_medical_insurance_medicine !== (this.insurance === 1 ? '医保药物' : '非医保药物')) {
+                    // Filter by prescription medicine
+                    if (this.recipe !== 0 && item.is_prescription_medicine !== (this.recipe == 1 ? '是' : '否')) {
                         return false;
                     }
                     return true;
@@ -386,7 +392,9 @@ export default {
         <el-tabs type="border-card" class="result_title result_box">
             <el-tab-pane label="综合排序">
                 <el-table :data="paginatedTableData" stripe style="width: 100%">
-                    <el-table-column prop="star" label="是否收藏" width="60">
+                    <el-table-column  label="是否收藏" width="60">
+
+                        <!--
                         <label class="container">
                             <input type="checkbox">
                             <svg height="24px" id="Layer_1" version="1.2" viewBox="0 0 24 24" width="24px"
@@ -401,6 +409,11 @@ export default {
                                 </g>
                             </svg>
                         </label>
+                        -->
+                        <template #default="scope">
+                        <StarMedicineButton :collected="scope.row.isCollected" :medicine_id="scope.row.medicine_id"></StarMedicineButton>
+
+                        </template>
                     </el-table-column>
                     <el-table-column prop="medicine_ch_name" label="药品名称" width="200" />
                     <el-table-column prop="medicine_category" label="类别" width="100" />
