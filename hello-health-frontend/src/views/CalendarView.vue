@@ -31,6 +31,8 @@ export default {
                 priority: '',
                 color: '',
                 finished: false,
+                interval: 1,
+                notify: true
             },
             rules: {
                 title: [
@@ -70,10 +72,10 @@ export default {
                     right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
                 },
                 height: 'auto',
-                initialView: 'dayGridMonth',
-                editable: true,
+                initialView: 'timeGridWeek',
+                editable: false,
                 selectable: true,
-                selectMirror: true,
+                selectMirror: false,
                 dayMaxEvents: true,
                 weekends: true,
                 navLinks: true,
@@ -87,8 +89,45 @@ export default {
                 dayMaxEventRows: true,       //数据条数太多时，限制各自里显示的数据条数（多余的以“+2more”格式显示），默认false不限制,支持输入数字设定固定的显示条数
                 locale: zhCnLocale,     // 设置语言
                 eventColor: "#78C2AD",  // 修改日程背景色
+                // 通过mainEvent来生成日历上能显示的event
                 events: computed(()=>{
-                    return this.allEvents.filter(e => { return !e.finished})
+                    this.eventNameHashMap.clear()
+                    let ans = [];
+                    for(let mainEvent of this.allEvents){
+                        if(mainEvent.interval === 0){
+                            // 连续事件
+                            let nowUUID = this.getUuid()
+                            this.eventNameHashMap.set(nowUUID, mainEvent.id)
+
+                            ans.push({
+                                id: nowUUID,
+                                title: mainEvent.title,
+                                start: mainEvent.start,
+                                end: mainEvent.end,
+                                color: this.priorityColorMap[mainEvent.priority]
+                            })
+                        }else{
+                            // 每几日发生一次的事件
+                            let nowStart = new Date(mainEvent.start)
+                            while(nowStart.getTime() < mainEvent.end.getTime()){
+                                let nowEnd = new Date(nowStart)
+                                nowEnd.setHours(mainEvent.end.getHours(), mainEvent.end.getMinutes())
+
+                                let nowUUID = this.getUuid()
+                                this.eventNameHashMap.set(nowUUID, mainEvent.id)
+                                ans.push({
+                                    id: nowUUID,
+                                    title: mainEvent.title,
+                                    start: nowStart,
+                                    end: nowEnd,
+                                    color: this.priorityColorMap[mainEvent.priority]
+                                })
+                                nowStart = new Date(nowStart);
+                                nowStart.setDate(nowStart.getDate() + mainEvent.interval);
+                            }
+                        }
+                    }
+                    return ans;
                 })
                 /* you can update a remote database when these fire:
                 eventAdd:
@@ -97,7 +136,8 @@ export default {
                 */
             },
             canUserEdit: false,
-            allEvents: []
+            allEvents: [],
+            eventNameHashMap: new Map()
         }
     },
     methods: {
@@ -126,10 +166,16 @@ export default {
             return `${hours}:${minutes}`;
         },
         getFormEndDateObj(){
-            return new Date(`${this.form.endDate} ${this.form.endTime}`)
+            let ans = new Date(this.form.endDate)
+            let time = new Date("1970-1-1 " + this.form.endTime)
+            ans.setHours(time.getHours(), time.getMinutes())
+            return ans
         },
         getFormStartDateObj(){
-            return new Date(`${this.form.startDate} ${this.form.startTime}`)
+            let ans = new Date(this.form.startDate)
+            let time = new Date("1970-1-1 " + this.form.startTime)
+            ans.setHours(time.getHours(), time.getMinutes())
+            return ans
         },
         setFormTime(startDate, endDate){
             this.form.startDate = this.formatFormDate(startDate);
@@ -142,6 +188,9 @@ export default {
                 this.form.endTime = this.formatFormTime(startDate);
             }
 
+        },
+        getUuid() {
+            return crypto.randomUUID();
         },
         // 日期相关的辅助函数区域结束
 
@@ -194,15 +243,20 @@ export default {
             this.dialogVisible = true;
 
             // Set form properties based on the clicked event
-            this.form.eventID = calEvent.event.id
-            this.form.title = calEvent.event.title;
-            this.setFormTime(calEvent.event.start, calEvent.event.end)
-            this.form.priority = (()=>{
-                for(let event of this.calendarOptions.events){
-                    if(event.id === calEvent.event.id) return event.priority
+            let id = this.eventNameHashMap.get(calEvent.event.id)
+            let realEvent = undefined;
+            for(let event of this.allEvents){
+                if(event.id === id){
+                    realEvent = event;
+                    break;
                 }
-                return false
-            })()
+            }
+            this.form.eventID = realEvent.id
+            this.form.title = realEvent.title;
+            this.setFormTime(realEvent.start, realEvent.end)
+            this.form.priority = realEvent.priority
+            this.form.interval = realEvent.interval;
+            this.form.notify = realEvent.notify;
         },
         async handleEventDrop(dropEventInfo){
             let success = await this.uploadEventChange(dropEventInfo.event)
@@ -253,7 +307,7 @@ export default {
         // 调节事件的完成状态
         async updateEventFinished(event) {
             // 更新事件的 finished 属性
-            await this.uploadEventChange({id:event.id, finished: !event.finished})
+            // await this.uploadEventChange({id:event.id, finished: !event.finished})
         },
         // 提交数据
         async submitForm(formName) {
@@ -265,9 +319,11 @@ export default {
                     let success = await this.uploadEventChange({
                         id: this.form.eventID,
                         title: this.form.title,
-                        start: this.getFormStartDateObj(),
-                        end: this.getFormEndDateObj(),
+                        start: this.getFormStartDateObj().getTime(),
+                        end: this.getFormEndDateObj().getTime(),
                         priority: this.form.priority,
+                        notify: this.form.notify,
+                        interval: this.form.interval
                     })
                     if(success) this.dialogVisible = false;
                 } else {
@@ -293,7 +349,8 @@ export default {
                             end: updatedEventPart.end ? updatedEventPart.end : event.end,
                             title: updatedEventPart.title ? updatedEventPart.title : event.title,
                             priority: updatedEventPart.priority ? updatedEventPart.priority : event.priority,
-                            finished: typeof updatedEventPart === "undefined" ? event.finished : updatedEventPart.finished
+                            notify: typeof updatedEventPart.notify === "undefined" ? event.notify : updatedEventPart.notify,
+                            interval: typeof updatedEventPart.interval === "undefined" ? event.interval : updatedEventPart.interval,
                         }
                         break;
                     }
@@ -306,15 +363,16 @@ export default {
             try{
                 let res = await axios.post('/api/editEvent',newCompleteEvent)
                 if(!oldEvent){
-                    oldEvent = {id: res.json.new_id+""}
+                    oldEvent = {id: res.json.new_id}
                     this.allEvents.push(oldEvent)
                 }
-                oldEvent.start = newCompleteEvent.start
-                oldEvent.end = newCompleteEvent.end
+                oldEvent.start = new Date(newCompleteEvent.start)
+                oldEvent.end = new Date(newCompleteEvent.end)
                 oldEvent.title = newCompleteEvent.title
                 oldEvent.finished = newCompleteEvent.finished
                 oldEvent.priority = newCompleteEvent.priority
-                oldEvent.color = this.priorityColorMap[oldEvent.priority]
+                oldEvent.interval = newCompleteEvent.interval
+                oldEvent.notify = newCompleteEvent.notify
                 return true
             }catch(error){
                 if(error.network) return false;
@@ -409,11 +467,11 @@ export default {
                         title: event.title,
                         start: new Date(event.start),
                         end: new Date(event.end),
-                        id: event.id + '',
+                        id: event.id,
                         priority: event.priority,
                         color: this.priorityColorMap[event.priority],
-                        finished: event.finished,
-                        visible: event.finished,
+                        notify: event.notify,
+                        interval: event.interval,
                     })
                 }
             })
@@ -465,9 +523,9 @@ export default {
                             :class="[event.priority === 'highPriority' ? 'highPriority' : (event.priority === 'middlePriority' ? 'middlePriority' : 'lowPriority')]">
                         </div>
                         <div class="eventTime">{{ formatTime(event.start) }} - {{ formatTime(event.end) }}</div>
-                        <label class="checkboxContainer" :class="{checked: event.finished}" @click="updateEventFinished(event)">
-                            <span class="checkbox"></span>
-                        </label>
+<!--                        <label class="checkboxContainer" :class="{checked: event.finished}" @click="updateEventFinished(event)">-->
+<!--                            <span class="checkbox"></span>-->
+<!--                        </label>-->
                     </div>
                     <div class="eventTodo" style="display: flex; align-items: center; justify-content: space-between;">
                         <div>{{ event.title }}</div>
@@ -488,7 +546,7 @@ export default {
                     <el-input v-model="form.title" :disabled="!canUserEdit"></el-input>
                 </el-form-item>
 
-                <el-form-item label="开始时间" required>
+                <el-form-item label="事项日期" required>
                     <el-col :span="11">
                         <el-form-item prop="startDate" style="margin-bottom: 0">
                             <el-date-picker type="date" format="YYYY/MM/DD" value-format="YYYY-MM-DD" placeholder="选择日期"
@@ -497,21 +555,22 @@ export default {
                         </el-form-item>
                     </el-col>
                     <el-col class="line" :span="2">-</el-col>
+
                     <el-col :span="11">
-                        <el-form-item prop="startTime" style="margin-bottom: 0">
-                            <el-time-select placeholder="选择时间" v-model="form.startTime" start="00:00" step="00:30"
-                                end="23:30" :max-time="maxStartTime" style="width: 100%;" :disabled="!canUserEdit">
-                            </el-time-select>
+                        <el-form-item prop="endDate" style="margin-bottom: 0">
+                            <el-date-picker type="date" format="YYYY/MM/DD" value-format="YYYY-MM-DD" placeholder="选择日期"
+                                            v-model="form.endDate" style="width: 100%;" :disabled="!canUserEdit">
+                            </el-date-picker>
                         </el-form-item>
                     </el-col>
                 </el-form-item>
 
-                <el-form-item label="结束时间" required>
+                <el-form-item label="事项时间" required>
                     <el-col :span="11">
-                        <el-form-item prop="endDate" style="margin-bottom: 0">
-                            <el-date-picker type="date" format="YYYY/MM/DD" value-format="YYYY-MM-DD" placeholder="选择日期"
-                                v-model="form.endDate" style="width: 100%;" :disabled="!canUserEdit">
-                            </el-date-picker>
+                        <el-form-item prop="startTime" style="margin-bottom: 0">
+                            <el-time-select placeholder="选择时间" v-model="form.startTime" start="00:00" step="00:30"
+                                            end="23:30" :max-time="maxStartTime" style="width: 100%;" :disabled="!canUserEdit">
+                            </el-time-select>
                         </el-form-item>
                     </el-col>
                     <el-col class="line" :span="2">-</el-col>
@@ -530,8 +589,19 @@ export default {
                         <el-option label="高优先级" value="highPriority"></el-option>
                     </el-select>
                 </el-form-item>
+                <el-form-item label="重复周期(天)" required>
+                    <el-input-number v-model="form.interval" :min="0" :max="7" :disabled="!canUserEdit"/>
+                    <span>&nbsp; * 重复周期为0即为连续事件</span>
+                </el-form-item>
+                <el-form-item label="是否发送短信提醒" required>
+                    <el-radio-group v-model="form.notify" class="ml-4" :disabled="!canUserEdit">
+                        <el-radio :label="true" size="small">是</el-radio>
+                        <el-radio :label="false" size="small">否</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+
                 <el-form-item>
-                    <el-button @click="resetForm('form')">取消</el-button>
+                    <el-button>取消</el-button>
                     <el-button v-if="canUserEdit" type="primary" @click="submitForm('form')">提交</el-button>
                 </el-form-item>
             </el-form>
@@ -799,5 +869,9 @@ el-dialog {
 .fc .fc-button-primary:not(:disabled):focus, .fc .fc-button-primary:not(:disabled):active:focus{
     box-shadow: #5a928280 0 0 0 0.2rem !important;
 
+}
+
+.fc-event, .fc-event-main{
+    cursor: pointer;
 }
 </style>
