@@ -322,20 +322,6 @@ export default {
                     </el-col>
                 </el-row>
                 <el-row>
-                    <el-col :span="2" class="text item">品牌：</el-col>
-                    <el-col :span="22" class="text select-item">
-                        <el-radio-group v-model="brand">
-                            <el-radio :label="0" class="option-box">全部</el-radio>
-                            <el-radio :label="1" class="option-box">白云山</el-radio>
-                            <el-radio :label="2" class="option-box">曼秀雷敦</el-radio>
-                            <el-radio :label="3" class="option-box">哈药集团制药六厂</el-radio>
-                            <el-radio :label="4" class="option-box">天大药业</el-radio>
-                            <el-radio :label="5" class="option-box">国药</el-radio>
-                            <el-radio :label="6" class="option-box">香雪</el-radio>
-                        </el-radio-group>
-                    </el-col>
-                </el-row>
-                <el-row>
                     <el-col :span="2" class="text item">剂型：</el-col>
                     <el-col :span="22" class="text select-item">
                         <el-radio-group v-model="form">
