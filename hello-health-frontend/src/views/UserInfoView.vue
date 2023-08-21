@@ -67,6 +67,8 @@
                   </el-dialog>
                 </template>
               </div>
+              <p v-if="isLocked" class="state-locked">用户状态：已被封禁！</p>
+              <p v-if="!isLocked" class="state-normal">用户状态：正常</p>
             </el-aside>
             <el-main>
               <span class="userName">{{ displayName }}</span>
@@ -446,6 +448,7 @@ export default {
       isLogin:true ,    //判断正在操控的用户是否处于登陆状态
       CoinRecordList:[],  //硬币记录
       CoinNum:0,  //硬币数量
+      isLocked:false,   //用户是否被封禁
 
       //本页面需要的一些变量，不用从数据库获取
       isEdit:false, //是否允许编辑信息
@@ -534,6 +537,8 @@ export default {
           this.followList.forEach(user => {
             this.followMap.set(user.user_id, true)
           })
+
+          this.isLocked = response.data.data.isLocked;
 
           this.fansList=response.data.data.fansList;
           
@@ -915,5 +920,21 @@ export default {
 .user-info {
   display: flex;
   justify-content: space-between;
+}
+/*用户状态封禁样式*/
+.state-locked{
+  color:red;
+  margin-left: 15px;
+  font-weight: bold;
+  margin-top:10px;
+  font-size: medium;
+}
+/*用户状态正常样式*/
+.state-normal{
+  color: #00bfa8;
+  margin-left: 30px;
+  font-weight: revert;
+  margin-top: 10px;
+  font-size: small;
 }
 </style>
