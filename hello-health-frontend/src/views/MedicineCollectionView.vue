@@ -263,18 +263,12 @@
             content: null,
             span: 1,
           },
-          {
-            id: 'medicine_collection_num',
-            label: "收藏总数",
-            content: null,
-            span: 1,
-          },
         ],
       }
     },
     // TODO 增加api
-    mounted() {
-      axios.get('/api/medicineList')
+    created() {
+      axios.get('/api/Medicine/collectionList')
           .then(response => {
             if (response.data.errorCode === 200) {
               this.tableData = response.data.data.medicine_list; // Assuming the response contains the medicine data
@@ -285,6 +279,7 @@
           .catch(error => {
             console.error(error);
           });
+          console.log(this.tableData)
     },
   
     methods: {
@@ -346,12 +341,13 @@
                   break;
               }
             }
-            // Filter by prescription medicine
-            if (this.recipe !== 0 && item.is_prescription_medicine !== (this.recipe === 1 ? '处方药物' : '非处方药物')) {
+
+            // Filter by medical insurance medicine
+            if (this.insurance !== 0 && item.is_medical_insurance_medicine !== (this.insurance === 1 ? '是' : '否')) {
               return false;
             }
-            // Filter by medical insurance medicine
-            if (this.insurance !== 0 && item.is_medical_insurance_medicine !== (this.insurance === 1 ? '医保药物' : '非医保药物')) {
+            // Filter by prescription medicine
+            if (this.recipe !== 0 && item.is_prescription_medicine !== (this.recipe === 1 ? '是' : '否')) {
               return false;
             }
             return true;

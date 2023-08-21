@@ -10,12 +10,7 @@
     <div class="circle-3">
       <div class="add-favorite-wrapper">
         <span class="AddCollection">
-          <i v-if="!is_Collected" class="fi fi-rr-star" style="color: white;" @click="collect">
-            {{ items.find((item) => item.id ==="medicine_collection_num").content }}
-          </i>
-          <i v-else class="fi fi-sr-star" style="color: white;" @click="unCollect">
-            {{ items.find((item) => item.id ==="medicine_collection_num").content }}
-          </i>
+          <StarMedicineButton :collected="isCollected" :medicine_id="$route.query.medicine_id"></StarMedicineButton>
         </span>
       </div>
     </div>
@@ -40,11 +35,14 @@
 
 <script>
 import axios from "axios";
-import { onMounted, reactive, ref } from "vue";
+import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
+import {ElMessage} from "element-plus";
+import StarMedicineButton from "./StarMedicineButton.vue"
 
 export default {
   name: "MedicineCard",
+  components:{StarMedicineButton},
 
   setup() {
     const items = reactive([
@@ -168,187 +166,33 @@ export default {
         content: null,
         span: 1,
       },
-      {
-        id: 'medicine_collection_num',
-        label: "收藏总数",
-        content: null,
-        span: 1,
-      },
     ]);
 
     const medicineId = ref(null); // 使用 ref 来包装 medicineId
-    const collectionNum = ref(null); // 使用 ref 来包装 collectionNum
+  
     medicineId.value = items.find((item) => item.id ==="medicine_id").content
-    collectionNum.value = items.find((item) => item.id ==="medicine_collection_num").content
-
-    const isLogin = ref(false);
-    const userInfo = reactive({
-      user_id: 123456,
-    });
-
-    const router = useRouter();
-
-    const collect = () => {
-      //判断是否登录
-      if (!isLogin.value) {
-        //若未登录
-        ElMessage({
-          message: "请先登录",
-          type: "warning",
-          showClose: true,
-          duration: 2000,
-        });
-        // TODO 之后此处需记录当前页面路径，以便于登陆完成后跳转
-        this.$router.push({
-          path: "/login",
-          query: { redirect: router.currentRoute.value.fullPath },
-        });
-      } else {
-        axios
-          .post(
-            `/api/Medicine/addCollection?medicine_id=${medicineId.value}`
-          )
-          .then((res) => {
-            console.log(res);
-            if (res.data.errorCode === 200) {
-              is_Collected.value = res.data.data.status;
-              collectionNum.value = res.data.data.medicine_collection_num;
-              // 收藏添加成功
-              console.log("收藏添加成功！");
-              items.find((item) => item.id === "medicine_collection_num").content += 1; // 增加收藏总数
-              updateCollectionData(); // 更新后台数据
-              is_Collected.value = true; // 设置收藏状态为已收藏
-            } else {
-              console.log("收藏添加失败...");
-            }
-          })
-          .catch((errMsg) => {
-            alert(
-              "对id为" +
-              medicineId.value +
-              "的药品收藏,相关API此时未完成"
-            );
-            console.log(errMsg);
-          });
-      }
-    };
-
-    const unCollect = () => {
-      axios
-      .post(
-            `/api/Medicine/removeCollection?medicine_id=${medicineId.value}`
-          )
-        .then((res) => {
-          if (res.data.errorCode === 200) {
-            is_Collected.value = res.data.data.status;
-            collectionNum.value = res.data.data.medicine_collection_num;
-            // 收藏移除成功
-            console.log("收藏移除成功！");
-            items.find((item) => item.id === "medicine_collection_num").content -= 1; // 减少收藏总数
-            updateCollectionData(); // 更新后台数据
-            is_Collected.value = false; // 设置收藏状态为已收藏
-          } else {
-            console.log("收藏移除失败...");
-          }
-        })
-        .catch((errMsg) => {
-          alert(
-            "取消对id为" +
-            medicineId +
-            "的药品收藏,相关API此时未完成"
-          );
-          console.log(errMsg);
-        });
-    };
-
-    onMounted(() => {
-      (async () => {
-        let response = await axios.get("/api/UserInfo");
-
-        console.log(response.data);
-        if (response.data.errorCode !== 200) return;
-        let responseObj = response.data.data;
-        isLogin.value = responseObj.login;
-        console.log(responseObj.login);
-        if (!responseObj.login) return;
-        userInfo.user_id = responseObj.user_id;
-      })();
-    });
-    const is_Collected = ref(false);
-
-    // 添加药品收藏
-    const handleAddCollection = (value) => {
-      if (value && !is_Collected.value) {
-        // 收藏添加成功
-        console.log("收藏添加成功！");
-        items.find((item) => item.id === "medicine_collection_num").content += 1; // 增加收藏总数
-        updateCollectionData(); // 更新后台数据
-        is_Collected.value = true; // 设置收藏状态为已收藏
-      } else {
-        console.log("收藏添加失败...");
-        // 更新相关操作
-      }
-    };
-
-    // 移除药品收藏
-    const handleRemoveCollection = (value) => {
-      if (value && is_Collected.value) {
-        // 收藏移除成功
-        console.log("收藏移除成功！");
-        items.find((item) => item.id === "medicine_collection_num").content -= 1; // 减少收藏总数
-        updateCollectionData(); // 更新后台数据
-        is_Collected.value = false; // 设置收藏状态为已收藏
-      } else {
-        console.log("收藏移除失败...");
-        // 更新相关操作
-      }
-    };
-
-    // 药品收藏数据更新
-    const updateCollectionData = () => {
-      // 构建请求参数
-      const params = new URLSearchParams();
-      params.append("user_id", userInfo.user_id);
-      params.append("medicine_id", medicineId.value);
-      params.append("medicine_collection_num", collectionNum.value);
-
-      axios
-        .post(
-          "/api/medicine/medicineCollection/updateCollection",
-          params
-        )
-        .then((response) => {
-          // 更新成功的处理逻辑
-          console.log("收藏数据更新成功");
-        })
-        .catch((error) => {
-          // 更新失败的处理逻辑
-          console.error("收藏数据更新失败", error);
-        });
-    }
+    
+    const isCollected=ref(null);
+    const collectMemory=ref(null);
 
     return {
       items,
       medicineId,
-      collectionNum,
-      userInfo,
-      is_Collected,
-      updateCollectionData,
-      handleAddCollection,
-      handleRemoveCollection,
-      collect,
-      unCollect,
+      isCollected,
+      collectMemory
     };
   },
   created() {
+    console.log("created")
     this.getMedicineCard();
   },
   methods: {
     getMedicineCard() {
       const medicine_Id = this.$route.query.medicine_id;
+      console.log(medicine_Id)
       if (medicine_Id) {
         axios
-          .post(`/api/Medicine/medicineCard?medicine_id=${medicine_Id}`)
+          .post(`/api/Medicine/medicineCard`,{medicine_id:medicine_Id})
           .then((res) => {
             const response = res.data;
             if (response.errorCode === 200) {
@@ -356,6 +200,11 @@ export default {
               this.items.forEach((item) => {
                 item.content = medicineData[item.id] || "-";
               });
+              this.isCollected=medicineData.isCollected;
+              this.medicineId=medicine_Id
+              this.collectMemory=medicineData.collect_memory
+              console.log(this.medicineId)
+              console.log(this.isCollected)
             } else {
               console.error("Error fetching medicine data:", response.errorCode);
             }

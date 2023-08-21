@@ -9,19 +9,9 @@
                         <div class="welcome">Welcome To<br />HelloHealth</div>
 
                         <div class="contenttext">
-                            <p><h2>探寻健康之门，启程HelloHealth</h2></p>
-                            <p> &nbsp;</p>
-
-                            <h2>
-                                <p>
-                                    加入我们，赋予生命更多的关爱与呵护
-                                </p>
-                                <p>&nbsp;</p>
-                                <p>
-                                    与全球健康爱好者一起，开启身体心灵的奇妙旅程
-                                </p>
-                            </h2>
-
+                            <p>探寻健康之门，启程HelloHealth</p>
+                            <p>加入我们，赋予生命更多的关爱与呵护</p>
+                            <p>与全球健康爱好者一起，开启身体心灵的奇妙旅程</p>
                         </div>
                     </div>
 
@@ -318,7 +308,6 @@ export default {
     background-color: #fff;
     padding: 40px;
     box-shadow: 0 6px 6px rgba(36,37,38,.02);
-    height: 80%;
 }
 
 .part{
@@ -391,6 +380,10 @@ export default {
     font: 400 16px/24px "Sora", sans-serif;
     position: relative;
     left: 8px;
+}
+
+.contenttext>p{
+    margin-bottom: 5px;
 }
 
 .btn {
