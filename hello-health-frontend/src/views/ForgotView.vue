@@ -88,12 +88,12 @@ const onSubmit = async () => {
         return
     }
 
-    axios.post("/api/Register/ForgotPassword",forgotPasswordCredential).catch(response => {
+    axios.post("/api/Register/ForgotPassword",forgotPasswordCredential).then(response => {
         isError.value = false;
         errorMsg.value = ''
         alert('密码重设成功！')
         router.push("/login")
-    }).then(error => {
+    }).catch(error => {
         if(error.network) return;
         switch(error.errorCode){
             case 105:
