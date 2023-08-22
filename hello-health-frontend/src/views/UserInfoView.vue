@@ -251,7 +251,7 @@
       </el-card>
     </div>
     <!--展示信息的分栏，分栏4：如果用户是医师的话，展示医师信息，否则无-->
-    <div v-if="userInfo.isCertified && isLogin && isCurrentUser">
+    <div v-if="userInfo.isCertified && isLogin">
       <el-card class="cardStyle">
         <el-descriptions
             class="margin-top"
@@ -260,7 +260,7 @@
             :size="size"
             border
         >
-          <template #extra>
+          <template #extra v-if="isCurrentUser">
             <!--点“编辑”按钮弹出医师认证框-->
             <el-button type="primary" @click="dialogVisible = true">编辑</el-button>
             <el-dialog v-model="dialogVisible" title="医师认证" width="50%">
@@ -528,6 +528,7 @@ export default {
           }
           const responseData2 = response.data.data.certification;
           this.certification = responseData2
+          console.log(this.certification)
           //this.isLogin = globalData.isLogin; // 获取用户登录状态 change
           this.followList = response.data.data.followList;
           this.isFollowed = response.data.data.isFollowed;
