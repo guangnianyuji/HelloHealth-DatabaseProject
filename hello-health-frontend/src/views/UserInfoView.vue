@@ -67,6 +67,8 @@
                   </el-dialog>
                 </template>
               </div>
+              <p v-if="isLocked" class="state-locked">用户状态：已被封禁！</p>
+              <p v-if="!isLocked" class="state-normal">用户状态：正常</p>
             </el-aside>
             <el-main>
               <span class="userName">{{ displayName }}</span>
@@ -248,7 +250,7 @@
       </el-card>
     </div>
     <!--展示信息的分栏，分栏4：如果用户是医师的话，展示医师信息，否则无-->
-    <div v-if="userInfo.isCertified && isLogin && isCurrentUser">
+    <div v-if="userInfo.isCertified && isLogin">
       <el-card class="cardStyle">
         <el-descriptions
             class="margin-top"
@@ -257,7 +259,7 @@
             :size="size"
             border
         >
-          <template #extra>
+          <template #extra v-if="isCurrentUser">
             <!--点“编辑”按钮弹出医师认证框-->
             <el-button type="primary" @click="dialogVisible = true">编辑</el-button>
             <el-dialog v-model="dialogVisible" title="医师认证" width="50%">
@@ -472,6 +474,7 @@ export default {
       isLogin:true ,    //判断正在操控的用户是否处于登陆状态
       CoinRecordList:[],  //硬币记录
       CoinNum:0,  //硬币数量
+      isLocked:false,   //用户是否被封禁
 
       //本页面需要的一些变量，不用从数据库获取
       isEdit:false, //是否允许编辑信息
@@ -565,6 +568,7 @@ export default {
           }
           const responseData2 = response.data.data.certification;
           this.certification = responseData2
+          console.log(this.certification)
           //this.isLogin = globalData.isLogin; // 获取用户登录状态 change
           this.followList = response.data.data.followList;
           this.isFollowed = response.data.data.isFollowed;
@@ -574,6 +578,8 @@ export default {
           this.followList.forEach(user => {
             this.followMap.set(user.user_id, true)
           })
+
+          this.isLocked = response.data.data.isLocked;
 
           this.fansList=response.data.data.fansList;
 
@@ -622,7 +628,7 @@ export default {
     },
     unfollow(userId) {
       if(userId){
-        axios.post("/api/UserInfo/unfollowUser", { thisUserID: globalData.userInfo.userId ,followUserID: userId })
+        axios.post("/api/UserInfo/unfollowUser", { followUserID: userId })
             .then(response => {
               //如果后端返回的状态码是200，那么将isFollowed设置为false
               this.followMap.set(userId, false)
@@ -633,7 +639,7 @@ export default {
             });
       }
       else {
-        axios.post("/api/UserInfo/unfollowUser", {thisUserID: globalData.userInfo.userId ,followUserID: this.userInfo.userID})
+        axios.post("/api/UserInfo/unfollowUser", {followUserID: this.userInfo.userID})
             .then(response => {
               //如果后端返回的状态码是200，那么将isFollowed设置为false
               this.isFollowed = false;
@@ -648,7 +654,7 @@ export default {
     followUser(userId) {
 
       if(userId){
-        axios.post("/api/UserInfo/followUser", { thisUserID: globalData.userInfo.userId ,followUserID: userId })
+        axios.post("/api/UserInfo/followUser", {followUserID: userId })
             .then(response => {
               //如果后端返回的状态码是200，那么将isFollowed设置为true
               this.followMap.set(userId, true);
@@ -659,7 +665,7 @@ export default {
             });
       }
       else{
-        axios.post("/api/UserInfo/followUser", {thisUserID: globalData.userInfo.userId ,followUserID: this.userInfo.userID})
+        axios.post("/api/UserInfo/followUser", {followUserID: this.userInfo.userID})
             .then(response => {
               //如果后端返回的状态码是200，那么将isFollowed设置为true
               this.isFollowed = true;
@@ -967,5 +973,21 @@ export default {
 .user-info {
   display: flex;
   justify-content: space-between;
+}
+/*用户状态封禁样式*/
+.state-locked{
+  color:red;
+  margin-left: 15px;
+  font-weight: bold;
+  margin-top:10px;
+  font-size: medium;
+}
+/*用户状态正常样式*/
+.state-normal{
+  color: #00bfa8;
+  margin-left: 30px;
+  font-weight: revert;
+  margin-top: 10px;
+  font-size: small;
 }
 </style>

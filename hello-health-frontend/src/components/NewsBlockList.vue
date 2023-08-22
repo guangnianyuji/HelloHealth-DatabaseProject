@@ -93,7 +93,7 @@ export default {
     getNewsList() {
       const apiUrl = this.selectedTagId
           ? `/api/Flash/newsByTag/${this.selectedTagId}`
-          : "/api/Flash/newsByTag/";
+          : "/api/Flash/newsByTag/-1";//如果没有选择标签，就传给后端-1，后端返回全部资讯
       axios.get(apiUrl)
           .then(res => {
             this.newsList = res.data.data.newsList;    // 获取全部新闻列表
