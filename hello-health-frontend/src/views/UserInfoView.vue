@@ -339,11 +339,16 @@
     <!--展示信息的分栏，分栏2：杏仁币信息-->
     <div>
       <el-card class="cardStyle" v-if="isLogin && isCurrentUser">
-        <el-row>
-          <div style="font-size: 18px;margin-top: 2px;">
-            我的杏仁币：
-          </div>
-          <div style="color:green;font-size: 22px;">
+        <el-row style="align-items: center; display: flex;">
+          <el-descriptions
+
+              title="我的杏仁币"
+              :column="3"
+              :size="size"
+              border
+          >
+          </el-descriptions>
+          <div style="color:green; font-size: 20px; padding-left: 2%">
             {{ CoinNum }}
           </div>
           <el-button class="coinButton" v-if="isLogin" link @click="goToCoinDetail">
@@ -426,11 +431,13 @@
             border
         >
         </el-descriptions>
-        <el-table :data="reportList" class="table">
-          <el-table-column v-for="item in reportCols"
-                           :key="item.label"
-                           :prop="item.prop"
-                           :label="item.label"/>
+        <el-table :data="reportList" height="250" class="table">
+          <el-table-column v-for="item in reportCols" :key="item.label" :label="item.label">
+            <template v-slot:default="scope">
+              <span v-if="item.prop === 'report_status'">{{ statusMap[scope.row.report_status] }}</span>
+              <span v-else>{{ scope.row[item.prop] }}</span>
+            </template>
+          </el-table-column>
           <el-table-column label="操作">
             <template v-slot:default="scope">
               <GoToPostLink :floor_number="scope.row.floor_number" :post_id="scope.row.post_id"></GoToPostLink>
@@ -496,10 +503,15 @@ export default {
       // 举报信息的数据
       reportList:[],
       reportCols: [
-        {prop:'report_date',label:"举报时间"},
-        {prop:'respond_date',label:"处理时间"},
+        {prop:'report_time',label:"举报时间"},
+        {prop:'respond_time',label:"处理时间"},
         {prop:"report_status",label:"举报状态"},
-      ]
+      ],
+      statusMap: {
+        0: "不通过",
+        1: "成功",
+        2: "审核中",
+      },
 
     }
   },

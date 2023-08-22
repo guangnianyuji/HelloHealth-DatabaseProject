@@ -20,7 +20,7 @@
             v-for="flash in currentNewsList"  :key="flash.id"
             :flash_title="flash.title"
             :flash_date="flash.date"
-            :flash_content="flash.content"
+            :flash_preview="flash.preview"
             :flash_image="flash.image"
             :flash_tags_list="flash.tags"
             :flash_id="flash.id"
@@ -32,7 +32,7 @@
             background
             v-model:page="page"
             :page-size="pageSize"
-            :total="total"
+            :total="+filteredNewsListTotal"
             layout="prev, pager, next"
             @current-change="handlePageChange"
         />
@@ -97,8 +97,24 @@ export default {
       axios.get(apiUrl)
           .then(res => {
             this.newsList = res.data.data.newsList;    // 获取全部新闻列表
+            this.newsList.forEach(item => {
+              item.preview = this.getContentText(item.content)
+            })
           })
-    }
+    },
+    getContentText(contentJson) {
+      contentJson = JSON.parse(contentJson);
+      let paragraphs = [];
+      if (contentJson && Array.isArray(contentJson.content)) {
+        for (const block of contentJson.content) {
+          if (block.type === 'paragraph') {
+            let paragraph = block.content.map(node => node.text).join(' ');
+            paragraphs.push(paragraph);
+          }
+        }
+      }
+      return paragraphs.join(' ');
+    },
   },
   mounted() {  // mounted 时获取全部新闻列表
     this.getNewsList()
