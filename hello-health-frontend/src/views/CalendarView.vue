@@ -214,7 +214,7 @@ export default {
         // 删除事件
         deleteEvent(event) {
             // 在 events 数组中查找并删除具有给定 eventID 的事件
-            axios.post("/api/removeEvent",{id:parseInt(event.id)})
+            axios.post("/api/List/removeEvent",{id:parseInt(event.id)})
                 .then(res => {
                     const index = this.allEvents.findIndex(e => e.id === event.id);
                     if (index !== -1)
@@ -361,7 +361,7 @@ export default {
                 return false
             }
             try{
-                let res = await axios.post('/api/editEvent',newCompleteEvent)
+                let res = await axios.post('/api/List/editEvent',newCompleteEvent)
                 if(!oldEvent){
                     oldEvent = {id: res.json.new_id}
                     this.allEvents.push(oldEvent)
@@ -459,7 +459,7 @@ export default {
             ElMessage.error('请先登录!')
             return;
         }
-        axios.get("/api/getEvents")
+        axios.get("/api/List/getEvents")
             .then(res => {
                 this.allEvents = []
                 for(let event of res.json.events){
