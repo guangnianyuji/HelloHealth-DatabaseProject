@@ -18,7 +18,7 @@ const recipe = ref(0)
 //const filteredData = ref(tableData)
 export default {
     name: "FindMedicineView",
-    components:{StarMedicineButton},
+    components: { StarMedicineButton },
     data() {
         return {
             currentPage: 1,
@@ -162,7 +162,7 @@ export default {
             .then(response => {
                 if (response.data.errorCode === 200) {
                     this.tableData = response.data.data.medicine_list; // Assuming the response contains the medicine data
-                    this.constData = response.data.data.medicine_list; 
+                    this.constData = response.data.data.medicine_list;
                     console.log(response.data.data.medicine_list)
                     //const filteredData = this.tableData;
                     //const responseData = response.data.data.medicine_list;
@@ -174,15 +174,15 @@ export default {
             .catch(error => {
                 console.error(error);
             });
-            console.log(this.tableData)
+        console.log(this.tableData)
     },
 
     methods: {
         handleEnterKey() {
             console.log('Enter key pressed');
-            this.search(); // Call the search method here
+            this.medicineSearch(); // Call the search method here
         },
-        search() {
+        medicineSearch() {
             console.log("Filtered Table Data:", this.tableData); // Check the value of filteredTableData
             if (this.tableData) {
                 //在标签筛选过的基础上进行搜索
@@ -379,7 +379,7 @@ export default {
                 <el-row class="result_title">
                     <el-col>
                         <el-input class="search-box" v-model="search_value" clearable @keyup.enter.native="handleEnterKey"
-                            placeholder="请输入药品中文名称" :suffix-icon="Search"/>
+                            placeholder="请输入药品中文名称" :prefix-icon="Search"/>
                     </el-col>
                     <el-col style="padding-top: 5px">
                         <div>查询结果共{{ this.filteredTableData.length }}条</div>
@@ -392,7 +392,7 @@ export default {
         <el-tabs type="border-card" class="result_title result_box">
             <el-tab-pane label="综合排序">
                 <el-table :data="paginatedTableData" stripe style="width: 100%">
-                    <el-table-column  label="是否收藏" width="60">
+                    <el-table-column label="是否收藏" width="60">
 
                         <!--
                         <label class="container">
@@ -411,7 +411,8 @@ export default {
                         </label>
                         -->
                         <template #default="scope">
-                        <StarMedicineButton :collected="scope.row.isCollected" :medicine_id="scope.row.medicine_id"></StarMedicineButton>
+                            <StarMedicineButton :collected="scope.row.isCollected" :medicine_id="scope.row.medicine_id">
+                            </StarMedicineButton>
 
                         </template>
                     </el-table-column>
@@ -436,8 +437,6 @@ export default {
                         </template>
                     </el-table-column>
                 </el-table>
-            </el-tab-pane>
-            <el-tab-pane label="按价格排序">
             </el-tab-pane>
         </el-tabs>
         <!--  分页  -->
