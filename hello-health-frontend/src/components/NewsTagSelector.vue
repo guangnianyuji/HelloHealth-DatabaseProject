@@ -47,9 +47,14 @@ export default {
   },
   methods: {
     clickTag(tagId) {
-      this.selectedTagId = tagId;
-      this.$emit('tag-selected', tagId); // 自定义事件，将选中的 tagId 传递给父组件
-      console.log(`发生了标签点击事件，选中的标签的ID是：`,tagId);
+      // 检查 selectedTagId 是否已经等于点击的 tagId
+      if (this.selectedTagId === tagId) {
+        this.selectedTagId = null;
+      } else {
+        this.selectedTagId = tagId;
+      }
+      this.$emit('tag-selected', this.selectedTagId);
+      console.log(`发生了标签点击事件，选中的标签的ID是：`, this.selectedTagId);
     },
   },
   mounted() { // mounted 时获取全部标签列表
