@@ -28,10 +28,18 @@
             <span class="content">
               <!-- 检查 label 是否为 "medicine_image" -->
               <img v-if="item.id === 'medicine_image'" :src="item.content" alt="Medicine Image">
+              <div v-else-if="item.id === 'collect_memory'" class="collectionMemory">
+                <el-input v-model="collectMemory" placeholder="Please input" class="input-with-select">
+                  <template #append>
+                    <el-button class="updateButton" @click="Update"><i class="fi fi-rr-refresh">更新</i></el-button>
+                  </template>
+                </el-input>
+              </div>
               <!-- 如果不是 "medicine_image"，则显示内容 -->
               <span v-else>{{ item.content || "-" }}</span>
             </span>
           </li>
+
         </ul>
       </section>
     </div>
@@ -40,7 +48,9 @@
 
 <script>
 import axios from "axios";
+import globalData from "@/global/global";
 import { reactive, ref } from "vue";
+import { Refresh } from '@element-plus/icons-vue'
 import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 import StarMedicineButton from "./StarMedicineButton.vue"
@@ -227,6 +237,29 @@ export default {
         console.error("No medicine ID provided");
       }
       window.scrollTo(0, 0); //将滚动条回滚至最顶端
+    },
+    Update() {
+      if (!globalData.login) {
+        ElMessage.warning('请先登录！')
+        return;
+      }
+      console.log(this.medicineId);
+      axios.post('/api/Medicine/addCollection',{
+          medicine_id: this.medicineId,
+          memory: this.collectMemory,
+      }).then((res) => {
+          this.isCollected = true;
+          ElMessage({
+            message: "更新药品备注成功！",
+            type: "success",
+          })
+        }).catch(error => {
+          if (error.network) return false;
+          switch (error.errorCode) {
+            default:
+              error.defaultHandler("更新药品备注失败")
+          }
+        });
     },
   },//end of methods
 }

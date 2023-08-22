@@ -82,7 +82,7 @@
           <el-row class="result_title">
             <el-col>
               <el-input class="search-box" v-model="search_value" clearable @keyup.enter.native="handleEnterKey"
-                placeholder="请输入药品中文名称" :suffix-icon="Search" />
+                placeholder="请输入药品中文名称" :prefix-icon="Search"/>
             </el-col>
             <el-col style="padding-top: 5px">
               <div>收藏共{{ this.filteredTableData.length }}条</div>
@@ -278,9 +278,9 @@ export default {
   methods: {
     handleEnterKey() {
       console.log('Enter key pressed');
-      this.search(); // Call the search method here
+      this.medicineSearch(); // Call the search method here
     },
-    search() {
+    medicineSearch() {
       console.log("Filtered Table Data:", this.tableData); // Check the value of filteredTableData
       if (this.tableData) {
         //在标签筛选过的基础上进行搜索
