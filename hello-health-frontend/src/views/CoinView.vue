@@ -225,7 +225,7 @@
     width: 204px;
     height: 134px;
     border-radius: 8px;
-    border: 2px solid var(--el-color-primary);
+    border: 1px solid var(--el-color-primary);
     background-color: #fff;
     position: relative;
     text-align: center;
@@ -287,6 +287,7 @@
 import axios from "axios";
 import { ref } from 'vue';
 import { ElMessage } from "element-plus";
+import globalData from "@/global/global";
 export default
     {
         name: "CoinView",
@@ -362,6 +363,12 @@ export default
          },
         
         created(){
+            if(!globalData.login)
+            {
+                ElMessage.error('请先登录!')
+                this.$router.push("/login")
+                return;
+            }
             this.getCoinRecord()
         }
     }
