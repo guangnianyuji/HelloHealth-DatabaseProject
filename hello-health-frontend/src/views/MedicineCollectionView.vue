@@ -132,7 +132,7 @@ export default {
       form,
       insurance,
       recipe,
-      input,
+      search_value: '',
       constData: [],  // 总列表，不可动
       tableData: [],  // 初始化为空数组，总列表基础上的搜索、筛选列表
       medicine: [
