@@ -166,6 +166,12 @@ export default {
         content: null,
         span: 1,
       },
+      {
+        id: 'collect_memory',
+        label: "药品收藏备注",
+        content: null,
+        span: 1,
+      },
     ]);
 
     const medicineId = ref(null); // 使用 ref 来包装 medicineId
