@@ -5,6 +5,16 @@
 <template>
   <el-container class="news-container">
       <el-main>
+        <el-row class="result_title">
+          <el-col >
+            <el-input
+                v-model="input"
+                class="search-box"
+                placeholder="根据关键词查找新闻"
+                :suffix-icon="Search"
+            />
+          </el-col>
+        </el-row>
         <!-- 三个 NewsBlock 组件 -->
         <NewsBlock
             v-for="flash in currentNewsList"  :key="flash.id"
@@ -33,6 +43,7 @@
 <script>
 import NewsBlock from './NewsBlock.vue'
 import axios from "axios";
+import {Search} from "@element-plus/icons-vue";
 export default {
   name: "NewsBlockList",
   components: { NewsBlock },
@@ -47,18 +58,31 @@ export default {
       newsList: [],  // 全部新闻列表
       page: 1,       // 当前页码
       pageSize: 4,   // 每页新闻数
-      total: 0       // 总新闻数
+      input: ""
     }
   },
   computed: {
-    currentNewsList() {  // 计算当前页新闻列表，自动计算的，不用调用
-      if (this.newsList && this.total > 0) {
+    Search() {
+      return Search
+    },
+    currentNewsList() {
+      if (this.filteredNewsList && this.filteredNewsListTotal > 0) {
         let start = (this.page - 1) * this.pageSize;
         let end = start + this.pageSize;
-        return this.newsList.slice(start, end);
+        return this.filteredNewsList.slice(start, end);
       } else {
-        return []; // 如果 newsList 未定义或为空，返回空数组
+        return [];
       }
+    },
+    filteredNewsList() {
+      if (!this.input) {
+        return this.newsList;
+      }
+      const keyword = this.input.toLowerCase();
+      return this.newsList.filter(news => news.title.toLowerCase().includes(keyword));
+    },
+    filteredNewsListTotal() {
+      return this.filteredNewsList.length;
     },
   },
   methods: {
@@ -68,13 +92,11 @@ export default {
     },
     getNewsList() {
       const apiUrl = this.selectedTagId
-          ? `/api/Flash/newsByTag/${this.selectedTagId}?id=`
-          : "/api/Flash/newsByTag/-1?id=";//如果没有选择标签，就传给后端-1，后端返回全部资讯
-      //"/api/Flash/newsByTag?id=&title=";
+          ? `/api/Flash/newsByTag/${this.selectedTagId}`
+          : "/api/Flash/newsByTag/-1";//如果没有选择标签，就传给后端-1，后端返回全部资讯
       axios.get(apiUrl)
           .then(res => {
             this.newsList = res.data.data.newsList;    // 获取全部新闻列表
-            this.total = this.newsList.length;         // 总新闻数
           })
     }
   },
@@ -95,5 +117,8 @@ export default {
   width: auto;
   display: flex;
   align-items: center;
+}
+.search-box {
+  padding-bottom: 1%;
 }
 </style>
