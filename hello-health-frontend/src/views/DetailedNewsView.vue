@@ -63,7 +63,7 @@ export default {
     getParams() {
       this.flash_id = this.$route.params.flash_id;
 
-      const apiUrl = `/api/getNewsById?flash_id=${this.flash_id}`;
+      const apiUrl = "/api/Flash/getNewsById/"+this.flash_id;
       axios.get(apiUrl)
           .then(res => {
             this.news_detail = res.data.data;

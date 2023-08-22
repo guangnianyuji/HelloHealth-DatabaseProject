@@ -6,7 +6,7 @@
                 <div style="margin-left: 3px;font-size:20px ;margin-right:5px;">返回</div>
         </el-button>
 
-        <img alt="" src="../assets/coindraw.png" style="height: 50px;margin-top: 8px;margin-left: 24%;margin-right: 5px;">
+        <img alt="" src="../assets/杏仁币.png" style="height: 50px;margin-top: 8px;margin-left: 24%;margin-right: 5px;">
 
         <div class="title">
             杏仁币详情
@@ -103,23 +103,26 @@
         <el-row>
             <el-container style="padding-left: 4%;">
                 <el-aside class="pay-image">
-
                 </el-aside>
                 <el-main>
                     <el-row>
-                        <div class="pay-number">¥ {{BuyNum}}.00</div>
-                        <div style="margin-top: 20px;margin-left: 30px;color: gray;">请扫码支付</div>
+                        <div class="card-item"  @click="chargeClick">
+                            <p class="t1" >余额+{{BuyNum}}杏仁币</p>
+                            <p class="t3">{{(BuyNum/10).toFixed(2)}}</p>
+                            <div class="card-foot">￥{{(BuyNum/10).toFixed(2)}}</div>
+                       </div>
+                        
                     </el-row>
                     <el-row>
-                        <div style="font-size: 16px;margin-top:1%;margin-left: 2%;">请先阅读并同意支付相关协议</div>
+                        <div style="font-size: 16px;margin-top:1%;">请先阅读并同意支付相关协议</div>
                     </el-row>
                     <el-row>
                         <el-checkbox 
                         v-model="checkedAgree" size="large" 
-                        style="margin-left: 2%;margin-top: 2.8%;">
+                        style="margin-top: 2.8%;">
                         我已阅读并同意
                         </el-checkbox>
-                        <a @click="GoUserAgreement" style="font-size:14px;margin-left: 0%;margin-top: 3.7%;text-decoration: underline;">《杏仁币用户协议》</a>
+                        <a @click="GoUserAgreement" style="font-size:14px;margin-top: 3.7%;text-decoration: underline;">《杏仁币用户协议》</a>
                     </el-row>
                 </el-main>
             </el-container>
@@ -201,7 +204,7 @@
 }
 .pay-image{
     margin-left:2px;
-    background-image: url("../assets/code.png");
+   
     background-size:cover;
     background-position: center;
     margin-top: 2%;
@@ -218,13 +221,72 @@
     color:green;
 }
 
+.card-item {
+    width: 204px;
+    height: 134px;
+    border-radius: 8px;
+    border: 2px solid var(--el-color-primary);
+    background-color: #fff;
+    position: relative;
+    text-align: center;
+    margin-right: 26px;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.card-item .t1 {
+    font-size: 16px;
+    height: 22px;
+    line-height: 22px;
+    color: #222226;
+    font-weight: 700;
+    margin: 24px 0 12px;
+    position: relative;
+    z-index: 2;
+}
+.card-item .t3 {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 32px;
+    color: var(--el-color-primary);
+}
+.card-item .card-foot {
+    position: absolute;
+    z-index: 2;
+    width: 100%;
+    height: 32px;
+    background-color:var(--el-color-primary);
+    font-size: 12px;
+    line-height: 32px;
+    color: #69421b;
+    font-weight: 500;
+    bottom: 0;
+    border-radius: 0 0 8px 8px;
+    overflow: hidden;
+}
+.card-item:hover {
+    border: 1px solid #02a7e3;
+    color: #02a7e3;
+    opacity: 0.6;
+}
+
+.card-item .custom-num{
+    border: none;
+    outline: none;
+    background-color: transparent;
+    max-width: 100%;
+    text-align: center;
+    color:var(--el-color-primary);
+    font-weight: 700;
+    font-size: 24px;
+}
 </style>
 
 <script scoped>
 
 import axios from "axios";
 import { ref } from 'vue';
-
+import { ElMessage } from "element-plus";
 export default
     {
         name: "CoinView",
@@ -244,6 +306,34 @@ export default
         },
         methods:
         {
+            chargeClick(){
+                
+                if(!this.checkedAgree){
+                    ElMessage.warning("请阅读并同意《杏仁币用户协议》")
+                    return
+                }
+                axios
+              .post("/api/HB/order", {
+            
+            num: this.BuyNum/10,
+          })
+          .then((res) => {
+            console.log(res.data.data.pay_page)
+            let newWindow =window.open('about:blank');
+            newWindow.document.write(res.data.data.pay_page);
+            newWindow.focus();
+            //如果要关闭这个页面
+            //if (newWindow) {
+              //  newWindow.close();
+                //    newWindow = null;
+                //}
+
+          })
+          .catch((errMsg) => {
+            console.log(errMsg);
+            console.log("获取跳转支付网页失败");
+          });
+            },
             GoUserAgreement()
             { 
                 //跳转到杏仁币用户协议网页
@@ -263,7 +353,7 @@ export default
                 this.CoinRecordList = res.data.data.coinRecordList;    // 获取全部硬币记录列表
                 this.RecordNum = this.CoinRecordList.length;          // 总记录数
                 this.CoinNum=res.data.data.coinNum;
-                console.log("123"+JSON.stringfy(this.CoinRecordList));
+                //console.log("123"+JSON.stringfy(this.CoinRecordList));
           })
             }
                

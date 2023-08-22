@@ -59,7 +59,7 @@ const router = createRouter({
             },{
                 path: "calendar",
                 name: "calendarView",
-                component: () => import ("@/views/HealthCalendarView.vue")
+                component: () => import ("@/views/CalendarView.vue")
             }, {
                 path: 'medicineCollection',
                 name: 'medicineCollectionView',

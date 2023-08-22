@@ -56,7 +56,7 @@ const goUrl = (url) => {
 const clearMessages = () => {
     messages.data = [];
     showingMessages.data = [];
-    axios.get("/api/NotificationClear",{doNotShowLoadingScreen: true})
+    axios.get("/api/Notification/Clear",{doNotShowLoadingScreen: true})
 }
 </script>
 
@@ -92,7 +92,7 @@ const clearMessages = () => {
             <i class="fi centerIcon" :class="{'fi-rr-angle-down': !isExpended, ' fi-rr-angle-up':isExpended}"></i><span>{{isExpended?"收起":"展开全部"}}</span>
         </el-button>
         <el-button class="clearButton" @click="clearMessages" link>
-            <i class="fi fi-rr-trash centerIcon"></i><span>全部清除</span>
+            <i class="fi fi-rr-trash centerIcon"></i><span>清除已读消息</span>
         </el-button>
     </p>
 </template>

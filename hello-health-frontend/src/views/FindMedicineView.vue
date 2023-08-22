@@ -7,17 +7,18 @@
 import { ref } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import axios from "axios";
+import StarMedicineButton from "@/components/StarMedicineButton.vue";
 
 const category = ref(0)
 const brand = ref(0)
 const form = ref(0)
 const insurance = ref(0)
 const recipe = ref(0)
-const input = ref('')
 // Filtered data based on selected options
 //const filteredData = ref(tableData)
 export default {
     name: "FindMedicineView",
+    components: { StarMedicineButton },
     data() {
         return {
             currentPage: 1,
@@ -27,8 +28,9 @@ export default {
             form,
             insurance,
             recipe,
-            input,
-            tableData: [], // 初始化为空数组
+            search_value: '',
+            constData: [],  // 总列表，不可动
+            tableData: [],  // 初始化为空数组，总列表基础上的搜索、筛选列表
             //filteredData, // Use the filteredData instead of tableData in the template
             medicine: [
                 {
@@ -156,10 +158,12 @@ export default {
     },
     // TODO 增加api
     mounted() {
-        axios.get('/api/medicineList?type_array=')
+        axios.get('api/Medicine/medicineList')
             .then(response => {
                 if (response.data.errorCode === 200) {
                     this.tableData = response.data.data.medicine_list; // Assuming the response contains the medicine data
+                    this.constData = response.data.data.medicine_list;
+                    console.log(response.data.data.medicine_list)
                     //const filteredData = this.tableData;
                     //const responseData = response.data.data.medicine_list;
                     //this.tableData = responseData; // 将获取的数据赋值给tableData数组
@@ -170,9 +174,34 @@ export default {
             .catch(error => {
                 console.error(error);
             });
+        console.log(this.tableData)
     },
 
     methods: {
+        handleEnterKey() {
+            console.log('Enter key pressed');
+            this.medicineSearch(); // Call the search method here
+        },
+        medicineSearch() {
+            console.log("Filtered Table Data:", this.tableData); // Check the value of filteredTableData
+            if (this.tableData) {
+                //在标签筛选过的基础上进行搜索
+                const filteredData = this.constData.filter((item) => {
+                    // Filter by search_value
+                    if (this.search_value !== '') {// 如果搜索框不为空,则进行筛选,否则返回全部数据
+                        if (!item.medicine_ch_name.includes(this.search_value))
+                            return false;
+                        else
+                            return true;
+                    }
+                    else // 如果搜索框为空,则返回全部数据
+                        return true;
+                });
+                console.log("Filtered Data:", filteredData); // Check the filtered data
+                this.tableData = filteredData; // 更新filteredTableData
+            }
+            return [];
+        },
         CardButtonClicked(row) {
             const medicineId = row.medicine_id;
             this.$router.push(`/medicineCard?medicine_id=${medicineId}`);
@@ -185,9 +214,6 @@ export default {
         }
     },
     computed: {
-        Search() {
-            return Search
-        },
         filteredTableData() {
             if (this.tableData) {
                 const filteredData = this.tableData.filter((item) => {
@@ -237,12 +263,14 @@ export default {
                                 break;
                         }
                     }
-                    // Filter by prescription medicine
-                    if (this.recipe !== 0 && item.is_prescription_medicine !== (this.recipe === 1 ? '处方药物' : '非处方药物')) {
+                    //后端返回的是 是  / 否
+
+                    // Filter by medical insurance medicine
+                    if (this.insurance !== 0 && item.is_medical_insurance_medicine !== (this.insurance === 1 ? '是' : '否')) {
                         return false;
                     }
-                    // Filter by medical insurance medicine
-                    if (this.insurance !== 0 && item.is_medical_insurance_medicine !== (this.insurance === 1 ? '医保药物' : '非医保药物')) {
+                    // Filter by prescription medicine
+                    if (this.recipe !== 0 && item.is_prescription_medicine !== (this.recipe == 1 ? '是' : '否')) {
                         return false;
                     }
                     return true;
@@ -262,7 +290,14 @@ export default {
 
             return this.filteredTableData.slice(start, end);
         },
-    },
+    },  // end of computed
+    watch: {
+        search_value: {
+            handler: 'search', // This will call the search method whenever search_value changes
+            immediate: true // This will trigger the handler immediately after adding the watch
+        }
+    },  // end of watch
+
 }
 </script>
 
@@ -289,20 +324,6 @@ export default {
                             <el-radio :label="1" class="option-box">西药</el-radio>
                             <el-radio :label="2" class="option-box">中药</el-radio>
                             <el-radio :label="3" class="option-box">保健品</el-radio>
-                        </el-radio-group>
-                    </el-col>
-                </el-row>
-                <el-row>
-                    <el-col :span="2" class="text item">品牌：</el-col>
-                    <el-col :span="22" class="text select-item">
-                        <el-radio-group v-model="brand">
-                            <el-radio :label="0" class="option-box">全部</el-radio>
-                            <el-radio :label="1" class="option-box">白云山</el-radio>
-                            <el-radio :label="2" class="option-box">曼秀雷敦</el-radio>
-                            <el-radio :label="3" class="option-box">哈药集团制药六厂</el-radio>
-                            <el-radio :label="4" class="option-box">天大药业</el-radio>
-                            <el-radio :label="5" class="option-box">国药</el-radio>
-                            <el-radio :label="6" class="option-box">香雪</el-radio>
                         </el-radio-group>
                     </el-col>
                 </el-row>
@@ -357,7 +378,8 @@ export default {
                 </el-row>
                 <el-row class="result_title">
                     <el-col>
-                        <el-input v-model="input" class="search-box" placeholder="Please Input" :suffix-icon="Search" />
+                        <el-input class="search-box" v-model="search_value" clearable @keyup.enter.native="handleEnterKey"
+                            placeholder="请输入药品中文名称" :prefix-icon="Search"/>
                     </el-col>
                     <el-col style="padding-top: 5px">
                         <div>查询结果共{{ this.filteredTableData.length }}条</div>
@@ -370,7 +392,9 @@ export default {
         <el-tabs type="border-card" class="result_title result_box">
             <el-tab-pane label="综合排序">
                 <el-table :data="paginatedTableData" stripe style="width: 100%">
-                    <el-table-column prop="star" label="是否收藏" width="60">
+                    <el-table-column label="是否收藏" width="60">
+
+                        <!--
                         <label class="container">
                             <input type="checkbox">
                             <svg height="24px" id="Layer_1" version="1.2" viewBox="0 0 24 24" width="24px"
@@ -385,6 +409,12 @@ export default {
                                 </g>
                             </svg>
                         </label>
+                        -->
+                        <template #default="scope">
+                            <StarMedicineButton :collected="scope.row.isCollected" :medicine_id="scope.row.medicine_id">
+                            </StarMedicineButton>
+
+                        </template>
                     </el-table-column>
                     <el-table-column prop="medicine_ch_name" label="药品名称" width="200" />
                     <el-table-column prop="medicine_category" label="类别" width="100" />
@@ -407,8 +437,6 @@ export default {
                         </template>
                     </el-table-column>
                 </el-table>
-            </el-tab-pane>
-            <el-tab-pane label="按价格排序">
             </el-tab-pane>
         </el-tabs>
         <!--  分页  -->
@@ -589,4 +617,5 @@ export default {
     margin-left: 30%;
     margin-top: 20px;
     margin-bottom: 40px;
-}</style>
+}
+</style>
