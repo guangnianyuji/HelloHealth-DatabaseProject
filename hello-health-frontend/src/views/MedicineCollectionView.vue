@@ -120,7 +120,6 @@ const brand = ref(0)
 const form = ref(0)
 const insurance = ref(0)
 const recipe = ref(0)
-const input = ref('')
 
 export default {
   name: "MedicineCollectionView",
