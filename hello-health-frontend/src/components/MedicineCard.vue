@@ -25,8 +25,21 @@
         <ul class="properties">
           <li class="property" v-for="item in items" :key="item.id">
             <span class="label">{{ item.label }}:</span>
-            <span class="content">{{ item.content || "-" }}</span>
+            <span class="content">
+              <!-- 检查 label 是否为 "medicine_image" -->
+              <img v-if="item.id === 'medicine_image'" :src="item.content" alt="Medicine Image">
+              <div v-else-if="item.id === 'collect_memory'" class="collectionMemory">
+                <el-input v-model="collectMemory" placeholder="Please input" class="input-with-select">
+                  <template #append>
+                    <el-button class="updateButton" @click="Update"><i class="fi fi-rr-refresh">更新</i></el-button>
+                  </template>
+                </el-input>
+              </div>
+              <!-- 如果不是 "medicine_image"，则显示内容 -->
+              <span v-else>{{ item.content || "-" }}</span>
+            </span>
           </li>
+
         </ul>
       </section>
     </div>
@@ -35,14 +48,16 @@
 
 <script>
 import axios from "axios";
+import globalData from "@/global/global";
 import { reactive, ref } from "vue";
+import { Refresh } from '@element-plus/icons-vue'
 import { useRouter } from "vue-router";
-import {ElMessage} from "element-plus";
+import { ElMessage } from "element-plus";
 import StarMedicineButton from "./StarMedicineButton.vue"
 
 export default {
   name: "MedicineCard",
-  components:{StarMedicineButton},
+  components: { StarMedicineButton },
 
   setup() {
     const items = reactive([
@@ -166,14 +181,20 @@ export default {
         content: null,
         span: 1,
       },
+      {
+        id: 'collect_memory',
+        label: "药品收藏备注",
+        content: null,
+        span: 1,
+      },
     ]);
 
     const medicineId = ref(null); // 使用 ref 来包装 medicineId
-  
-    medicineId.value = items.find((item) => item.id ==="medicine_id").content
-    
-    const isCollected=ref(null);
-    const collectMemory=ref(null);
+
+    medicineId.value = items.find((item) => item.id === "medicine_id").content
+
+    const isCollected = ref(null);
+    const collectMemory = ref(null);
 
     return {
       items,
@@ -192,7 +213,7 @@ export default {
       console.log(medicine_Id)
       if (medicine_Id) {
         axios
-          .post(`/api/Medicine/medicineCard`,{medicine_id:medicine_Id})
+          .post(`/api/Medicine/medicineCard`, { medicine_id: medicine_Id })
           .then((res) => {
             const response = res.data;
             if (response.errorCode === 200) {
@@ -200,9 +221,9 @@ export default {
               this.items.forEach((item) => {
                 item.content = medicineData[item.id] || "-";
               });
-              this.isCollected=medicineData.isCollected;
-              this.medicineId=medicine_Id
-              this.collectMemory=medicineData.collect_memory
+              this.isCollected = medicineData.isCollected;
+              this.medicineId = medicine_Id
+              this.collectMemory = medicineData.collect_memory
               console.log(this.medicineId)
               console.log(this.isCollected)
             } else {
@@ -217,6 +238,29 @@ export default {
       }
       window.scrollTo(0, 0); //将滚动条回滚至最顶端
     },
+    Update() {
+      if (!globalData.login) {
+        ElMessage.warning('请先登录！')
+        return;
+      }
+      console.log(this.medicineId);
+      axios.post('/api/Medicine/addCollection',{
+          medicine_id: this.medicineId,
+          memory: this.collectMemory,
+      }).then((res) => {
+          this.isCollected = true;
+          ElMessage({
+            message: "更新药品备注成功！",
+            type: "success",
+          })
+        }).catch(error => {
+          if (error.network) return false;
+          switch (error.errorCode) {
+            default:
+              error.defaultHandler("更新药品备注失败")
+          }
+        });
+    },
   },//end of methods
 }
 
@@ -228,6 +272,7 @@ export default {
   --white: #e3e3e3;
   --bc: rgba(15, 70, 115, 0.6);
   --bc-al: rgba(12, 133, 119, 0.62);
+  --bc-st: rgba(120, 255, 217, 0.3);
   left: 50%;
   /* 将左侧位置设置为 50% */
   transform: translate(-50%);
@@ -249,9 +294,7 @@ export default {
 
 .card {
   width: 100%;
-  /* 修改为适当的宽度 */
-  margin: 0 auto;
-  /* 添加此行 */
+  margin: 0 auto 60px;
   padding: 1rem 0;
   display: grid;
   grid-template-areas: "top" "bottom";
@@ -294,7 +337,7 @@ export default {
   height: 5rem;
   right: -4rem;
   top: 55%;
-  background-color: var(--bc-al);
+  background-color: var(--bc-st);
   border-radius: 50%;
 }
 
@@ -305,6 +348,7 @@ export default {
 
 .bottom {
   z-index: 10;
+  padding-bottom: 10px;
 }
 
 .properties {
@@ -362,4 +406,5 @@ export default {
   font-size: 1.5rem;
   font-weight: 700;
   font-style: normal;
-}</style>
+}
+</style>

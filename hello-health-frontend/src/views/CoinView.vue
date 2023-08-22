@@ -6,7 +6,7 @@
                 <div style="margin-left: 3px;font-size:20px ;margin-right:5px;">返回</div>
         </el-button>
 
-        <img alt="" src="../assets/coindraw.png" style="height: 50px;margin-top: 8px;margin-left: 24%;margin-right: 5px;">
+        <img alt="" src="../assets/杏仁币.png" style="height: 50px;margin-top: 8px;margin-left: 24%;margin-right: 5px;">
 
         <div class="title">
             杏仁币详情
