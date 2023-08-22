@@ -25,7 +25,12 @@
         <ul class="properties">
           <li class="property" v-for="item in items" :key="item.id">
             <span class="label">{{ item.label }}:</span>
-            <span class="content">{{ item.content || "-" }}</span>
+            <span class="content">
+              <!-- 检查 label 是否为 "medicine_image" -->
+              <img v-if="item.id === 'medicine_image'" :src="item.content" alt="Medicine Image">
+              <!-- 如果不是 "medicine_image"，则显示内容 -->
+              <span v-else>{{ item.content || "-" }}</span>
+            </span>
           </li>
         </ul>
       </section>
@@ -37,12 +42,12 @@
 import axios from "axios";
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
-import {ElMessage} from "element-plus";
+import { ElMessage } from "element-plus";
 import StarMedicineButton from "./StarMedicineButton.vue"
 
 export default {
   name: "MedicineCard",
-  components:{StarMedicineButton},
+  components: { StarMedicineButton },
 
   setup() {
     const items = reactive([
@@ -175,11 +180,11 @@ export default {
     ]);
 
     const medicineId = ref(null); // 使用 ref 来包装 medicineId
-  
-    medicineId.value = items.find((item) => item.id ==="medicine_id").content
-    
-    const isCollected=ref(null);
-    const collectMemory=ref(null);
+
+    medicineId.value = items.find((item) => item.id === "medicine_id").content
+
+    const isCollected = ref(null);
+    const collectMemory = ref(null);
 
     return {
       items,
@@ -198,7 +203,7 @@ export default {
       console.log(medicine_Id)
       if (medicine_Id) {
         axios
-          .post(`/api/Medicine/medicineCard`,{medicine_id:medicine_Id})
+          .post(`/api/Medicine/medicineCard`, { medicine_id: medicine_Id })
           .then((res) => {
             const response = res.data;
             if (response.errorCode === 200) {
@@ -206,9 +211,9 @@ export default {
               this.items.forEach((item) => {
                 item.content = medicineData[item.id] || "-";
               });
-              this.isCollected=medicineData.isCollected;
-              this.medicineId=medicine_Id
-              this.collectMemory=medicineData.collect_memory
+              this.isCollected = medicineData.isCollected;
+              this.medicineId = medicine_Id
+              this.collectMemory = medicineData.collect_memory
               console.log(this.medicineId)
               console.log(this.isCollected)
             } else {
@@ -368,4 +373,5 @@ export default {
   font-size: 1.5rem;
   font-weight: 700;
   font-style: normal;
-}</style>
+}
+</style>
