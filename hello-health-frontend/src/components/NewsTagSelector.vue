@@ -53,7 +53,7 @@ export default {
     },
   },
   mounted() { // mounted 时获取全部标签列表
-    //axios.get("/api/tagList?tag_id=&tag_name=")
+
     axios.get("/api/Flash/tagList")
         .then(response => {
           this.tagList = response.data.data.tagList;
