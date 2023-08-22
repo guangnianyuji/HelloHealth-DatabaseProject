@@ -68,7 +68,6 @@
                 </template>
               </div>
               <p v-if="isLocked" class="state-locked">用户状态：已被封禁！</p>
-              <p v-if="!isLocked" class="state-normal">用户状态：正常</p>
             </el-aside>
             <el-main>
               <span class="userName">{{ displayName }}</span>
