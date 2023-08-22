@@ -136,6 +136,8 @@
   import {Search} from '@element-plus/icons-vue'
   import axios from "axios";
   import {ref} from "vue";
+  import globalData from "@/global/global";
+  import {ElMessage} from "element-plus";
   
   const category = ref(0)
   const brand = ref(0)
@@ -282,6 +284,12 @@
     },
     // TODO 增加api
     created() {
+        if(!globalData.login)
+        {
+            ElMessage.error('请先登录!')
+            this.$router.push("/login")
+            return;
+        }
       axios.get('/api/Medicine/collectionList')
           .then(response => {
             if (response.data.errorCode === 200) {
