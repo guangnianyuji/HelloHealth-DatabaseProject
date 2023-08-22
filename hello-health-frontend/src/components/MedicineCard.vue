@@ -239,6 +239,7 @@ export default {
   --white: #e3e3e3;
   --bc: rgba(15, 70, 115, 0.6);
   --bc-al: rgba(12, 133, 119, 0.62);
+  --bc-st: rgba(120, 255, 217, 0.3);
   left: 50%;
   /* 将左侧位置设置为 50% */
   transform: translate(-50%);
@@ -260,9 +261,7 @@ export default {
 
 .card {
   width: 100%;
-  /* 修改为适当的宽度 */
-  margin: 0 auto;
-  /* 添加此行 */
+  margin: 0 auto 60px;
   padding: 1rem 0;
   display: grid;
   grid-template-areas: "top" "bottom";
@@ -305,7 +304,7 @@ export default {
   height: 5rem;
   right: -4rem;
   top: 55%;
-  background-color: var(--bc-al);
+  background-color: var(--bc-st);
   border-radius: 50%;
 }
 
@@ -316,6 +315,7 @@ export default {
 
 .bottom {
   z-index: 10;
+  padding-bottom: 10px;
 }
 
 .properties {
