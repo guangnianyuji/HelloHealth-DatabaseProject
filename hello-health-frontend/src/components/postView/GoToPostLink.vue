@@ -4,6 +4,7 @@ const props = defineProps({
     post_id: Number,
     floor_number:Number
 })
+
 const goOriginPost = () => {
     window.open(`${globalData.userWebsite}/forum/${props.post_id}?floor=${props.floor_number}`)
 }
