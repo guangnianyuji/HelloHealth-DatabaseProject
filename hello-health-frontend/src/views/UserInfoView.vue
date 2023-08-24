@@ -609,10 +609,9 @@ export default {
         //判断是否是本人在查看信息页面，来判断该用户是否可对信息进行修改
 
           //return !this.$route.params.userId;
-          console.log(this.$route.params.userId)
-          console.log(globalData.userInfo.user_id)
-          let result=(!this.$route.params.userId)||(this.$route.params.userId==globalData.userInfo.user_id);
-          console.log(result)
+ 
+          let result=(userIdNum==0)||(userIdNum==globalData.userInfo.user_id);
+           
           this.isCurrentUser=result;
           if(result)
           {
