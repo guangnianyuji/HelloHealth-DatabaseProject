@@ -313,6 +313,24 @@
           <el-descriptions-item>
             <template #label>
               <div class="cell-item">
+                科室：
+              </div>
+            </template>
+            <!--从数据库获取科室-->
+            {{certification.department}}
+          </el-descriptions-item>
+          <el-descriptions-item>
+            <template #label>
+              <div class="cell-item">
+                医院等级：
+              </div>
+            </template>
+            <!--从数据库获取医院等级-->
+            {{certification.hospital_rank}}
+          </el-descriptions-item>
+          <el-descriptions-item>
+            <template #label>
+              <div class="cell-item">
                 认证时间：
               </div>
             </template>
