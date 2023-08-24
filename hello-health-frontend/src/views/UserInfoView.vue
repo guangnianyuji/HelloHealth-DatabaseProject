@@ -68,7 +68,6 @@
                 </template>
               </div>
               <p v-if="isLocked" class="state-locked">用户状态：已被封禁！</p>
-              <p v-if="!isLocked" class="state-normal">用户状态：正常</p>
             </el-aside>
             <el-main>
               <span class="userName">{{ displayName }}</span>
@@ -83,7 +82,11 @@
               </el-button>
               <el-button style="border-color:rgb(0,191,168)" v-else-if="isLogin && isCurrentUser" class="attention-list" @click="this.myFollowVisible = true">我的关注</el-button>
               <el-button style="border-color:rgb(0,191,168)" v-if="isLogin && isCurrentUser" class="attention-list" @click="this.myFansVisible = true">我的粉丝</el-button>
-              <br><br><br>
+              <br><br> 
+              <span style="font-size: x-large;font-weight: 1000;">{{followList.length}}</span>&nbsp;关注
+              <el-divider style="font-size: xx-large" direction="vertical" />&nbsp;
+              <span style="font-size: x-large;font-weight: 1000;">{{fansList.length}}</span>&nbsp;粉丝
+              <br><br> 
               
               <div>
                 <span>{{ authenInfo }}</span>
@@ -128,6 +131,7 @@
                 </template>
               </div>
             </el-main>
+
           </el-container>
         </div>
       </el-card>
@@ -328,7 +332,11 @@
             :size="size"
             border
         >
+        <template #extra>
+          <span style="font-size: x-large;font-weight: 1000;">{{userPosts.length}}</span>&nbsp;发布
+        </template>
         </el-descriptions>
+
         <el-row v-if="userPosts">
           <el-col :span="8" v-for="post in userPosts" :key="post">
             <PostCard :post_info="post" style="margin-left:10% ;margin-right:10% ;margin-bottom: 15%;"></PostCard>

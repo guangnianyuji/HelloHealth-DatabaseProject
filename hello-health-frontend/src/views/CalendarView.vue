@@ -190,7 +190,11 @@ export default {
 
         },
         getUuid() {
-            return crypto.randomUUID();
+            let uuid = crypto.randomUUID();
+            while(this.eventNameHashMap.has(uuid)){
+                uuid = crypto.randomUUID();
+            }
+            return uuid;
         },
         // 日期相关的辅助函数区域结束
 
@@ -198,11 +202,6 @@ export default {
             this.canUserEdit = !this.canUserEdit;
         },
         addEvent() {
-            if(!globalData.login)
-            {
-                ElMessage.error('请先登录!')
-                return;
-            }
             // Clear the form fields
             this.form.title = '';
             this.form.eventID = '-1';
@@ -235,11 +234,6 @@ export default {
         },
         // 日历日程点击事件
         handleEventClick(calEvent) {
-            if(!globalData.login)
-            {
-                ElMessage.error('请先登录!')
-                return;
-            }
             this.dialogVisible = true;
 
             // Set form properties based on the clicked event
@@ -263,11 +257,6 @@ export default {
             if(!success) dropEventInfo.revert();
         },
         handleDateSelect(selectInfo) {
-            if(!globalData.login)
-            {
-                ElMessage.error('请先登录!')
-                return;
-            }
             if (!this.canUserEdit) return;
 
             // 判断过去时间不能新增
@@ -314,6 +303,16 @@ export default {
             this.$refs[formName].validate(async (valid) => {
                 if (valid) {
                     this.form.startDate = `${this.form.startDate}`;
+                    let startDate = new Date(this.form.startDate)
+                    let nowDate = new Date()
+                    startDate.setHours(0,0,0, 0)
+                    nowDate.setHours(0,0,0, 0)
+                    console.log(startDate)
+                    console.log(nowDate)
+                    if(startDate.getTime()<nowDate.getTime()){
+                        ElMessage.error('过去时间不能进行新增!')
+                        return;
+                    }
                     this.form.endDate = `${this.form.endDate}`;
                     if(!this.form.priority) this.form.priority = "lowPriority"
                     let success = await this.uploadEventChange({
@@ -453,10 +452,11 @@ export default {
             return this.allEvents.filter(event => !event.finished);
         }
     },
-    mounted() {
+    created() {
         if(!globalData.login)
         {
             ElMessage.error('请先登录!')
+            this.$router.push("/login")
             return;
         }
         axios.get("/api/List/getEvents")
@@ -601,7 +601,7 @@ export default {
                 </el-form-item>
 
                 <el-form-item>
-                    <el-button>取消</el-button>
+                    <el-button @click="dialogVisible=false">取消</el-button>
                     <el-button v-if="canUserEdit" type="primary" @click="submitForm('form')">提交</el-button>
                 </el-form-item>
             </el-form>
