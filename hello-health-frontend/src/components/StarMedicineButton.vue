@@ -1,8 +1,8 @@
 <template>
-    <i v-if="!isCollected" class="fi fi-rr-star" style="color: var(--el-color-primary)" @click="Collect">
+    <i v-if="!isCollected" class="fi fi-rr-star" style="color: var(--el-color-primary);" @click="Collect">
             
     </i>
-    <i v-if="isCollected" class="fi fi-sr-star" style="color: var(--el-color-primary)" @click="unCollect">
+    <i v-if="isCollected" class="fi fi-sr-star" style="color:var(--el-color-primary);" @click="unCollect">
          
     </i>
     
