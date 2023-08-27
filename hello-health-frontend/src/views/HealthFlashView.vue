@@ -35,6 +35,7 @@
 import NewsCarousel from "../components/NewsCarousel.vue";
 import NewsBlockList from "../components/NewsBlockList.vue";
 import NewsTagSelector from "../components/NewsTagSelector.vue";
+import {Search} from "@element-plus/icons-vue";
 
 export default {
   name: "HealthFlashView",

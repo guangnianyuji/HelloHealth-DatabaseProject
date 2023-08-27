@@ -82,7 +82,11 @@
               </el-button>
               <el-button style="border-color:rgb(0,191,168)" v-else-if="isLogin && isCurrentUser" class="attention-list" @click="this.myFollowVisible = true">我的关注</el-button>
               <el-button style="border-color:rgb(0,191,168)" v-if="isLogin && isCurrentUser" class="attention-list" @click="this.myFansVisible = true">我的粉丝</el-button>
-              <br><br><br>
+              <br><br> 
+              <span style="font-size: x-large;font-weight: 1000;">{{followList.length}}</span>&nbsp;关注
+              <el-divider style="font-size: xx-large" direction="vertical" />&nbsp;
+              <span style="font-size: x-large;font-weight: 1000;">{{fansList.length}}</span>&nbsp;粉丝
+              <br><br> 
               
               <div>
                 <span>{{ authenInfo }}</span>
@@ -127,11 +131,11 @@
                 </template>
               </div>
             </el-main>
+
           </el-container>
         </div>
       </el-card>
     </div>
-
     <!--展示信息的分栏，分栏3：基本信息-->
     <div v-if="isLogin">
       <el-card class="cardStyle">
@@ -309,6 +313,24 @@
           <el-descriptions-item>
             <template #label>
               <div class="cell-item">
+                科室：
+              </div>
+            </template>
+            <!--从数据库获取科室-->
+            {{certification.department}}
+          </el-descriptions-item>
+          <el-descriptions-item>
+            <template #label>
+              <div class="cell-item">
+                医院等级：
+              </div>
+            </template>
+            <!--从数据库获取医院等级-->
+            {{certification.hospital_rank}}
+          </el-descriptions-item>
+          <el-descriptions-item>
+            <template #label>
+              <div class="cell-item">
                 认证时间：
               </div>
             </template>
@@ -328,7 +350,11 @@
             :size="size"
             border
         >
+        <template #extra>
+          <span style="font-size: x-large;font-weight: 1000;">{{userPosts.length}}</span>&nbsp;发布
+        </template>
         </el-descriptions>
+
         <el-row v-if="userPosts">
           <el-col :span="8" v-for="post in userPosts" :key="post">
             <PostCard :post_info="post" style="margin-left:10% ;margin-right:10% ;margin-bottom: 15%;"></PostCard>
@@ -339,11 +365,16 @@
     <!--展示信息的分栏，分栏2：杏仁币信息-->
     <div>
       <el-card class="cardStyle" v-if="isLogin && isCurrentUser">
-        <el-row>
-          <div style="font-size: 18px;margin-top: 2px;">
-            我的杏仁币：
-          </div>
-          <div style="color:green;font-size: 22px;">
+        <el-row style="align-items: center; display: flex;">
+          <el-descriptions
+
+              title="我的杏仁币"
+              :column="3"
+              :size="size"
+              border
+          >
+          </el-descriptions>
+          <div style="color:green; font-size: 20px; padding-left: 2%">
             {{ CoinNum }}
           </div>
           <el-button class="coinButton" v-if="isLogin" link @click="goToCoinDetail">
@@ -413,6 +444,34 @@
         </el-container>
       </el-card>
     </div>
+    <!--展示信息的分栏，分栏6：举报信息-->
+    <div>
+      <el-card class="cardStyle" v-if="isLogin && isCurrentUser">
+        <el-descriptions
+            class="margin-top clickable"
+            title="我的举报"
+            :column="
+
+            3"
+            :size="size"
+            border
+        >
+        </el-descriptions>
+        <el-table :data="reportList" height="250" class="table">
+          <el-table-column v-for="item in reportCols" :key="item.label" :label="item.label">
+            <template v-slot:default="scope">
+              <span v-if="item.prop === 'report_status'">{{ statusMap[scope.row.report_status] }}</span>
+              <span v-else>{{ scope.row[item.prop] }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作">
+            <template v-slot:default="scope">
+              <GoToPostLink :floor_number="scope.row.floor_number" :post_id="scope.row.post_id"></GoToPostLink>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-card>
+    </div>
   </div>
 </template>
 
@@ -423,10 +482,11 @@ import NewsBlockList from "@/components/NewsBlockList.vue";
 import globalData from "@/global/global";
 import { ElMessage } from "element-plus";
 import UserInfoCard from "@/components/UserInfoCard.vue";
+import GoToPostLink from "@/components/postView/GoToPostLink.vue";
 
 export default {
   name: "UserInfoPage",
-  components: {UserInfoCard, NewsBlockList, PostCard},
+  components: {UserInfoCard, NewsBlockList, PostCard, GoToPostLink},
   data(){
     return{
       isSelf: true,
@@ -460,9 +520,25 @@ export default {
       businessPic: null, // 执业证照片
       uploadedPhotos: 0 ,// 已上传的照片数量
       photoUpload:false,   //头像上传，初始为false
+
       fileList:[],
 
       isCurrentUser:false,
+
+
+      // 举报信息的数据
+      reportList:[],
+      reportCols: [
+        {prop:'report_time',label:"举报时间"},
+        {prop:'respond_time',label:"处理时间"},
+        {prop:"report_status",label:"举报状态"},
+      ],
+      statusMap: {
+        0: "不通过",
+        1: "成功",
+        2: "审核中",
+      },
+
     }
   },
   
@@ -479,6 +555,8 @@ export default {
 
 
   mounted() {
+    console.log("mounted")
+
     let userIdNum = parseInt(this.$route.params.userId ? this.$route.params.userId: 0);
     if(!this.$route.params.userId && !globalData.login){
         this.$router.push("/login");
@@ -509,6 +587,7 @@ export default {
   methods:{
 
     refresh(){
+      this.fetchReport()
       let userIdNum = parseInt(this.$route.params.userId ? this.$route.params.userId: 0);
     console.log(userIdNum);
     if(isNaN(userIdNum)){
@@ -541,17 +620,16 @@ export default {
           this.isLocked = response.data.data.isLocked;
 
           this.fansList=response.data.data.fansList;
-          
+
 
               /* 获取用户发布的帖子 */
           this.fetchUserPosts(this.userInfo.userID);
         //判断是否是本人在查看信息页面，来判断该用户是否可对信息进行修改
- 
+
           //return !this.$route.params.userId;
-          console.log(this.$route.params.userId)
-          console.log(globalData.userInfo.user_id)
-          let result=(!this.$route.params.userId)||(this.$route.params.userId==globalData.userInfo.user_id);
-          console.log(result)
+ 
+          let result=(userIdNum==0)||(userIdNum==globalData.userInfo.user_id);
+           
           this.isCurrentUser=result;
           if(result)
           {
@@ -560,14 +638,16 @@ export default {
               this.CoinRecordList=response.data.data.coinRecordList;
               this.CoinNum=response.data.data.coinNum;
             })
+
+            /* 举报信息 */
+            this.fetchReport()
           }
         })
         .catch(error => {
             if(error.network) return;
             error.defaultHandler();
         });
-        
-     
+
     },
 
     goUserPage(userId){
@@ -762,11 +842,21 @@ export default {
     /* 求获取用户发布的帖子 */
     fetchUserPosts(userID) {
       axios.post("/api/UserInfo/fetchUserPosts", {
+
         user_id:userID
+
       }).then(res => {
         this.userPosts= res.data.data.post_list;
       })
     },
+    fetchReport(){
+      // 获取举报信息
+      axios.get(`/api/UserInfo/Report?userid=${globalData.userInfo.userId}`)
+          .then((res)=>{
+            this.reportList=res.data.data.reportList;
+            console.log(this.reportList)
+          })
+    }
   }
 }
 
