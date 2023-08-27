@@ -10,7 +10,7 @@
     <div class="circle-3">
       <div class="add-favorite-wrapper">
         <span class="AddCollection">
-          <StarMedicineButton :collected="isCollected" :medicine_id="$route.query.medicine_id"></StarMedicineButton>
+          <StarMedicineButton :collected="isCollected" :medicine_id="$route.query.medicine_id" @father-update="getMedicineCard"></StarMedicineButton>
         </span>
       </div>
     </div>
@@ -28,12 +28,17 @@
             <span class="content">
               <!-- 检查 label 是否为 "medicine_image" -->
               <img v-if="item.id === 'medicine_image'" :src="item.content" alt="Medicine Image">
-              <div v-else-if="item.id === 'collect_memory'" class="collectionMemory">
+              <div v-if="item.id === 'collect_memory'" class="collectionMemory">
+                <div v-if="isCollected">
                 <el-input v-model="collectMemory" placeholder="Please input" class="input-with-select">
                   <template #append>
                     <el-button class="updateButton" @click="Update"><i class="fi fi-rr-refresh">更新</i></el-button>
                   </template>
                 </el-input>
+                </div>
+                <div v-else>
+                 <strong> 您还没有收藏此药品！！</strong>
+                </div>
               </div>
               <!-- 如果不是 "medicine_image"，则显示内容 -->
               <span v-else>{{ item.content || "-" }}</span>
@@ -58,6 +63,7 @@ import StarMedicineButton from "./StarMedicineButton.vue"
 export default {
   name: "MedicineCard",
   components: { StarMedicineButton },
+
 
   setup() {
     const items = reactive([
@@ -224,8 +230,7 @@ export default {
               this.isCollected = medicineData.isCollected;
               this.medicineId = medicine_Id
               this.collectMemory = medicineData.collect_memory
-              console.log(this.medicineId)
-              console.log(this.isCollected)
+ 
             } else {
               console.error("Error fetching medicine data:", response.errorCode);
             }
@@ -261,6 +266,7 @@ export default {
           }
         });
     },
+
   },//end of methods
 }
 

@@ -25,8 +25,8 @@
             </el-container>
           </div>
           <el-divider />
-          <div class="contentMain">
-            <p v-html="this.news_detail.content"></p>
+          <div class="content">
+            <TipTapEditorReadonly :content-json-string="this.news_detail.content"></TipTapEditorReadonly>
           </div>
         </div>
       </el-main>
@@ -51,8 +51,10 @@
 <script>
 
 import axios from "axios"
+import TipTapEditorReadonly from "@/components/postView/TipTapEditorReadonly.vue";
 export default {
   name: "DetailedNewsPage",
+  components: {TipTapEditorReadonly},
   data() {
     return {
       flash_id:null,
@@ -138,6 +140,11 @@ export default {
 .ml-2{
     font-size:16px;
     margin:5px;
+}
+
+.content {
+  line-height: 1.7em;
+  min-height: 200px;
 }
 </style>
 

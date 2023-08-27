@@ -51,6 +51,9 @@ export default {
     flash_content: {
       type: String
     },
+    flash_preview: {
+      type: String
+    },
     flash_image: {
       type: String
     },
@@ -69,10 +72,10 @@ export default {
     },
     truncatedContent: function() {
       const limit = 10; /* preview最大字符数 */
-      if (this.flash_content.length > limit) {
-        return this.flash_content.substring(0, limit) + '...';
+      if (this.flash_preview.length > limit) {
+        return this.flash_preview.substring(0, limit) + '...';
       } else {
-        return this.flash_content;
+        return this.flash_preview;
       }
     }
   },
