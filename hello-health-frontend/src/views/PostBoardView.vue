@@ -21,8 +21,8 @@
                 class="demo-tabs"
 
                 @tab-click="sortSwitcher">
-                <el-tab-pane  label="最新论坛" name="Time"> </el-tab-pane>
-                <el-tab-pane  label="最热论坛" name="Heat"> </el-tab-pane>
+                <el-tab-pane  label="论坛最新" name="Time"> </el-tab-pane>
+                <el-tab-pane  label="论坛最热" name="Heat"> </el-tab-pane>
             </el-tabs>
 
             <el-row v-if="post_list">

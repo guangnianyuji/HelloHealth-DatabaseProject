@@ -63,7 +63,7 @@ export default {
   },
   computed: {
     truncatedTitle: function() {
-      const limit = 5; /* title最大字符数 */
+      const limit = 15; /* title最大字符数 */
       if (this.flash_title.length > limit) {
         return this.flash_title.substring(0, limit) + '...';
       } else {
@@ -71,7 +71,7 @@ export default {
       }
     },
     truncatedContent: function() {
-      const limit = 10; /* preview最大字符数 */
+      const limit = 50; /* preview最大字符数 */
       if (this.flash_preview.length > limit) {
         return this.flash_preview.substring(0, limit) + '...';
       } else {
@@ -130,7 +130,7 @@ export default {
   cursor: pointer;                  /* 设置鼠标样式为手型 */
 }
 .flash-date {
-  width: 25%;          /* 日期宽度为 25% */
+  width: 40%;          /* 日期宽度为 40% */
   text-align: right;   /* 日期右对齐 */
 }
 .flash-preview {

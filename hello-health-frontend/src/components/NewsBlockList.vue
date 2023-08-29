@@ -19,7 +19,7 @@
         <NewsBlock
             v-for="flash in currentNewsList"  :key="flash.id"
             :flash_title="flash.title"
-            :flash_date="flash.date"
+            :flash_date="flash.time"
             :flash_preview="flash.preview"
             :flash_image="flash.image"
             :flash_tags_list="flash.tags"
@@ -107,7 +107,7 @@ export default {
       let paragraphs = [];
       if (contentJson && Array.isArray(contentJson.content)) {
         for (const block of contentJson.content) {
-          if (block.type === 'paragraph') {
+          if (block.type === 'paragraph' && Array.isArray(block.content)) {
             let paragraph = block.content.map(node => node.text).join(' ');
             paragraphs.push(paragraph);
           }
