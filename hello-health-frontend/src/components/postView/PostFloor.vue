@@ -51,6 +51,10 @@ const openReplyBar = () =>{
     if(!globalData.login){
         ElMessage.error('请先登录再参与讨论。')
         return;
+    } 
+    if(globalData.locked){
+        ElMessage.error('抱歉，您的账号已经被封禁！')
+        return;
     }
 
     if(prop.floorInfo.floor_number===1){
