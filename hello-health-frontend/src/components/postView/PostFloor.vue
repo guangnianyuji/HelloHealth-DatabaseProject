@@ -71,7 +71,7 @@ const openReplyBar = () =>{
 }
 
 const onReplySubmit = (content,reply_user_info,handler) =>{
-    if(content.length < 5){
+    if(content.length < 1){
         ElMessage.error("请输入更多内容。");
         return;
     }

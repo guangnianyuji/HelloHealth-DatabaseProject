@@ -47,7 +47,7 @@ const avatarClicked = () =>{
 }
 
 const menus = reactive({v:[
-        {"title":"首页","icon":"fi-rr-home","path":"/"},
+        {"title":"HH 首页","icon":"fi-rr-home","path":"/"},
         {"title":"HH 找药","icon":"fi-rr-capsules","path":"/medicine"},
         {"title":"健康资讯","icon":"fi-rr-books","path":"/news"},
         {"title":"HH 论坛","icon":"fi-rr-user-md-chat","path":"/forum"},
@@ -77,7 +77,7 @@ axios.get("/api/UserInfo").then(response => {
     gotUserInfo.value = true
     if(!responseObj.login) return;
     menus.v = [
-        {"title":"首页","icon":"fi-rr-home","path":"/"},
+        {"title":"HH 首页","icon":"fi-rr-home","path":"/"},
         {"title":"HH 找药","icon":"fi-rr-capsules","path":"/medicine"},
         {"title":"收藏管理","icon":"fi-rr-followcollection","path":"collection",
             "children":[
@@ -87,8 +87,8 @@ axios.get("/api/UserInfo").then(response => {
         },
         {"title":"健康资讯","icon":"fi-rr-books","path":"/news"},
         {"title":"HH 论坛","icon":"fi-rr-user-md-chat","path":"/forum"},
-        {"title":"健康日程档案","icon":"fi-rr-calendar-clock","path":"/calendar"},
-        {"title":"个人信息管理","icon":"fi-rr-user-gear","path":"/user"}
+        {"title":"健康日历","icon":"fi-rr-calendar-clock","path":"/calendar"},
+        {"title":"个人中心","icon":"fi-rr-user-gear","path":"/user"}
     ]
     loadComplete.value = false;
     // 等菜单卸载完了再改回来

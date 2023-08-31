@@ -11,10 +11,13 @@
           <div class=“common-layout”>
             <el-container>
               <el-aside width="100%">
-                <div>
+                <div style="align-items: center">
                   <p class="title" style="margin-bottom:20px;">
                     {{this.news_detail.title}}
                   </p>
+                  <div style="margin-bottom:1%; text-align: center">
+                    {{this.news_detail.time}}
+                  </div>
                   <div class="tagWrapper">
                       <el-tag v-for="tag in news_detail.tags" :key="tag" class="ml-2" type="warning" size="large">
                           {{tag}}

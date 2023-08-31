@@ -231,7 +231,7 @@
               </template>
               <!--从数据库获取邮箱地址-->
               <div class="input-container">
-                <input type="text" name="text" class="input" placeholder="请输入邮箱"
+                <input type="text" name="text" class="input" placeholder="请输入邮箱地址"
                        v-model="userInfo.email" :disabled="!isEdit">
                 <div class="highlight"></div>
               </div>
