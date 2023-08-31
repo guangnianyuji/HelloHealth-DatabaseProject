@@ -542,37 +542,37 @@ export default {
     }
   },
   
-  // watch: {
-  //   $route: {
-  //     handler: function(route) {
-  //        console.log("watch")
-  //       this.refresh()
-  //     },
-  //     immediate: true
-  //   }
-  // },
+  watch: {
+    $route: {
+      handler: function(route) {
+         console.log("watch")
+         let userIdNum = parseInt(this.$route.params.userId ? this.$route.params.userId: 0);
 
-
+         if(!userIdNum && !globalData.login){
+           
+          this.$router.push("/login");
+          return;
+         }
+        this.refresh()
+      },
+      immediate: true
+    }
+  },
 
   // mounted() {
   //   console.log("mounted")
 
   //   let userIdNum = parseInt(this.$route.params.userId ? this.$route.params.userId: 0);
-  //   if(!this.$route.params.userId && !globalData.login){
+  //   if(!userIdNum && !globalData.login){
   //       this.$router.push("/login");
   //       return;
   //   }
   // },
-  //从数据库获取所需的用户信息
-  created() {
-    console.log("created")
-    let userIdNum = parseInt(this.$route.params.userId ? this.$route.params.userId: 0);
-    if(!this.$route.params.userId && !globalData.login){
-        this.$router.push("/login");
-        return;
-    }
-    this.refresh();
-  },
+ // 从数据库获取所需的用户信息
+  // created() {
+  //   console.log("created")
+  //   //this.refresh();
+  // },
 
 
   computed: {
@@ -616,7 +616,8 @@ export default {
           this.followList = response.data.data.followList;
           this.isFollowed = response.data.data.isFollowed;
 
-          console.log(this.followList)
+
+          console.log(this.isFollowed)
 
           this.followList.forEach(user => {
             this.followMap.set(user.user_id, true)
