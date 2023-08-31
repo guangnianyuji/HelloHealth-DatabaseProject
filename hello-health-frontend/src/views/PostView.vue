@@ -76,7 +76,7 @@ const editor = ref();
 
 // 发送楼层
 const submitNewComment = () => {
-    if(editor.value.editor.state.doc.textContent.length < 15) {
+    if(editor.value.editor.state.doc.textContent.length < 1) {
         ElMessage.error('请输入更多内容。');
         return;
     }
