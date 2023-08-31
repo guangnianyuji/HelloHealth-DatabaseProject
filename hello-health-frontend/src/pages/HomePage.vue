@@ -73,6 +73,7 @@ const gotUserInfo = ref(false)
 axios.get("/api/UserInfo").then(response => {
     let responseObj = response.json
     isLogin.value = responseObj.login;
+    
     gotUserInfo.value = true
     if(!responseObj.login) return;
     menus.v = [
@@ -95,6 +96,7 @@ axios.get("/api/UserInfo").then(response => {
         loadComplete.value = true
     },0)
     globalData.login = true;
+    globalData.locked=responseObj.locked
     userInfo.data = responseObj
     globalData.userInfo = userInfo.data
 }).catch(error => {

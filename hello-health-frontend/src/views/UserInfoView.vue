@@ -542,30 +542,35 @@ export default {
     }
   },
   
-  watch: {
-    $route: {
-      handler: function(route) {
-         console.log("watch")
-        this.refresh()
-      },
-      immediate: true
-    }
-  },
+  // watch: {
+  //   $route: {
+  //     handler: function(route) {
+  //        console.log("watch")
+  //       this.refresh()
+  //     },
+  //     immediate: true
+  //   }
+  // },
 
 
 
-  mounted() {
-    console.log("mounted")
+  // mounted() {
+  //   console.log("mounted")
 
+  //   let userIdNum = parseInt(this.$route.params.userId ? this.$route.params.userId: 0);
+  //   if(!this.$route.params.userId && !globalData.login){
+  //       this.$router.push("/login");
+  //       return;
+  //   }
+  // },
+  //从数据库获取所需的用户信息
+  created() {
+    console.log("created")
     let userIdNum = parseInt(this.$route.params.userId ? this.$route.params.userId: 0);
     if(!this.$route.params.userId && !globalData.login){
         this.$router.push("/login");
         return;
     }
-  },
-  //从数据库获取所需的用户信息
-  created() {
-    console.log("created")
     this.refresh();
   },
 
@@ -654,7 +659,11 @@ export default {
       this.$router.push("/user/"+userId)
     },
     onFollowBtnClick(userId) {
-
+      if(!globalData.login){
+        ElMessage.error('请先登录!')
+          this.$router.push("/login")
+          return;
+      }
       let isFollowed = this.followMap.get(userId)
 
       if (this.isFollowed || isFollowed) {
