@@ -86,7 +86,7 @@ export default {
                                         case 116:
                                             ElMessage.error("币数不足，投币失败！")
                                             break;
-                                        case 117:
+                                        case 111:
                                             ElMessage.error("不能给自己投币！")
                                             break;
                                         default:

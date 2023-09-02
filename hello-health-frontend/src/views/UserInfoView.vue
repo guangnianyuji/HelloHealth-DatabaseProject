@@ -231,8 +231,10 @@
               </template>
               <!--从数据库获取邮箱地址-->
               <div class="input-container">
-                <input type="text" name="text" class="input" placeholder="请输入邮箱地址"
-                       v-model="userInfo.email" :disabled="!isEdit">
+                <div>
+                  <input type="text" name="text" class="input" placeholder="请输入邮箱地址"
+                         v-model="userInfo.email" :disabled="!isEdit">
+                </div>
                 <div class="highlight"></div>
               </div>
             </el-descriptions-item>
@@ -244,8 +246,10 @@
               </template>
               <!--从数据库获取个人简介-->
               <div class="input-container">
-                <input type="text" name="text" class="input" placeholder="请输入简介"
-                       v-model="userInfo.description" :disabled="!isEdit">
+                <div>
+                  <input type="text" name="text" class="input" placeholder="请输入个人简介"
+                         v-model="userInfo.description" :disabled="!isEdit">
+                </div>
                 <div class="highlight"></div>
               </div>
             </el-descriptions-item>
