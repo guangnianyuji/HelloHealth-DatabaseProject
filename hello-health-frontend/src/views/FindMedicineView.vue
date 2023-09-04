@@ -419,7 +419,7 @@ export default {
                     <el-table-column prop="medicine_ch_name" label="药品名称" width="200" />
                     <el-table-column prop="medicine_category" label="类别" width="100" />
                     <el-table-column prop="medicine_form" label="剂型" width="100" />
-                    <el-table-column prop="medicine_indications" label="适应症" width="300" />
+                    <el-table-column prop="medicine_indications" label="适应症" width="auto" />
                     <el-table-column prop="medicine_manufacturer" label="生产厂商" width="150" />
                     <el-table-column prop="operation" label="操作" width="150">
                         <template #default="{ row }">

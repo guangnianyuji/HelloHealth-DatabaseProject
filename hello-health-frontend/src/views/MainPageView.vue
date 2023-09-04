@@ -43,8 +43,8 @@
 
         <div class="part">
 
-            <el-row>
-                <el-col :span="12">
+            <el-row style="display: flex; align-items: center;">
+                <el-col :span="18">
                     <NewsCarousel/>
                     <!--
                     <el-carousel >
@@ -54,8 +54,8 @@
                     </el-carousel>
                     -->
                 </el-col>
-
-                <el-col :span="12">
+                <el-col :span="2"></el-col>
+                <el-col :span="4">
                     <div style="margin-left: 10%;margin-top:10%;">
                         <div style="font-size: xx-large;">
                             <b>健康资讯</b>
