@@ -145,7 +145,7 @@ watch(router.currentRoute, () => {
         <div class="headerHolder">
             <div class="leftTitle">
                 <img alt="" src="../assets/logo.png">
-                <SearchBox @searchStart="searchStart"></SearchBox>
+<!--                <SearchBox @searchStart="searchStart"></SearchBox>-->
             </div>
             <div class="rightTitle" v-if="isLogin">
                 <img alt="" src="../assets/titleImg1.png">
@@ -192,6 +192,10 @@ watch(router.currentRoute, () => {
                         </el-menu-item>
                     </component>
                 </el-menu>
+                <div class="beian">
+                    <el-link href="https://beian.miit.gov.cn/" target="_blank" type="info">赣ICP备2023008902号-1</el-link>
+                </div>
+
             </div>
 
             <div class="content">
@@ -270,6 +274,7 @@ watch(router.currentRoute, () => {
     min-width: 230px;
     max-width: 230px;
     flex: 3;
+    position: relative;
 }
 
 .sideBar .sideBarMenu{
@@ -284,5 +289,16 @@ watch(router.currentRoute, () => {
 .userInfoWrapper{
     padding: 10px 20px;
     border-bottom: 1px #eee solid;
+}
+
+.beian{
+    width: 100%;
+    text-align: center;
+    position: absolute;
+    bottom: 10px;
+}
+.beian .el-link{
+    color: #ccc;
+    font-size: 10px;
 }
 </style>
