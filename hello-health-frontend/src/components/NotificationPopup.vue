@@ -50,7 +50,7 @@ const getNotification = () => {
 
 defineExpose({getNotification})
 const goUrl = (url) => {
-    if(url) router.push(url);
+    if(url) router.push("/" + url);
 }
 
 const clearMessages = () => {
