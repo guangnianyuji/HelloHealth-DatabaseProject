@@ -21,6 +21,7 @@ export default {
     data() {
         return {
             dialogVisible: false,
+            idMost: 0,
             form: {
                 eventID: '',
                 title: '',
@@ -29,7 +30,6 @@ export default {
                 endDate: '',
                 endTime: '',
                 priority: '',
-                color: '',
                 finished: false,
                 interval: 1,
                 notify: true
@@ -190,10 +190,9 @@ export default {
 
         },
         getUuid() {
-            let uuid = crypto.randomUUID();
-            while(this.eventNameHashMap.has(uuid)){
-                uuid = crypto.randomUUID();
-            }
+            let uuid = '' + this.idMost
+            this.idMost++
+
             return uuid;
         },
         // 日期相关的辅助函数区域结束
@@ -634,7 +633,7 @@ export default {
 }
 
 .health-calendar {
-    color: var(--board, rgba(0, 191, 168, 0.6));
+    color: rgba(0, 191, 168, 0.6);
     text-align: left;
     font: 500 22px/40px "Inter", sans-serif;
     position: relative;
@@ -676,7 +675,7 @@ export default {
 }
 
 .TodoList {
-    color: var(--board, rgba(0, 191, 168, 0.6));
+    color: rgba(0, 191, 168, 0.6);
     text-align: left;
     font: 700 13px/20px "Inter", sans-serif;
     position: relative;
@@ -722,7 +721,7 @@ export default {
 }
 
 .highPriority {
-    background: var(--blue-500, #EC4899);
+    background: #EC4899;
     border-radius: 50%;
     flex-shrink: 0;
     width: 12px;
@@ -731,7 +730,7 @@ export default {
 }
 
 .middlePriority {
-    background: var(--blue-500, #FBBF24);
+    background: #FBBF24;
     border-radius: 50%;
     flex-shrink: 0;
     width: 12px;
@@ -740,7 +739,7 @@ export default {
 }
 
 .lowPriority {
-    background: var(--blue-500, #3b82f6);
+    background: #3b82f6;
     border-radius: 50%;
     flex-shrink: 0;
     width: 12px;
