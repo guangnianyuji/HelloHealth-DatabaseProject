@@ -329,7 +329,7 @@ export default {
 .main {
     display: flex;
     flex-direction: row;
-    width: 80%;
+    
     align-items: center;
     justify-content: space-between;
     position: relative;
@@ -345,6 +345,7 @@ export default {
     justify-content: center;
     flex-shrink: 0;
     position: relative;
+    margin-left:10%;
 }
 
 .main-welcome {
