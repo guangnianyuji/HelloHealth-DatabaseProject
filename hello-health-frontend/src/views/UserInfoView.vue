@@ -682,6 +682,7 @@ export default {
             .then(response => {
               //如果后端返回的状态码是200，那么将isFollowed设置为false
               this.followMap.set(userId, false)
+              this.refresh()
             })
             .catch(error => {
                 if(error.network) return;
@@ -693,6 +694,7 @@ export default {
             .then(response => {
               //如果后端返回的状态码是200，那么将isFollowed设置为false
               this.isFollowed = false;
+              this.refresh()
             })
             .catch(error => {
                 if(error.network) return;
@@ -708,6 +710,7 @@ export default {
             .then(response => {
               //如果后端返回的状态码是200，那么将isFollowed设置为true
               this.followMap.set(userId, true);
+              this.refresh()
             })
             .catch(error => {
                 if(error.network) return;
@@ -719,6 +722,7 @@ export default {
             .then(response => {
               //如果后端返回的状态码是200，那么将isFollowed设置为true
               this.isFollowed = true;
+              this.refresh()
             })
             .catch(error => {
                 if(error.network) return;

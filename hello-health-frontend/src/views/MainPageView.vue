@@ -215,6 +215,9 @@
                 </el-row>
 
                 <el-divider />
+                <div class="beian">
+                    <el-link href="https://beian.miit.gov.cn/" target="_blank" type="info">赣ICP备2023008902号-1</el-link>
+                </div>
 
                 <div>
                     <br/>
@@ -265,6 +268,16 @@ export default {
 };
 </script>
 <style scoped>
+
+.beian{
+    text-align: center;
+    
+    
+}
+.el-link{
+    font-size:150%;
+    color:ghostwhite;
+}
 .footer-content{
     color:ghostwhite;
     font-size:100%;
