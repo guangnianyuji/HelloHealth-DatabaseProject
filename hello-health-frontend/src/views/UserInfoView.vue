@@ -433,7 +433,7 @@
             </el-row>
             <el-row>
               <div style="font-size: 14px;color: grey;margin-left: 2px;">
-                • 每日登录、完成健康计划。
+                • 每日登录。
               </div>
             </el-row>
             <el-row>
@@ -460,7 +460,7 @@
             border
         >
         </el-descriptions>
-        <el-table :data="reportList" height="250" class="table">
+        <el-table :data="reportList" height="250" class="table" empty-text="暂无您的举报记录~">
           <el-table-column v-for="item in reportCols" :key="item.label" :label="item.label">
             <template v-slot:default="scope">
               <span v-if="item.prop === 'report_status'">{{ statusMap[scope.row.report_status] }}</span>

@@ -62,7 +62,7 @@
                 </el-row>
                 <el-row>
                     <div style="font-size: 14px;color: grey;">
-                        • 每日登录、完成健康计划。
+                        • 每日登录。
                     </div>
                 </el-row>
                 <el-row>
