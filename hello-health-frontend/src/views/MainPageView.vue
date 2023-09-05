@@ -172,7 +172,7 @@
 
         <div >
             <div style="background-color: #00bfa8;">
-                <el-row style="width: 80%; margin: 0 auto;">
+                <el-row style="width: 95%; margin: 0 auto;">
                     <el-col :span="8">
                         <div class="footer-part">
 
@@ -271,7 +271,7 @@ export default {
     font-weight:300;
 }
 .footer-part{
-    margin-left:20%;
+    margin-left:10%;
 }
 .footer-title{
     margin-top:20%;
