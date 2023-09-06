@@ -231,9 +231,12 @@
               </template>
               <!--从数据库获取邮箱地址-->
               <div class="input-container">
-                <input type="text" name="text" class="input" placeholder="请输入邮箱"
-                       v-model="userInfo.email" :disabled="!isEdit">
+                  <div>
+                                      <input type="text" name="text" class="input" placeholder="请输入邮箱地址"
+                                             v-model="userInfo.email" :disabled="!isEdit">
                 <div class="highlight"></div>
+                  </div>
+
               </div>
             </el-descriptions-item>
             <el-descriptions-item>
@@ -430,7 +433,7 @@
             </el-row>
             <el-row>
               <div style="font-size: 14px;color: grey;margin-left: 2px;">
-                • 每日登录、完成健康计划。
+                • 每日登录。
               </div>
             </el-row>
             <el-row>
@@ -457,7 +460,7 @@
             border
         >
         </el-descriptions>
-        <el-table :data="reportList" height="250" class="table">
+        <el-table :data="reportList" height="250" class="table" empty-text="暂无您的举报记录~">
           <el-table-column v-for="item in reportCols" :key="item.label" :label="item.label">
             <template v-slot:default="scope">
               <span v-if="item.prop === 'report_status'">{{ statusMap[scope.row.report_status] }}</span>
@@ -546,28 +549,33 @@ export default {
     $route: {
       handler: function(route) {
          console.log("watch")
+         let userIdNum = parseInt(this.$route.params.userId ? this.$route.params.userId: 0);
+
+         if(!userIdNum && !globalData.login){
+           
+          this.$router.push("/login");
+          return;
+         }
         this.refresh()
       },
       immediate: true
     }
   },
 
+  // mounted() {
+  //   console.log("mounted")
 
-
-  mounted() {
-    console.log("mounted")
-
-    let userIdNum = parseInt(this.$route.params.userId ? this.$route.params.userId: 0);
-    if(!this.$route.params.userId && !globalData.login){
-        this.$router.push("/login");
-        return;
-    }
-  },
-  //从数据库获取所需的用户信息
-  created() {
-    console.log("created")
-    this.refresh();
-  },
+  //   let userIdNum = parseInt(this.$route.params.userId ? this.$route.params.userId: 0);
+  //   if(!userIdNum && !globalData.login){
+  //       this.$router.push("/login");
+  //       return;
+  //   }
+  // },
+ // 从数据库获取所需的用户信息
+  // created() {
+  //   console.log("created")
+  //   //this.refresh();
+  // },
 
 
   computed: {
@@ -611,7 +619,8 @@ export default {
           this.followList = response.data.data.followList;
           this.isFollowed = response.data.data.isFollowed;
 
-          console.log(this.followList)
+
+          console.log(this.isFollowed)
 
           this.followList.forEach(user => {
             this.followMap.set(user.user_id, true)
@@ -654,7 +663,11 @@ export default {
       this.$router.push("/user/"+userId)
     },
     onFollowBtnClick(userId) {
-
+      if(!globalData.login){
+        ElMessage.error('请先登录!')
+          this.$router.push("/login")
+          return;
+      }
       let isFollowed = this.followMap.get(userId)
 
       if (this.isFollowed || isFollowed) {
@@ -669,6 +682,7 @@ export default {
             .then(response => {
               //如果后端返回的状态码是200，那么将isFollowed设置为false
               this.followMap.set(userId, false)
+              this.refresh()
             })
             .catch(error => {
                 if(error.network) return;
@@ -680,6 +694,7 @@ export default {
             .then(response => {
               //如果后端返回的状态码是200，那么将isFollowed设置为false
               this.isFollowed = false;
+              this.refresh()
             })
             .catch(error => {
                 if(error.network) return;
@@ -695,6 +710,7 @@ export default {
             .then(response => {
               //如果后端返回的状态码是200，那么将isFollowed设置为true
               this.followMap.set(userId, true);
+              this.refresh()
             })
             .catch(error => {
                 if(error.network) return;
@@ -706,6 +722,7 @@ export default {
             .then(response => {
               //如果后端返回的状态码是200，那么将isFollowed设置为true
               this.isFollowed = true;
+              this.refresh()
             })
             .catch(error => {
                 if(error.network) return;

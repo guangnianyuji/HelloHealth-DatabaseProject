@@ -47,7 +47,7 @@ const avatarClicked = () =>{
 }
 
 const menus = reactive({v:[
-        {"title":"首页","icon":"fi-rr-home","path":"/"},
+        {"title":"HH 首页","icon":"fi-rr-home","path":"/"},
         {"title":"HH 找药","icon":"fi-rr-capsules","path":"/medicine"},
         {"title":"健康资讯","icon":"fi-rr-books","path":"/news"},
         {"title":"HH 论坛","icon":"fi-rr-user-md-chat","path":"/forum"},
@@ -73,10 +73,11 @@ const gotUserInfo = ref(false)
 axios.get("/api/UserInfo").then(response => {
     let responseObj = response.json
     isLogin.value = responseObj.login;
+    
     gotUserInfo.value = true
     if(!responseObj.login) return;
     menus.v = [
-        {"title":"首页","icon":"fi-rr-home","path":"/"},
+        {"title":"HH 首页","icon":"fi-rr-home","path":"/"},
         {"title":"HH 找药","icon":"fi-rr-capsules","path":"/medicine"},
         {"title":"收藏管理","icon":"fi-rr-followcollection","path":"collection",
             "children":[
@@ -86,8 +87,8 @@ axios.get("/api/UserInfo").then(response => {
         },
         {"title":"健康资讯","icon":"fi-rr-books","path":"/news"},
         {"title":"HH 论坛","icon":"fi-rr-user-md-chat","path":"/forum"},
-        {"title":"健康日程档案","icon":"fi-rr-calendar-clock","path":"/calendar"},
-        {"title":"个人信息管理","icon":"fi-rr-user-gear","path":"/user"}
+        {"title":"健康日历","icon":"fi-rr-calendar-clock","path":"/calendar"},
+        {"title":"个人中心","icon":"fi-rr-user-gear","path":"/user"}
     ]
     loadComplete.value = false;
     // 等菜单卸载完了再改回来
@@ -95,6 +96,7 @@ axios.get("/api/UserInfo").then(response => {
         loadComplete.value = true
     },0)
     globalData.login = true;
+    globalData.locked=responseObj.locked
     userInfo.data = responseObj
     globalData.userInfo = userInfo.data
 }).catch(error => {
@@ -143,7 +145,7 @@ watch(router.currentRoute, () => {
         <div class="headerHolder">
             <div class="leftTitle">
                 <img alt="" src="../assets/logo.png">
-                <SearchBox @searchStart="searchStart"></SearchBox>
+<!--                <SearchBox @searchStart="searchStart"></SearchBox>-->
             </div>
             <div class="rightTitle" v-if="isLogin">
                 <img alt="" src="../assets/titleImg1.png">
@@ -190,6 +192,10 @@ watch(router.currentRoute, () => {
                         </el-menu-item>
                     </component>
                 </el-menu>
+                <div class="beian">
+                    <el-link href="https://beian.miit.gov.cn/" target="_blank" type="info">赣ICP备2023008902号-1</el-link>
+                </div>
+
             </div>
 
             <div class="content">
@@ -268,6 +274,7 @@ watch(router.currentRoute, () => {
     min-width: 230px;
     max-width: 230px;
     flex: 3;
+    position: relative;
 }
 
 .sideBar .sideBarMenu{
@@ -282,5 +289,16 @@ watch(router.currentRoute, () => {
 .userInfoWrapper{
     padding: 10px 20px;
     border-bottom: 1px #eee solid;
+}
+
+.beian{
+    width: 100%;
+    text-align: center;
+    position: absolute;
+    bottom: 10px;
+}
+.beian .el-link{
+    color: #ccc;
+    font-size: 10px;
 }
 </style>

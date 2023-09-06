@@ -27,7 +27,9 @@
             <span class="label">{{ item.label }}:</span>
             <span class="content">
               <!-- 检查 label 是否为 "medicine_image" -->
-              <img v-if="item.id === 'medicine_image'" :src="item.content" alt="Medicine Image">
+              <div   v-if="item.id === 'medicine_image'" >
+              <img  :src="item.content" style="width: 100%;height: 100%;objec-fit: cover;" ><!--alt="Medicine Image"-->
+              </div>
               <div v-if="item.id === 'collect_memory'" class="collectionMemory">
                 <div v-if="isCollected">
                 <el-input v-model="collectMemory" placeholder="Please input" class="input-with-select">
@@ -41,7 +43,7 @@
                 </div>
               </div>
               <!-- 如果不是 "medicine_image"，则显示内容 -->
-              <span v-else>{{ item.content || "-" }}</span>
+              <span v-else>{{ item.content || "-" }} </span>
             </span>
           </li>
 
@@ -183,7 +185,7 @@ export default {
       },
       {
         id: 'medicine_reference_quote',
-        label: "参考报价",
+        label: "参考报价(/元)",
         content: null,
         span: 1,
       },

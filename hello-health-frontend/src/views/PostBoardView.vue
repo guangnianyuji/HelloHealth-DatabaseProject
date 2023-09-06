@@ -26,13 +26,20 @@
             </el-tabs>
 
             <el-row v-if="post_list">
-                <el-col :span="8" v-for="post in post_list" :key="post">
+                <el-col :span="8" v-for="post in page_post_list" :key="post">
                     <post-card :post_info="post" style="margin-left:10% ;margin-right:10% ;margin-bottom: 15%;"></post-card>
                 </el-col>
             </el-row>
         </div>
-
-
+         
+        <div style="margin-left: 30%;margin-bottom: 10%;">
+            <el-pagination background  @current-change="currentChange"
+                 :page-size="postsPerPage"
+                layout="total, prev, pager, next, jumper" :total="post_list.length"
+                v-model="currentPage">
+            </el-pagination>
+        </div>
+         
     </div>
 
     <el-dialog
@@ -155,13 +162,16 @@ export default{
         {
             type_sort: {
                 type: "Time",
-                number: 9,
-                page: 1
+                number: -1,
+                 
                 // TODO: 加个页号选择
 
             } ,//之前选择的类型
+            postsPerPage:9,
+            currentPage:1,
             dialogVisible: false,
             post_list: [],
+            page_post_list:[],
             gdata: globalData,
             newPostInfo:{
                 title:"",
@@ -174,12 +184,24 @@ export default{
         }),
     methods:
         {
+            changePagePost(){
+                let start = (this.currentPage - 1) * this.postsPerPage;
+                let end = start + this.postsPerPage;
+             
+                this.page_post_list=this.post_list.slice(start, end);
+              
+            },
+            currentChange(val) {
+            this.currentPage = val; // 更新当前页码
+            this.changePagePost();
+            },
             sortSwitcher ( res) {
                 console.log(res.paneName );
                 if(res.paneName===this.type_sort.type){
                     return;
                 }
                 this.type_sort.type=res.paneName;
+                this.currentPage=1;
                 this.sortBy();
             },
             sortBy(){
@@ -187,17 +209,25 @@ export default{
                     .then((res)=> {
                         this.post_list= res.json.post_list;
                         this.tags = res.json.tags;
+                        this.changePagePost();
                     })
                     .catch((error) => {
                         if(error.network) return;
                         error.defaultHandler("加载帖子出错");
                     });
+
             },
             openPostEditor() {
                 if(!globalData.login){
                     ElMessage.error('请先登录再参与讨论。')
                     return;
                 }
+                  
+                if(globalData.locked){
+                    ElMessage.error('抱歉，您的账号已经被封禁！')
+                    return;
+                }
+
                 this.dialogVisible = true
             },
 

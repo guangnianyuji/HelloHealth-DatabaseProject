@@ -106,6 +106,10 @@ const onSubmit = () => {
                 errorMsg.value = '用户已存在！'
                 isError.value = true
                 break;
+            case 103:
+                errorMsg.value = '用户名重复，请重新设定用户名！'
+                isError.value = true
+                break;
             default:
                 error.defaultHandler()
         }

@@ -1,9 +1,9 @@
 <template>
-  <el-carousel :interval="4000" type="card" height="200px" indicator-position="outside" arrow="never">
+  <el-carousel :interval="4000" type="card" height="300px" indicator-position="outside" arrow="never">
     <el-carousel-item v-for="news in newsList" :key="news.newsId" @click="goFullContent(news.newsId)">
-      <el-image
+      <el-image class="car-image"
           :src="news.newsImage"
-          fit="cover" style="width: 100%; height: 100%"
+          style="width: 100%; height: 100%"
       />
       <div class="title" v-text="news.newsTitle"></div>
     </el-carousel-item>
@@ -40,6 +40,15 @@ export default {
 </script>
 
 <style scoped>
+.car-image {
+  object-fit: fill;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .el-carousel__item h3 {
   display: flex;
   color: #475669;

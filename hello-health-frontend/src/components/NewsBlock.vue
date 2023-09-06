@@ -97,7 +97,7 @@ export default {
   width: 600px;
 }
 .flash-image {
-  object-fit: cover;
+  object-fit: fill;
   height: 100%;
   width: 100%;
   display: flex;

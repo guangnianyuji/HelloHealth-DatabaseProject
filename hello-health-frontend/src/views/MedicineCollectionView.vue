@@ -94,14 +94,15 @@
     <div class="card-container">
       <div class="card" v-for="(item, index) in filteredTableData" :key="index" @click="BriefCardClicked(item)">
         <div class="medicine-image">
-          <img :src="item.medicine_image" alt="Medicine Image" />
+          <img :src="item.medicine_image" style="width: 100%;height: 100%;objec-fit: cover;" alt="Medicine Image" />
         </div>
         <div class="card__content">
           <p class="medicine_name">{{ item.medicine_ch_name }}</p>
           <p class="medicine_description">分类：{{ item.medicine_category }}</p>
           <p class="medicine_description">剂型：{{ item.medicine_form }}</p>
           <p class="medicine_description">适应症：{{ item.medicine_indications }}</p>
-          <p class="medicine_description">简介：{{ item.medicine_introduction }}</p>
+          <p class="medicine_description">简介：{{ item.medicine_introduction||'暂无' }}</p>
+          <p class="medicine_description">我的备注：{{ item.collect_memory||'无' }}</p>
         </div>
       </div>
     </div>
@@ -265,6 +266,7 @@ export default {
         if (response.data.errorCode === 200) {
           this.tableData = response.data.data.medicine_list; // Assuming the response contains the medicine data
           this.constData = response.data.data.medicine_list;
+          //console.log(response.data.data.medicine_list)
         } else {
           console.error("Error fetching medicine data:", response.data.errorCode);
         }
@@ -272,7 +274,7 @@ export default {
       .catch(error => {
         console.error(error);
       });
-    console.log(this.tableData)
+    
   },
 
   methods: {
