@@ -43,8 +43,8 @@
 
         <div class="part">
 
-            <el-row>
-                <el-col :span="12">
+            <el-row style="display: flex; align-items: center;">
+                <el-col :span="18">
                     <NewsCarousel/>
                     <!--
                     <el-carousel >
@@ -54,8 +54,8 @@
                     </el-carousel>
                     -->
                 </el-col>
-
-                <el-col :span="12">
+                <el-col :span="2"></el-col>
+                <el-col :span="4">
                     <div style="margin-left: 10%;margin-top:10%;">
                         <div style="font-size: xx-large;">
                             <b>健康资讯</b>
@@ -172,7 +172,7 @@
 
         <div >
             <div style="background-color: #00bfa8;">
-                <el-row style="width: 80%; margin: 0 auto;">
+                <el-row style="width: 95%; margin: 0 auto;">
                     <el-col :span="8">
                         <div class="footer-part">
 
@@ -215,6 +215,9 @@
                 </el-row>
 
                 <el-divider />
+                <div class="beian">
+                    <el-link href="https://beian.miit.gov.cn/" target="_blank" type="info">赣ICP备2023008902号-1</el-link>
+                </div>
 
                 <div>
                     <br/>
@@ -265,13 +268,23 @@ export default {
 };
 </script>
 <style scoped>
+
+.beian{
+    text-align: center;
+    
+    
+}
+.el-link{
+    font-size:150%;
+    color:ghostwhite;
+}
 .footer-content{
     color:ghostwhite;
     font-size:100%;
     font-weight:300;
 }
 .footer-part{
-    margin-left:20%;
+    margin-left:10%;
 }
 .footer-title{
     margin-top:20%;
@@ -329,7 +342,7 @@ export default {
 .main {
     display: flex;
     flex-direction: row;
-    width: 80%;
+    
     align-items: center;
     justify-content: space-between;
     position: relative;
@@ -345,6 +358,7 @@ export default {
     justify-content: center;
     flex-shrink: 0;
     position: relative;
+    margin-left:10%;
 }
 
 .main-welcome {

@@ -32,6 +32,10 @@ const openCommentEditor = () =>{
         ElMessage.error('请先登录再参与讨论。')
         return;
     }
+    if(globalData.locked){
+        ElMessage.error('抱歉，您的账号已经被封禁！')
+        return;
+    }
     dialogVisible.value = true
 }
 
@@ -76,7 +80,7 @@ const editor = ref();
 
 // 发送楼层
 const submitNewComment = () => {
-    if(editor.value.editor.state.doc.textContent.length < 15) {
+    if(editor.value.editor.state.doc.textContent.length < 1) {
         ElMessage.error('请输入更多内容。');
         return;
     }
