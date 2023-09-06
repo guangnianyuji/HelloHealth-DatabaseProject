@@ -6,10 +6,11 @@
   <!--布局容器，上面为Header（图片）,下面为Mainer（文字）-->
   <div class="common-layout">
     <el-container>
-      <!--放置图片-->
-      <el-header class="header"></el-header>
+
       <!--放置标签按钮-->
       <el-main class="bottomBox">
+          <!--放置图片-->
+          <el-header class="header"></el-header>
         <!--根据后端获取的标签输出标签-->
         <el-row class="buttonContainer" :gutter="10">
           <!-- 第一层循环，遍历所有的 group -->
@@ -76,7 +77,7 @@ export default {
   background-image: url("../assets/10.png");
   background-size: contain;
   background-position: left;
-  width: 250px;
+  //width: 250px;
   height: 150px;
 }
 /*Mainer部分容器的样式设置*/
