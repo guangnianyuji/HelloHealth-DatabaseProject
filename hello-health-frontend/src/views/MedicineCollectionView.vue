@@ -394,7 +394,6 @@ export default {
   font-size: 20px;
   color: #000000;
   margin-left: 4%;
-  padding-top: 20px;
 }
 
 .FM_r_title {

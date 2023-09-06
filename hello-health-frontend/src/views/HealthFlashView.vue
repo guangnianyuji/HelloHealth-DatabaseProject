@@ -17,7 +17,7 @@
     </el-row>
     <el-container>
       <el-container class="news_content">
-        <el-aside class="left">
+        <el-aside class="left" style="margin-top: 2%">
           <!-- 标签选择器 -->
           <NewsTagSelector @tag-selected="handleTagSelected" />
         </el-aside>

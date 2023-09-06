@@ -179,7 +179,7 @@
                             <div class="footer-title">
                                 HelloHealth
                             </div>
-
+                                <img src="@/assets/logo2.png" class="logo">
                         </div>
                     </el-col>
 
@@ -208,7 +208,14 @@
                             <div class="footer-title">
                                 Contact Us
                             </div>
+                            <div class="footer-content address" >
+                                中国 上海曹安公路4800号同济大学软件学院
+                                <br/>
+                                邮编：201804
+                                <br/>
+                                <img src="@/assets/tjlogo-white.png" class="school"/>
 
+                            </div>
                         </div>
                     </el-col>
 
@@ -554,17 +561,30 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin: 0 0 30px 0;
+    margin: 0 0 30px 10px;
 }
 
 .functionTitle>.functionDesc{
-    max-width: 50%;
+    padding-top: 5px;
+    max-width: 66%;
 }
 
 .functionRow{
     display: flex;
     gap: 5%;
 }
-
+.address{
+    margin-top: 5%;
+    margin-left: 2%;
+}
+.school{
+    margin-top: 5%;
+    weight:200px;
+    height:100px;
+}
+.logo{
+    margin-left: 18%;
+    margin-top: 3%;
+}
 </style>
   
