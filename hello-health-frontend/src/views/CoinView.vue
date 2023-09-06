@@ -6,7 +6,7 @@
                 <div style="margin-left: 3px;font-size:20px ;margin-right:5px;">返回</div>
         </el-button>
 
-        <img alt="" src="../assets/coindraw.png" style="height: 50px;margin-top: 8px;margin-left: 24%;margin-right: 5px;">
+        <img alt="" src="../assets/杏仁币.png" style="height: 50px;margin-top: 8px;margin-left: 24%;margin-right: 5px;">
 
         <div class="title">
             杏仁币详情
@@ -225,7 +225,7 @@
     width: 204px;
     height: 134px;
     border-radius: 8px;
-    border: 2px solid var(--el-color-primary);
+    border: 1px solid var(--el-color-primary);
     background-color: #fff;
     position: relative;
     text-align: center;
@@ -287,6 +287,7 @@
 import axios from "axios";
 import { ref } from 'vue';
 import { ElMessage } from "element-plus";
+import globalData from "@/global/global";
 export default
     {
         name: "CoinView",
@@ -362,6 +363,12 @@ export default
          },
         
         created(){
+            if(!globalData.login)
+            {
+                ElMessage.error('请先登录!')
+                this.$router.push("/login")
+                return;
+            }
             this.getCoinRecord()
         }
     }

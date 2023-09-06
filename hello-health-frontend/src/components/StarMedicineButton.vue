@@ -16,6 +16,7 @@ import { ElMessageBox } from 'element-plus'
 export default{
     
     props:['collected','medicine_id'],
+    emits:['fatherUpdate'],
     watch:
         {
             collected:function(newData)
@@ -64,6 +65,7 @@ export default{
                                        type: "success",
 
                                    })
+                                   this.$emit('fatherUpdate')                           
                                }).catch(error => {
                                    if(error.network) return false;
                                    switch (error.errorCode){
@@ -90,6 +92,7 @@ export default{
                                        type: "success",
 
                                    })
+                                   this.$emit('fatherUpdate')
                                }).catch(error => {
                                    if(error.network) return false;
                                    switch (error.errorCode){

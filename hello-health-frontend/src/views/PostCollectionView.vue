@@ -78,6 +78,8 @@ import { ref, onMounted } from "vue";
 import { ElMessage } from 'element-plus'
 import axios from "axios";
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs';
+import globalData from "@/global/global";
+import router from "@/router";
 const locale = zhCn;
 
 const list = ref([]);
@@ -144,6 +146,12 @@ function changeStar(id) {
 }
 
 onMounted(() => {
+    if(!globalData.login)
+    {
+        ElMessage.error('请先登录!')
+        router.push("/login")
+        return;
+    }
   updatePostCollectionList();
 });
 </script>
