@@ -79,7 +79,7 @@ const router = createRouter({
             },{
                 path: "coinDetail",
                 name: "coinView",
-                component: ()=>import("@/components/CoinView.vue"),
+                component: ()=>import("@/views/CoinView.vue"),
             },
             {
                 path: "UserAgreement",
