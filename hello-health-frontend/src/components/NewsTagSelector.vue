@@ -71,7 +71,7 @@ export default {
 <style scoped>
 /*Header部分容器的图片的样式*/
 .header {
-  background-image: url("../assets/10.png");
+  background-image: url("/static/10.png");
   background-size: contain;
   background-position: left;
   //width: 250px;

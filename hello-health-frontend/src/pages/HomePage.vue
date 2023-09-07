@@ -61,7 +61,7 @@ let userInfo = reactive({
         user_name: "未登录",
         user_id: 123456,
         user_group: "none",
-        avatar_url: "/src/assets/defaultAvatar.png",
+        avatar_url: "/static/defaultAvatar.png",
         unread_notification: false,
         verified: false
     }
@@ -119,29 +119,29 @@ const getSidebarPath = () => {
 
 }
 
-let menuImgSrc = "/src/assets/menu_main.png"; // 默认图片路径
+let menuImgSrc = "/static/menu_main.png"; // 默认图片路径
 
 const updateMenuImgSrc = () => {
     let currentPath = router.currentRoute.value.path;
     // 根据当前路径更改图片路径
     if (currentPath.includes("Collection")) {
-        menuImgSrc = "/src/assets/menu_collection.png";
+        menuImgSrc = "/static/menu_collection.png";
     } else if (currentPath.includes("medicine")) {
-        menuImgSrc = "/src/assets/menu_medicine.png";
+        menuImgSrc = "/static/menu_medicine.png";
     } else if (currentPath.includes("news")) {
-        menuImgSrc = "/src/assets/menu_news.png";
+        menuImgSrc = "/static/menu_news.png";
     } else if (currentPath.includes("forum")) {
-        menuImgSrc = "/src/assets/menu_forum.png";
+        menuImgSrc = "/static/menu_forum.png";
     } else if (currentPath.includes("calendar")) {
-        menuImgSrc = "/src/assets/menu_calendar.png";
+        menuImgSrc = "/static/menu_calendar.png";
     } else if (currentPath.includes("user")) {
-        menuImgSrc = "/src/assets/menu_profile.png";
+        menuImgSrc = "/static/menu_profile.png";
     } else if (currentPath.includes("coin")) {
-        menuImgSrc = "/src/assets/menu_coin.png";
+        menuImgSrc = "/static/menu_coin.png";
     } else if (currentPath.includes("UserAgreement")) {
-        menuImgSrc = "/src/assets/menu_coin.png";
+        menuImgSrc = "/static/menu_coin.png";
     } else {
-        menuImgSrc = "/src/assets/menu_main.png";
+        menuImgSrc = "/static/menu_main.png";
     }
     console.log(currentPath);
     console.log(menuImgSrc);
@@ -176,11 +176,11 @@ watch(router.currentRoute, () => {
     <div class="pageWrapper">
         <div class="headerHolder">
             <div class="leftTitle">
-                <img alt="" src="../assets/logo.png">
+                <img alt="" src="/static/logo.png">
                 <!--                <SearchBox @searchStart="searchStart"></SearchBox>-->
             </div>
             <div class="rightTitle" v-if="isLogin">
-                <img alt="" src="../assets/titleImg1.png">
+                <img alt="" src="/static/titleImg1.png">
                 <el-popover :width="360"
                     popper-style="box-shadow: 0 5px 20px hsla(0,0%,7%,.1);padding: 0; transition: opacity 0.3s;"
                     trigger="click" @before-enter="updateNotifications">
@@ -199,7 +199,7 @@ watch(router.currentRoute, () => {
                 <LinkButtonWithIcon font-color="#fff" text="退出" icon="" @click="exitButtonClicked"></LinkButtonWithIcon>
             </div>
             <div class="rightTitle" v-if="!isLogin">
-                <img alt="" src="../assets/titleImg1.png">
+                <img alt="" src="/static/titleImg1.png">
 
                 <LinkButtonWithIcon font-color="#fff" text="点击登录" icon="" @click="loginButtonClicked"></LinkButtonWithIcon>
             </div>

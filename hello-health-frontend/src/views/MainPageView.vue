@@ -35,7 +35,7 @@
                         <pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
                             <use xlink:href="#image0_208_60" transform="translate(0 -0.0168634) scale(0.00084317)" />
                         </pattern>
-                        <image xlink:href="@/assets/mainPage1.png" id="image0_208_60" width="1186" height="1226"/>
+                        <image xlink:href="/static/mainPage1.png" id="image0_208_60" width="1186" height="1226"/>
                     </defs>
                 </svg>
             </div>
@@ -179,7 +179,7 @@
                             <div class="footer-title">
                                 HelloHealth
                             </div>
-                            <img src="@/assets/logo2.png" class="logo heartbeat">
+                            <img src="/static/logo2.png" class="logo heartbeat">
                         </div>
                     </el-col>
 
@@ -213,7 +213,7 @@
                                 <br/>
                                 邮编：201804
                                 <br/>
-                                <img src="@/assets/tjlogo-white.png" class="school"/>
+                                <img src="/static/tjlogo-white.png" class="school"/>
 
                             </div>
                         </div>
@@ -253,7 +253,7 @@ export default {
     methods:{
         flashPic(item)
         {
-            return "src/assets/homeview"+item+".jpg";
+            return "/static/homeview"+item+".jpg";
         },
         go(place)
         {

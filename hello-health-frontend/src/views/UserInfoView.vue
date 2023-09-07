@@ -10,7 +10,7 @@
                         <el-aside width="200px">
                             <div class="avatar-container">
                                 <el-avatar :size="100" style="margin-left:30px;margin-top:20px;" fit="contain"
-                                    :src="isLogin ? userInfo.avatarUrl : require('/src/assets/defaultAvatar.png')"></el-avatar>
+                                    :src="isLogin ? userInfo.avatarUrl : require('/static/defaultAvatar.png')"></el-avatar>
                                 <template v-if="isCurrentUser">
                                     <el-button class="pic-edit-button" type="primary" icon="el-icon-edit"
                                         @click="showPhotoUpload">Edit
@@ -329,7 +329,7 @@
                     </template>
                 </el-descriptions>
                 <div class="tips" v-if="userPosts.length === 0">
-                    <img class="sadImg jello-horizontal" style="height: 256px;" alt="" src="@/assets/thinking.png" />
+                    <img class="sadImg jello-horizontal" style="height: 256px;" alt="" src="/static/thinking.png" />
                     <div class="sadTip jello-horizontal">暂时还没有发布的帖子哦~快去发布吧！</div>
                 </div>
                 <el-row v-if="userPosts">
@@ -356,7 +356,7 @@
                             </el-button>
                         </el-row>
                         <el-row style="margin-top:7%;margin-left: 5%">
-                            <img src="../assets/杏仁币.png" style="width: 60px;height: 60%;margin-left: 15px;margin-top: 2%" />
+                            <img src="/static/杏仁币.png" style="width: 60px;height: 60%;margin-left: 15px;margin-top: 2%" />
                             <div style="color:RGB(0,191,168); font-size: 20px;padding-left: 15px;margin-top:6%">
                                 x {{ CoinNum }} 枚
                             </div>

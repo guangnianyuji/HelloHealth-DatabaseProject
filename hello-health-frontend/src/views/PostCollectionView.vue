@@ -8,7 +8,7 @@
 
       <el-col class="result_title" style="padding-top: 5px">
         <div class="tips" v-if="list.length === 0">
-          <img class="sadImg jello-horizontal" style="height: 256px;" alt="" src="@/assets/thinking.png" />
+          <img class="sadImg jello-horizontal" style="height: 256px;" alt="" src="/static/thinking.png" />
           <div class="sadTip jello-horizontal">暂时还没有收藏的帖子哦~快去浏览吧！</div>
         </div>
       </el-col>
