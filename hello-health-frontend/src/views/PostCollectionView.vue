@@ -6,6 +6,13 @@
         <div class="viewTitle tracking-in-expand" style="padding-top: 3px">帖子收藏</div>
       </el-row>
 
+      <el-col class="result_title" style="padding-top: 5px">
+        <div class="tips" v-if="list.length === 0">
+          <img class="sadImg jello-horizontal" style="height: 256px;" alt="" src="@/assets/sad.png" />
+          <div class="sadTip jello-horizontal">暂时还没有收藏的帖子哦~快去浏览吧！</div>
+        </div>
+      </el-col>
+
       <div class="postList">
         <el-row :gutter="20">
           <el-col :span="12" v-for="item in list" :key="item.id" style="margin-bottom: 20px;">
@@ -272,66 +279,95 @@ a:visited {
   transform: scale(1.4);
 }
 
+.tips {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* 在主轴上居中对齐 */
+  text-align: center;
+  /* 也可以在文本上进行居中对齐 */
+  margin-top: 10px;
+}
+
+.sadTip {
+  background-image: linear-gradient(96.14deg,
+      #8DBEF8 0%,
+      #377EB6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  text-align: left;
+  font: 600 18px "Poppins", sans-serif;
+
+  margin-top: 5px;
+}
+
 .tracking-in-expand {
-    -webkit-animation: tracking-in-expand 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
-    animation: tracking-in-expand 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+  -webkit-animation: tracking-in-expand 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+  animation: tracking-in-expand 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
 }
 
 @-webkit-keyframes tracking-in-expand {
-    0% {
-        letter-spacing: -0.5em;
-        opacity: 0;
-    }
+  0% {
+    letter-spacing: -0.5em;
+    opacity: 0;
+  }
 
-    40% {
-        opacity: 0.6;
-    }
+  40% {
+    opacity: 0.6;
+  }
 
-    100% {
-        opacity: 1;
-    }
+  100% {
+    opacity: 1;
+  }
 }
 
 @keyframes tracking-in-expand {
-    0% {
-        letter-spacing: -0.5em;
-        opacity: 0;
-    }
+  0% {
+    letter-spacing: -0.5em;
+    opacity: 0;
+  }
 
-    40% {
-        opacity: 0.6;
-    }
+  40% {
+    opacity: 0.6;
+  }
 
-    100% {
-        opacity: 1;
-    }
+  100% {
+    opacity: 1;
+  }
 }
 
 .jello-horizontal {
-	animation: jello-horizontal 0.9s both;
+  animation: jello-horizontal 0.9s both;
 }
 
 @keyframes jello-horizontal {
   0% {
     transform: scale3d(1, 1, 1);
   }
+
   30% {
     transform: scale3d(1.25, 0.75, 1);
   }
+
   40% {
     transform: scale3d(0.75, 1.25, 1);
   }
+
   50% {
     transform: scale3d(1.15, 0.85, 1);
   }
+
   65% {
     transform: scale3d(0.95, 1.05, 1);
   }
+
   75% {
     transform: scale3d(1.05, 0.95, 1);
   }
+
   100% {
     transform: scale3d(1, 1, 1);
   }
-}
-</style>
+}</style>
