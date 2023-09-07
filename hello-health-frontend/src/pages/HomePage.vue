@@ -2,18 +2,18 @@
 
 import SearchBox from "@/components/SearchBox.vue";
 import LinkButtonWithIcon from "@/components/LinkButtonWithIcon.vue";
-import {changeTheme} from "@/assets/changeTheme";
+import { changeTheme } from "@/assets/changeTheme";
 import router from "@/router";
 import axios from "axios";
-import {onBeforeMount, onMounted, reactive, ref, watch} from "vue";
+import { onBeforeMount, onMounted, reactive, ref, watch, computed} from "vue";
 import UserInfoCard from "@/components/UserInfoCard.vue";
 import globalData from "@/global/global"
-import {ElMenuItem, ElSubMenu} from "element-plus";
+import { ElMenuItem, ElSubMenu } from "element-plus";
 import NotificationPopup from "@/components/NotificationPopup.vue";
 
 changeTheme("#00bfa8")
 
-function loginButtonClicked () {
+function loginButtonClicked() {
     router.push("/login")
 }
 
@@ -23,12 +23,12 @@ const menuItemClick = (ke) => {
 
 const searchStart = (msg) => {
     // TODO 不知道要干什么，先提示一下
-    alert("搜索开始！"+msg)
+    alert("搜索开始！" + msg)
 }
 
-const exitButtonClicked = async ()=>{
+const exitButtonClicked = async () => {
     await axios.get("/api/Login/Logout")
-    window.location.href ="/";
+    window.location.href = "/";
 }
 
 const notificationBox = ref();
@@ -36,31 +36,33 @@ const notificationButtonClicked = () => {
     userInfo.data.unread_notification = false;
 }
 
-const updateNotifications = () =>{
+const updateNotifications = () => {
     notificationBox.value.getNotification();
 }
 
-const avatarClicked = () =>{
-    if(!isLogin.value){
+const avatarClicked = () => {
+    if (!isLogin.value) {
         router.push("/login")
     }
 }
 
-const menus = reactive({v:[
-        {"title":"HH 首页","icon":"fi-rr-home","path":"/"},
-        {"title":"HH 找药","icon":"fi-rr-capsules","path":"/medicine"},
-        {"title":"健康资讯","icon":"fi-rr-books","path":"/news"},
-        {"title":"HH 论坛","icon":"fi-rr-user-md-chat","path":"/forum"},
-    ]});
+const menus = reactive({
+    v: [
+        { "title": "HH 首页", "icon": "fi-rr-home", "path": "/" },
+        { "title": "HH 找药", "icon": "fi-rr-capsules", "path": "/medicine" },
+        { "title": "健康资讯", "icon": "fi-rr-books", "path": "/news" },
+        { "title": "HH 论坛", "icon": "fi-rr-user-md-chat", "path": "/forum" },
+    ]
+});
 
 let userInfo = reactive({
-    data:{
-        user_phone:"",
-        user_name:"未登录",
-        user_id:123456,
-        user_group:"none",
-        avatar_url:"/src/assets/defaultAvatar.png",
-        unread_notification:false,
+    data: {
+        user_phone: "",
+        user_name: "未登录",
+        user_id: 123456,
+        user_group: "none",
+        avatar_url: "/src/assets/defaultAvatar.png",
+        unread_notification: false,
         verified: false
     }
 
@@ -73,58 +75,87 @@ const gotUserInfo = ref(false)
 axios.get("/api/UserInfo").then(response => {
     let responseObj = response.json
     isLogin.value = responseObj.login;
-    
+
     gotUserInfo.value = true
-    if(!responseObj.login) return;
+    if (!responseObj.login) return;
     menus.v = [
-        {"title":"HH 首页","icon":"fi-rr-home","path":"/"},
-        {"title":"HH 找药","icon":"fi-rr-capsules","path":"/medicine"},
-        {"title":"收藏管理","icon":"fi-rr-followcollection","path":"collection",
-            "children":[
-                {"title":"药品收藏","icon":"fi-rr-capsules","path":"/medicineCollection"},
-                {"title":"帖子收藏","icon":"fi-rr-memo","path":"/postCollection"},
+        { "title": "HH 首页", "icon": "fi-rr-home", "path": "/" },
+        { "title": "HH 找药", "icon": "fi-rr-capsules", "path": "/medicine" },
+        {
+            "title": "收藏管理", "icon": "fi-rr-followcollection", "path": "collection",
+            "children": [
+                { "title": "药品收藏", "icon": "fi-rr-capsules", "path": "/medicineCollection" },
+                { "title": "帖子收藏", "icon": "fi-rr-memo", "path": "/postCollection" },
             ]
         },
-        {"title":"健康资讯","icon":"fi-rr-books","path":"/news"},
-        {"title":"HH 论坛","icon":"fi-rr-user-md-chat","path":"/forum"},
-        {"title":"健康日历","icon":"fi-rr-calendar-clock","path":"/calendar"},
-        {"title":"个人中心","icon":"fi-rr-user-gear","path":"/user"}
+        { "title": "健康资讯", "icon": "fi-rr-books", "path": "/news" },
+        { "title": "HH 论坛", "icon": "fi-rr-user-md-chat", "path": "/forum" },
+        { "title": "健康日历", "icon": "fi-rr-calendar-clock", "path": "/calendar" },
+        { "title": "个人中心", "icon": "fi-rr-user-gear", "path": "/user" }
     ]
     loadComplete.value = false;
     // 等菜单卸载完了再改回来
-    setTimeout(()=>{
+    setTimeout(() => {
         loadComplete.value = true
-    },0)
+    }, 0)
     globalData.login = true;
-    globalData.locked=responseObj.locked
+    globalData.locked = responseObj.locked
     userInfo.data = responseObj
     globalData.userInfo = userInfo.data
 }).catch(error => {
-    if(error.network) return
+    if (error.network) return
     error.defaultHandler();
 })
 
 
 const getSidebarPath = () => {
     let path = router.currentRoute.value.path.split("/")
-    if(path.length === 1){
+    if (path.length === 1) {
         return ""
-    }else{
+    } else {
         return "/" + path[1];
     }
 
 
 }
 
+let menuImgSrc = "/src/assets/menu_main.png"; // 默认图片路径
+
+const updateMenuImgSrc = () => {
+    let currentPath = router.currentRoute.value.path;
+    // 根据当前路径更改图片路径
+    if (currentPath.includes("Collection")) {
+        menuImgSrc = "/src/assets/menu_collection.png";
+    } else if (currentPath.includes("medicine")) {
+        menuImgSrc = "/src/assets/menu_medicine.png";
+    } else if (currentPath.includes("news")) {
+        menuImgSrc = "/src/assets/menu_news.png";
+    } else if (currentPath.includes("forum")) {
+        menuImgSrc = "/src/assets/menu_forum.png";
+    } else if (currentPath.includes("calendar")) {
+        menuImgSrc = "/src/assets/menu_calendar.png";
+    } else if (currentPath.includes("user")) {
+        menuImgSrc = "/src/assets/menu_profile.png";
+    } else if (currentPath.includes("coin")) {
+        menuImgSrc = "/src/assets/menu_coin.png";
+    } else if (currentPath.includes("UserAgreement")) {
+        menuImgSrc = "/src/assets/menu_coin.png";
+    } else {
+        menuImgSrc = "/src/assets/menu_main.png";
+    }
+    console.log(currentPath);
+    console.log(menuImgSrc);
+};
+
 const menu = ref();
 let contentDom = undefined;
-onMounted(()=>{
-    (()=>{
+onMounted(() => {
+    (() => {
         let menuItemNow = getSidebarPath();
-        for(let item of menus.v){
-            if(!item.children) continue;
-            for(let child of item.children){
-                if(child.path===menuItemNow){
+        for (let item of menus.v) {
+            if (!item.children) continue;
+            for (let child of item.children) {
+                if (child.path === menuItemNow) {
                     menu.value.open(item.path);
                 }
             }
@@ -135,7 +166,8 @@ onMounted(()=>{
 
 
 watch(router.currentRoute, () => {
-    contentDom.scrollTo({left: 0, top: 0})
+    contentDom.scrollTo({ left: 0, top: 0 })
+    updateMenuImgSrc();
 })
 
 </script>
@@ -145,18 +177,17 @@ watch(router.currentRoute, () => {
         <div class="headerHolder">
             <div class="leftTitle">
                 <img alt="" src="../assets/logo.png">
-<!--                <SearchBox @searchStart="searchStart"></SearchBox>-->
+                <!--                <SearchBox @searchStart="searchStart"></SearchBox>-->
             </div>
             <div class="rightTitle" v-if="isLogin">
                 <img alt="" src="../assets/titleImg1.png">
-                <el-popover
-                    :width="360"
+                <el-popover :width="360"
                     popper-style="box-shadow: 0 5px 20px hsla(0,0%,7%,.1);padding: 0; transition: opacity 0.3s;"
-                    trigger="click"
-                    @before-enter="updateNotifications"
-                >
+                    trigger="click" @before-enter="updateNotifications">
                     <template #reference>
-                        <LinkButtonWithIcon font-color="#fff" text="消息通知" icon="fi-rr-bell" :has-notification="userInfo.data.unread_notification" @click="notificationButtonClicked"></LinkButtonWithIcon>
+                        <LinkButtonWithIcon font-color="#fff" text="消息通知" icon="fi-rr-bell"
+                            :has-notification="userInfo.data.unread_notification" @click="notificationButtonClicked">
+                        </LinkButtonWithIcon>
                     </template>
                     <template #default>
                         <NotificationPopup ref="notificationBox"></NotificationPopup>
@@ -181,17 +212,22 @@ watch(router.currentRoute, () => {
 
 
                 <el-menu v-if="loadComplete" :default-active="getSidebarPath()" class="sideBarMenu" ref="menu">
-                    <component v-for="item in menus.v" :is="item.children ? ElSubMenu : ElMenuItem" :index="item.path" v-on="item.children ? {}: {click: menuItemClick}">
+                    <component v-for="item in menus.v" :is="item.children ? ElSubMenu : ElMenuItem" :index="item.path"
+                        v-on="item.children ? {} : { click: menuItemClick }">
                         <template #title>
                             <i class="fi" :class="item.icon"></i>
-                            <span>{{item.title}}</span>
+                            <span>{{ item.title }}</span>
                         </template>
-                        <el-menu-item v-if="item.children" v-for="child in item.children" :index="child.path" @click="menuItemClick">
+                        <el-menu-item v-if="item.children" v-for="child in item.children" :index="child.path"
+                            @click="menuItemClick">
                             <i class="fi" :class="child.icon"></i>
-                            <span>{{child.title}}</span>
+                            <span>{{ child.title }}</span>
                         </el-menu-item>
                     </component>
                 </el-menu>
+
+                <img class="menuImg" alt="" :src="menuImgSrc" />
+
                 <div class="beian">
                     <el-link href="https://beian.miit.gov.cn/" target="_blank" type="info">赣ICP备2023008902号-1</el-link>
                 </div>
@@ -207,8 +243,7 @@ watch(router.currentRoute, () => {
 
 
 <style scoped>
-
-.headerHolder{
+.headerHolder {
     width: 100%;
     height: 60px;
     box-sizing: border-box;
@@ -218,13 +253,14 @@ watch(router.currentRoute, () => {
     max-height: 60px;
     flex: 1;
 }
-.headerHolder>div{
+
+.headerHolder>div {
     display: flex;
     align-items: center;
     margin: 0 20px;
 }
 
-.pageWrapper{
+.pageWrapper {
     height: 100vh;
     width: 100%;
     min-width: 1200px;
@@ -239,22 +275,22 @@ watch(router.currentRoute, () => {
     margin-right: 20px;
 }
 
-.rightTitle img{
+.rightTitle img {
     height: 60px;
 }
 
-.rightTitle>*{
+.rightTitle>* {
     margin: 0 10px;
 }
 
-.line{
+.line {
     border-left: #fff 1px solid;
     height: 1em;
     width: 1px;
     margin: 0 5px;
 }
 
-.contentHolder{
+.contentHolder {
     display: flex;
     justify-items: stretch;
     flex: 3;
@@ -263,40 +299,30 @@ watch(router.currentRoute, () => {
 }
 
 
-.content{
+.content {
     overflow-y: auto;
     background-color: var(--el-color-primary-light-9);
-    
+
     flex: 1;
 }
 
 .bg-pan-bottom {
-	animation: bg-pan-bottom 8s infinite alternate both;
-    background: linear-gradient(to bottom, var(--el-color-primary-light-9), #ddf4ff); /* 设置渐变色 */
+    animation: bg-pan-bottom 8s infinite alternate both;
+    background: linear-gradient(to bottom, var(--el-color-primary-light-9), #ddf4ff);
+    /* 设置渐变色 */
 }
 
-/* ----------------------------------------------
- * Generated by Animista on 2023-9-6
- * Licensed under FreeBSD License.
- * See http://animista.net/license for more info. 
- * w: http://animista.net, t: @cssanimista
- * ---------------------------------------------- */
+@keyframes bg-pan-bottom {
+    0% {
+        background-position: 50% 0%;
+    }
 
-/**
- * ----------------------------------------
- * animation bg-pan-bottom
- * ----------------------------------------
- */
- @keyframes bg-pan-bottom {
-  0% {
-    background-position: 50% 0%;
-  }
-  100% {
-    background-position: 50% 100%;
-  }
+    100% {
+        background-position: 50% 100%;
+    }
 }
 
-.sideBar{
+.sideBar {
     width: 230px;
     min-width: 230px;
     max-width: 230px;
@@ -304,28 +330,37 @@ watch(router.currentRoute, () => {
     position: relative;
 }
 
-.sideBar .sideBarMenu{
+.sideBar .sideBarMenu {
     border-right: none;
 }
 
-.sideBar .sideBarMenu i{
+.sideBar .sideBarMenu i {
     margin-right: 10px;
     font-size: 1.1em;
 }
 
-.userInfoWrapper{
+.userInfoWrapper {
     padding: 10px 20px;
     border-bottom: 1px #eee solid;
 }
 
-.beian{
+.menuImg {
+    position: absolute;
+    width: 80%;
+    bottom: 30px;
+    margin-left: 10%;
+}
+
+.beian {
     width: 100%;
     text-align: center;
     position: absolute;
     bottom: 10px;
 }
-.beian .el-link{
+
+.beian .el-link {
     color: #ccc;
     font-size: 10px;
 }
+
 </style>

@@ -452,7 +452,7 @@ export default {
 .FM_title {
     font-size: 20px;
     color: #000000;
-    margin-left: 4%;
+    margin-left: 5%; 
     padding-top: 20px;
 }
 
@@ -464,7 +464,6 @@ export default {
 }
 
 .viewTitle {
-    margin-left: 1%;
     background-image: linear-gradient(96.14deg,
             rgba(0, 191, 168, 1) 0%,
             #0093bf 100%);
