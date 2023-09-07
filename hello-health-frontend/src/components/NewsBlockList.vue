@@ -13,6 +13,8 @@
                 placeholder="根据关键词查找新闻"
                 :suffix-icon="Search"
             />
+
+
           </el-col>
         </el-row>
         <!-- 三个 NewsBlock 组件 -->
@@ -29,6 +31,7 @@
       <el-footer>
         <!-- 分页组件 -->
         <el-pagination
+                class="footer"
             background
             v-model:page="page"
             :page-size="pageSize"
@@ -135,6 +138,10 @@ export default {
   align-items: center;
 }
 .search-box {
-  padding-bottom: 1%;
+    padding-bottom: 1%;
+}
+.footer{
+    margin-top: 10%;
+    margin-bottom: 2%;
 }
 </style>
