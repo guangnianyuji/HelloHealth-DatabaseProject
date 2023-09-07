@@ -124,7 +124,7 @@ const gotoSpecificFloor = ()=>{
         ElMessage.error("指定的楼层不存在。");
         return;
     }
-    floorDom.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"})
+    floorDom.scrollIntoView({behavior: "smooth", block: "nearest", inline: "nearest"})
 
     setTimeout(()=>{
         floorDom.classList.add("kiraKira")

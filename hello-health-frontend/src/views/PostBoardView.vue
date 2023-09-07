@@ -3,14 +3,13 @@
         <div>
             <el-row >
                 <el-col :span="20">
-                    <div class="forum-title title-with-line" >
+                    <div class="viewTitle tracking-in-expand" >
                         HH论坛
                     </div>
-
                 </el-col>
 
                 <el-col :span="4">
-                    <img alt="" src="../assets/10.png" style="height: 100px">
+                    <img class="fade-in-fwd" alt="" src="/static/10.png" style="height: 100px">
                 </el-col>
             </el-row>
         </div>
@@ -138,6 +137,66 @@
 
 .tagSelector{
     width: 100% !important;
+}
+
+.viewTitle {
+    margin-top: 20px;
+    background-image: linear-gradient(96.14deg,
+            rgba(0, 191, 168, 1) 0%,
+            #0093bf 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    text-align: left;
+    font: 600 32px "Poppins", sans-serif;
+}
+.tracking-in-expand {
+    -webkit-animation: tracking-in-expand 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+    animation: tracking-in-expand 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+}
+
+@-webkit-keyframes tracking-in-expand {
+    0% {
+        letter-spacing: -0.5em;
+        opacity: 0;
+    }
+
+    40% {
+        opacity: 0.6;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes tracking-in-expand {
+    0% {
+        letter-spacing: -0.5em;
+        opacity: 0;
+    }
+
+    40% {
+        opacity: 0.6;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.fade-in-fwd {
+	animation: fade-in-fwd 0.6s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+}
+@keyframes fade-in-fwd {
+  0% {
+    transform: translateZ(-80px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateZ(0);
+    opacity: 1;
+  }
 }
 
 </style>
