@@ -19,6 +19,7 @@
         </el-row>
         <!-- 三个 NewsBlock 组件 -->
         <NewsBlock
+            class="flash tilt-in-left-1"
             v-for="flash in currentNewsList"  :key="flash.id"
             :flash_title="flash.title"
             :flash_date="flash.time"
@@ -144,4 +145,19 @@ export default {
     margin-top: 10%;
     margin-bottom: 2%;
 }
+
+.tilt-in-left-1 {
+	animation: tilt-in-left-1 0.6s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+}
+@keyframes tilt-in-left-1 {
+  0% {
+    transform: rotateX(-30deg) translateX(-300px) skewX(-30deg);
+    opacity: 0;
+  }
+  100% {
+    transform: rotateX(0deg) translateX(0) skewX(0deg);
+    opacity: 1;
+  }
+}
+
 </style>
