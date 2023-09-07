@@ -10,7 +10,7 @@
       <!--放置标签按钮-->
       <el-main class="bottomBox">
         <!--放置图片-->
-        <el-header class="header jello-horizontal"></el-header>
+        <el-header class="header fade-in-fwd"></el-header>
         <!--根据后端获取的标签输出标签-->
         <el-row class="buttonContainer" :gutter="10">
           <!-- 第一层循环，遍历所有的 group -->
@@ -128,36 +128,17 @@ export default {
   font: 600 16px "Poppins", sans-serif;
 }
 
-.jello-horizontal {
-  animation: jello-horizontal 0.9s both;
+.fade-in-fwd {
+	animation: fade-in-fwd 0.6s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
 }
-@keyframes jello-horizontal {
+@keyframes fade-in-fwd {
   0% {
-    transform: scale3d(1, 1, 1);
+    transform: translateZ(-80px);
+    opacity: 0;
   }
-
-  30% {
-    transform: scale3d(1.25, 0.75, 1);
-  }
-
-  40% {
-    transform: scale3d(0.75, 1.25, 1);
-  }
-
-  50% {
-    transform: scale3d(1.15, 0.85, 1);
-  }
-
-  65% {
-    transform: scale3d(0.95, 1.05, 1);
-  }
-
-  75% {
-    transform: scale3d(1.05, 0.95, 1);
-  }
-
   100% {
-    transform: scale3d(1, 1, 1);
+    transform: translateZ(0);
+    opacity: 1;
   }
 }
 
