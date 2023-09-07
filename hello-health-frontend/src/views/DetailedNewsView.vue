@@ -40,8 +40,8 @@
             <div class="logoField">
               <div class="label">发布单位</div>
               <div class="logo" style="position: relative;">
-                <hr style="position: absolute; top: -10px; width: 83%; border:none;border-top:2px solid #e88585;margin-left: 30px;" />
-                <img src="../assets/logo.png" style=" margin-top: 10px;width:250px;margin-left:40px" />
+                <hr style="position: absolute; top: -10px; width: 83%; border:none;border-top:2px solid var(--el-color-primary);margin-left: 30px;" />
+                <img src="../assets/logo1.png" style=" margin-top: 10px;width:250px;margin-left:40px" />
               </div>
             </div>
           </div>
@@ -101,6 +101,7 @@ export default {
 .contentField{
   background-color: white;
   min-height: 800px;
+  padding:2%;
 }
 /*新闻文字内容部分的样式*/
 .contentMain{

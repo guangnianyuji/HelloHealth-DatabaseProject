@@ -89,14 +89,14 @@ export default {
 /*设置按钮的样式*/
 .buttonStyle {
   margin-left: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
   margin-top: 2px;
   background-color: white;
   color: black;
   height: 20px;
   width: 100px;
   font-size: 13px;
-  margin-right: 20px;
+  margin-right: 14px;
   border-color: white;
   text-align: start;
 }
@@ -123,7 +123,6 @@ export default {
       #0093bf 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-
   text-align: left;
   font: 600 16px "Poppins", sans-serif;
 }

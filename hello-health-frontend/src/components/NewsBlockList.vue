@@ -147,7 +147,7 @@ export default {
 }
 
 .tilt-in-left-1 {
-	animation: tilt-in-left-1 0.6s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+	animation: tilt-in-left-1 0.8s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
 }
 @keyframes tilt-in-left-1 {
   0% {

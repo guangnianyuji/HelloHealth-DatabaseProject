@@ -235,7 +235,10 @@ watch(router.currentRoute, () => {
             </div>
 
             <div class="content">
-                <div class="area">
+                <RouterView v-if="gotUserInfo"></RouterView>
+            </div>
+
+            <div class="area">
                     <ul class="circles">
                         <li></li>
                         <li></li>
@@ -249,8 +252,6 @@ watch(router.currentRoute, () => {
                         <li></li>
                     </ul>
                 </div>
-                <RouterView v-if="gotUserInfo"></RouterView>
-            </div>
         </div>
     </div>
 </template>
@@ -338,6 +339,7 @@ watch(router.currentRoute, () => {
     width: 230px;
     min-width: 230px;
     max-width: 230px;
+    background-color: #fff;
     flex: 3;
     position: relative;
 }
