@@ -7,7 +7,7 @@
 <!--        </el-button>-->
             <button link @click="goToInfo">返回</button>
 
-        <img alt="" src="../assets/杏仁币.png" style="height: 50px;margin-top: 10px;margin-left: 24%;margin-right: 5px;">
+        <img alt="" src="/static/杏仁币.png" style="height: 50px;margin-top: 10px;margin-left: 24%;margin-right: 5px;">
 
         <div class="title">
             杏仁币详情
@@ -127,7 +127,7 @@
             </el-container>
             </el-col>
             <el-col :span="12">
-                <img src="../assets/2.png" style="width: 90%;height: 90%;margin-top: 6%;margin-left: 4%">
+                <img src="/static/2.png" style="width: 90%;height: 90%;margin-top: 6%;margin-left: 4%">
             </el-col>
         </el-row>
         </div>

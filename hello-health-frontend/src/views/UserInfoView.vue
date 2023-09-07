@@ -1,5 +1,5 @@
 <template>
-  <!--整个页面是可以上下滚动的-->
+    <!--整个页面是可以上下滚动的-->
     <div class="wrapper">
         <!--展示信息的分栏，分栏1：用户头像-->
         <!--size="100" style="margin-left:20px;margin-top:20px;" fit="contain"-->
@@ -10,23 +10,18 @@
                         <el-aside width="200px">
                             <div class="avatar-container">
                                 <el-avatar :size="100" style="margin-left:30px;margin-top:20px;" fit="contain"
-                                           :src="isLogin ? userInfo.avatarUrl : require('/src/assets/defaultAvatar.png')"></el-avatar>
+                                    :src="isLogin ? userInfo.avatarUrl : require('/static/defaultAvatar.png')"></el-avatar>
                                 <template v-if="isCurrentUser">
                                     <el-button class="pic-edit-button" type="primary" icon="el-icon-edit"
-                                               @click="showPhotoUpload">Edit
+                                        @click="showPhotoUpload">Edit
                                     </el-button>
                                     <el-dialog v-model="photoUpload" title="头像上传" width="50%">
                                         <div style="text-align: center;">
                                             <p>请上传头像</p>
-                                            <el-upload
-                                                    class="upload-demo"
-                                                    action="https://jsonplaceholder.typicode.com/posts/"
-                                                    :auto-upload="false"
-                                                    :on-change="handleChange"
-                                                    accept="image/jpg,image/jpeg,image/png,image/gif"
-                                                    :multiple="false"
-                                                    :file-list="fileList"
-                                            >
+                                            <el-upload class="upload-demo"
+                                                action="https://jsonplaceholder.typicode.com/posts/" :auto-upload="false"
+                                                :on-change="handleChange" accept="image/jpg,image/jpeg,image/png,image/gif"
+                                                :multiple="false" :file-list="fileList">
                                                 <el-button slot="trigger" size="small" type="primary">选取文件
                                                 </el-button>
                                                 <div slot="tip" class="el-upload__tip">上传文件格式为.jpg、.jpeg、.png、.gif，且不超过
@@ -43,13 +38,10 @@
                                         <div class="user-cards">
                                             <el-card class="user-card" v-for="user in followList" :key="user">
                                                 <div class="user-info">
-                                                    <UserInfoCard :user-info="user"
-                                                                  @click="goUserPage(user.user_id)"></UserInfoCard>
-                                                    <el-button
-                                                            :type="followMap.get(user.user_id) ? 'default':'primary' "
-                                                            style="margin: 20px"
-                                                            @click="onFollowBtnClick(user.user_id)"
-                                                    >
+                                                    <UserInfoCard :user-info="user" @click="goUserPage(user.user_id)">
+                                                    </UserInfoCard>
+                                                    <el-button :type="followMap.get(user.user_id) ? 'default' : 'primary'"
+                                                        style="margin: 20px" @click="onFollowBtnClick(user.user_id)">
                                                         {{ followMap.get(user.user_id) ? '已关注' : '+ 关注' }}
                                                     </el-button>
                                                 </div>
@@ -60,13 +52,10 @@
                                         <div class="user-cards">
                                             <el-card class="user-card" v-for="user in fansList" :key="user.user_id">
                                                 <div class="user-info">
-                                                    <UserInfoCard :user-info="user"
-                                                                  @click="goUserPage(user.user_id)"></UserInfoCard>
-                                                    <el-button
-                                                            :type="followMap.get(user.user_id) ?'default':'primary' "
-                                                            style="margin: 20px"
-                                                            @click="onFollowBtnClick(user.user_id)"
-                                                    >
+                                                    <UserInfoCard :user-info="user" @click="goUserPage(user.user_id)">
+                                                    </UserInfoCard>
+                                                    <el-button :type="followMap.get(user.user_id) ? 'default' : 'primary'"
+                                                        style="margin: 20px" @click="onFollowBtnClick(user.user_id)">
                                                         {{ followMap.get(user.user_id) ? '已关注' : '+ 关注' }}
                                                     </el-button>
                                                 </div>
@@ -82,23 +71,19 @@
                             <el-button v-if="!isLogin" class="login-button" type="primary" @click="goToLoginPage">
                                 请登录
                             </el-button>
-                            <el-button
-                                    v-if="isLogin && !isCurrentUser"
-                                    :type="isFollowed ? 'default' : 'primary'"
-                                    style="margin-left: 40px;margin-bottom:10px"
-                                    @click="onFollowBtnClick(null)"
-                            >
+                            <el-button v-if="isLogin && !isCurrentUser" :type="isFollowed ? 'default' : 'primary'"
+                                style="margin-left: 40px;margin-bottom:10px" @click="onFollowBtnClick(null)">
                                 {{ isFollowed ? '已关注' : '+ 关注' }}
                             </el-button>
                             <el-button style="border-color:rgb(0,191,168)" v-else-if="isLogin && isCurrentUser"
-                                       class="attention-list" @click="this.myFollowVisible = true">我的关注
+                                class="attention-list" @click="this.myFollowVisible = true">我的关注
                             </el-button>
                             <el-button style="border-color:rgb(0,191,168)" v-if="isLogin && isCurrentUser"
-                                       class="attention-list" @click="this.myFansVisible = true">我的粉丝
+                                class="attention-list" @click="this.myFansVisible = true">我的粉丝
                             </el-button>
                             <br><br>
                             <span style="font-size: x-large;font-weight: 1000;">{{ followList.length }}</span>&nbsp;关注
-                            <el-divider style="font-size: xx-large" direction="vertical"/>&nbsp;
+                            <el-divider style="font-size: xx-large" direction="vertical" />&nbsp;
                             <span style="font-size: x-large;font-weight: 1000;">{{ fansList.length }}</span>&nbsp;粉丝
                             <br><br>
 
@@ -108,7 +93,7 @@
                                     <span v-if="!isCurrentUser && !userInfo.isCertified">{{ '未认证' }}</span>
                                     <span v-else-if="userInfo.isCertified">{{ certification.professionTitle }}</span>
                                     <el-button v-else-if="isCurrentUser && !userInfo.isCertified"
-                                               class="certificated-button" @click="showCertificationDialog">去认证
+                                        class="certificated-button" @click="showCertificationDialog">去认证
                                     </el-button>
                                     <span v-else>{{ '未认证' }}</span>
                                     <el-dialog v-model="dialogVisible" title="医师认证" width="50%">
@@ -116,13 +101,9 @@
                                             <p>请上传您的医师资格证照片和执业证照片</p>
                                             <br><br>
                                             <el-upload class="upload-demo"
-                                                       action="https://jsonplaceholder.typicode.com/posts/"
-                                                       :auto-upload="false"
-                                                       :on-change="handleChangeDoctor"
-                                                       :multiple="false"
-                                                       :file-list="fileList"
-                                                       accept="image/jpg,image/jpeg,image/png,image/gif"
-                                            >
+                                                action="https://jsonplaceholder.typicode.com/posts/" :auto-upload="false"
+                                                :on-change="handleChangeDoctor" :multiple="false" :file-list="fileList"
+                                                accept="image/jpg,image/jpeg,image/png,image/gif">
                                                 <el-button slot="trigger" size="small" type="primary">选取文件
                                                 </el-button>
                                                 <div slot="tip" class="el-upload__tip">上传文件格式为.jpg、.jpeg、.png、.gif，且不超过
@@ -131,13 +112,9 @@
                                                 <br><br>
                                             </el-upload>
                                             <el-upload class="upload-demo"
-                                                       action="https://jsonplaceholder.typicode.com/posts/"
-                                                       :auto-upload="false"
-                                                       :on-change="handleChangeBusiness"
-                                                       :multiple="false"
-                                                       :file-list="fileList"
-                                                       accept="image/jpg,image/jpeg,image/png,image/gif"
-                                            >
+                                                action="https://jsonplaceholder.typicode.com/posts/" :auto-upload="false"
+                                                :on-change="handleChangeBusiness" :multiple="false" :file-list="fileList"
+                                                accept="image/jpg,image/jpeg,image/png,image/gif">
                                                 <el-button slot="trigger" size="small" type="primary">选取文件
                                                 </el-button>
                                                 <div slot="tip" class="el-upload__tip">上传文件格式为.jpg、.jpeg、.png、.gif，且不超过
@@ -161,13 +138,7 @@
         <!--展示信息的分栏，分栏3：基本信息-->
         <div v-if="isLogin">
             <el-card class="cardStyle">
-                <el-descriptions
-                        class="margin-top"
-                        title="基本信息"
-                        :column="3"
-                        :size="size"
-                        border
-                >
+                <el-descriptions class="margin-top" title="基本信息" :column="3" :size="size" border>
                     <template #extra v-if="isCurrentUser">
                         <!--点“编辑”按钮可以对用户信息进行编辑-->
                         <el-button type="primary" v-if="!isEdit" @click="edit">编辑</el-button>
@@ -184,7 +155,7 @@
                             <div class="input-container">
                                 <!--<input type="text" name="text" class="input" placeholder="请输入用户名"
                                        v-model="userInfo.userName" :disabled="!isEdit">-->
-                                <span >{{ userInfo.userName }}</span>
+                                <span>{{ userInfo.userName }}</span>
                                 <div class="highlight"></div>
                             </div>
                         </el-descriptions-item>
@@ -222,13 +193,8 @@
                             </template>
                             <template v-if="isEdit">
                                 <!-- 在"保存"状态下，生日显示框是一个时间选择框 -->
-                                <el-date-picker
-                                        v-model="userInfo.birthday"
-                                        type="date"
-                                        formate="YYYY/MM/DD"
-                                        value-format="YYYY-MM-DD"
-                                        placeholder="选择日期"
-                                ></el-date-picker>
+                                <el-date-picker v-model="userInfo.birthday" type="date" formate="YYYY/MM/DD"
+                                    value-format="YYYY-MM-DD" placeholder="选择日期"></el-date-picker>
                             </template>
                         </el-descriptions-item>
                         <el-descriptions-item v-if="isCurrentUser">
@@ -255,7 +221,7 @@
                             <div class="input-container">
                                 <div>
                                     <input type="text" name="text" class="input" placeholder="请输入邮箱地址"
-                                           v-model="userInfo.email" :disabled="!isEdit">
+                                        v-model="userInfo.email" :disabled="!isEdit">
                                     <div class="highlight"></div>
                                 </div>
 
@@ -270,7 +236,7 @@
                             <!--从数据库获取个人简介-->
                             <div class="input-container">
                                 <input type="text" name="text" class="input" placeholder="请输入简介"
-                                       v-model="userInfo.description" :disabled="!isEdit">
+                                    v-model="userInfo.description" :disabled="!isEdit">
                                 <div class="highlight"></div>
                             </div>
                         </el-descriptions-item>
@@ -281,13 +247,7 @@
         <!--展示信息的分栏，分栏4：如果用户是医师的话，展示医师信息，否则无-->
         <div v-if="userInfo.isCertified && isLogin">
             <el-card class="cardStyle">
-                <el-descriptions
-                        class="margin-top"
-                        title="医师信息"
-                        :column="3"
-                        :size="size"
-                        border
-                >
+                <el-descriptions class="margin-top" title="医师信息" :column="3" :size="size" border>
                     <template #extra v-if="isCurrentUser">
                         <!--点“编辑”按钮弹出医师认证框-->
                         <el-button type="primary" @click="dialogVisible = true">编辑</el-button>
@@ -295,28 +255,18 @@
                             <div style="text-align: center;">
                                 <p>请上传您的医师资格证照片和执业证照片</p>
                                 <br><br>
-                                <el-upload class="upload-demo"
-                                           action="https://jsonplaceholder.typicode.com/posts/"
-                                           :auto-upload="false"
-                                           :on-change="handleChangeDoctor"
-                                           :multiple="false"
-                                           :file-list="fileList"
-                                           accept="image/jpg,image/jpeg,image/png,image/gif"
-                                >
+                                <el-upload class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/"
+                                    :auto-upload="false" :on-change="handleChangeDoctor" :multiple="false"
+                                    :file-list="fileList" accept="image/jpg,image/jpeg,image/png,image/gif">
                                     <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
                                     <div slot="tip" class="el-upload__tip">上传文件格式为.jpg、.jpeg、.png、.gif，且不超过
                                         2MB
                                     </div>
                                     <br><br>
                                 </el-upload>
-                                <el-upload class="upload-demo"
-                                           action="https://jsonplaceholder.typicode.com/posts/"
-                                           :auto-upload="false"
-                                           :on-change="handleChangeBusiness"
-                                           :multiple="false"
-                                           :file-list="fileList"
-                                           accept="image/jpg,image/jpeg,image/png,image/gif"
-                                >
+                                <el-upload class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/"
+                                    :auto-upload="false" :on-change="handleChangeBusiness" :multiple="false"
+                                    :file-list="fileList" accept="image/jpg,image/jpeg,image/png,image/gif">
                                     <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
                                     <div slot="tip" class="el-upload__tip">上传文件格式为.jpg、.jpeg、.png、.gif，且不超过
                                         2MB
@@ -372,22 +322,20 @@
         <!--展示信息的分栏，分栏5：我的发布-->
         <div v-if="isLogin">
             <el-card class="cardStyle">
-                <el-descriptions
-                        class="margin-top"
-                        :title="isCurrentUser ? '我的发布' : 'ta的发布'"
-                        :column="3"
-                        :size="size"
-                        border
-                >
+                <el-descriptions class="margin-top" :title="isCurrentUser ? '我的发布' : 'ta的发布'" :column="3" :size="size"
+                    border>
                     <template #extra>
                         <span style="font-size: x-large;font-weight: 1000;">{{ userPosts.length }}</span>&nbsp;发布
                     </template>
                 </el-descriptions>
-
+                <div class="tips" v-if="userPosts.length === 0">
+                    <img class="sadImg jello-horizontal" style="height: 256px;" alt="" src="/static/thinking.png" />
+                    <div class="sadTip jello-horizontal">暂时还没有发布的帖子哦~快去发布吧！</div>
+                </div>
                 <el-row v-if="userPosts">
                     <el-col :span="8" v-for="post in userPosts" :key="post">
-                        <PostCard :post_info="post"
-                                  style="margin-left:10% ;margin-right:10% ;margin-bottom: 15%;"></PostCard>
+                        <PostCard :post_info="post" style="margin-left:10% ;margin-right:10% ;margin-bottom: 15%;">
+                        </PostCard>
                     </el-col>
                 </el-row>
             </el-card>
@@ -396,60 +344,46 @@
         <div>
             <el-card class="cardStyle" v-if="isLogin && isCurrentUser">
                 <el-row>
-                <el-col :span="12">
-                    <el-row style="align-items: center; display: flex;">
-                        <el-descriptions
-                                :column="3"
-                                :size="size"
-                                border
-                                margin-top="5px"
-                        >
-                        </el-descriptions>
+                    <el-col :span="12">
+                        <el-row style="align-items: center; display: flex;">
+                            <el-descriptions :column="3" :size="size" border margin-top="5px">
+                            </el-descriptions>
 
-                        <span style="font-size: 16px;font-weight: bold">我的杏仁币</span>
-                        <el-button class="coinButton" v-if="isLogin" link @click="goToCoinDetail" style="font-size:14px">
-                            杏仁币详情>>
-                        </el-button>
-                    </el-row>
-                    <el-row style="margin-top:7%;margin-left: 5%">
-                        <img src="../assets/杏仁币.png"
-                             style="width: 60px;height: 60%;margin-left: 15px;margin-top: 2%"/>
-                        <div style="color:RGB(0,191,168); font-size: 20px;padding-left: 15px;margin-top:6%">
-                            x {{ CoinNum }} 枚
-                        </div>
-                    </el-row>
-                </el-col>
+                            <span style="font-size: 16px;font-weight: bold">我的杏仁币</span>
+                            <el-button class="coinButton" v-if="isLogin" link @click="goToCoinDetail"
+                                style="font-size:14px">
+                                杏仁币详情>>
+                            </el-button>
+                        </el-row>
+                        <el-row style="margin-top:7%;margin-left: 5%">
+                            <img src="/static/杏仁币.png" style="width: 60px;height: 60%;margin-left: 15px;margin-top: 2%" />
+                            <div style="color:RGB(0,191,168); font-size: 20px;padding-left: 15px;margin-top:6%">
+                                x {{ CoinNum }} 枚
+                            </div>
+                        </el-row>
+                    </el-col>
 
-                <el-col :span="12">
-                    <el-row style="margin-left: 1%;margin-bottom: 2%;margin-top: 3.5%;">
-                        <div style="font-size: 16px;font-weight: bold;padding-right: 5px">硬币记录</div>
-                        <div style="font-size: 15px;color: grey;margin-left: 3px;margin-top: 1px;">
-                            您最近一周的变化情况
-                        </div>
-                    </el-row>
-                    <el-table :data="CoinRecordList"
-                              :default-sort="{ prop: 'Time', order: 'ascending' }"
-                              height="150" style="width: 100%" class="table" empty-text="您暂时没有杏仁币记录~">
-                        <el-table-column prop="Time" label="时间" width="150"/>
-                        <el-table-column prop="Num" label="变化" width="120"/>
-                        <el-table-column prop="Reason" label="原因" width="150"/>
-                    </el-table>
-                </el-col>
+                    <el-col :span="12">
+                        <el-row style="margin-left: 1%;margin-bottom: 2%;margin-top: 3.5%;">
+                            <div style="font-size: 16px;font-weight: bold;padding-right: 5px">硬币记录</div>
+                            <div style="font-size: 15px;color: grey;margin-left: 3px;margin-top: 1px;">
+                                您最近一周的变化情况
+                            </div>
+                        </el-row>
+                        <el-table :data="CoinRecordList" :default-sort="{ prop: 'Time', order: 'ascending' }" height="150"
+                            style="width: 100%" class="table" empty-text="您暂时没有杏仁币记录~">
+                            <el-table-column prop="Time" label="时间" width="150" />
+                            <el-table-column prop="Num" label="变化" width="120" />
+                            <el-table-column prop="Reason" label="原因" width="150" />
+                        </el-table>
+                    </el-col>
                 </el-row>
             </el-card>
         </div>
         <!--展示信息的分栏，分栏6：举报信息-->
         <div>
             <el-card class="cardStyle" v-if="isLogin && isCurrentUser">
-                <el-descriptions
-                        class="margin-top clickable"
-                        title="我的举报"
-                        :column="
-
-            3"
-                        :size="size"
-                        border
-                >
+                <el-descriptions class="margin-top clickable" title="我的举报" :column="3" :size="size" border>
                 </el-descriptions>
                 <el-table :data="reportList" height="250" class="table" empty-text="暂无您的举报记录~">
                     <el-table-column v-for="item in reportCols" :key="item.label" :label="item.label">
@@ -460,8 +394,8 @@
                     </el-table-column>
                     <el-table-column label="操作">
                         <template v-slot:default="scope">
-                            <GoToPostLink :floor_number="scope.row.floor_number"
-                                          :post_id="scope.row.post_id"></GoToPostLink>
+                            <GoToPostLink :floor_number="scope.row.floor_number" :post_id="scope.row.post_id">
+                            </GoToPostLink>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -475,13 +409,13 @@ import axios from "axios"
 import PostCard from "@/components/postBoardView/PostCard.vue";
 import NewsBlockList from "@/components/NewsBlockList.vue";
 import globalData from "@/global/global";
-import {ElMessage} from "element-plus";
+import { ElMessage } from "element-plus";
 import UserInfoCard from "@/components/UserInfoCard.vue";
 import GoToPostLink from "@/components/postView/GoToPostLink.vue";
 
 export default {
     name: "UserInfoPage",
-    components: {UserInfoCard, NewsBlockList, PostCard, GoToPostLink},
+    components: { UserInfoCard, NewsBlockList, PostCard, GoToPostLink },
     data() {
         return {
             isSelf: true,
@@ -524,9 +458,9 @@ export default {
             // 举报信息的数据
             reportList: [],
             reportCols: [
-                {prop: 'report_time', label: "举报时间"},
-                {prop: 'respond_time', label: "处理时间"},
-                {prop: "report_status", label: "举报状态"},
+                { prop: 'report_time', label: "举报时间" },
+                { prop: 'respond_time', label: "处理时间" },
+                { prop: "report_status", label: "举报状态" },
             ],
             statusMap: {
                 0: "不通过",
@@ -594,7 +528,7 @@ export default {
                 this.$router.replace("/error");
                 return;
             }
-            axios.post('/api/UserInfo/Details', {user_id: userIdNum})
+            axios.post('/api/UserInfo/Details', { user_id: userIdNum })
                 .then(response => {
                     const responseData = response.data.data.userInfo;
                     this.userInfo = responseData
@@ -669,7 +603,7 @@ export default {
         },
         unfollow(userId) {
             if (userId) {
-                axios.post("/api/UserInfo/unfollowUser", {followUserID: userId})
+                axios.post("/api/UserInfo/unfollowUser", { followUserID: userId })
                     .then(response => {
                         //如果后端返回的状态码是200，那么将isFollowed设置为false
                         this.followMap.set(userId, false)
@@ -680,7 +614,7 @@ export default {
                         error.defaultHandler();
                     });
             } else {
-                axios.post("/api/UserInfo/unfollowUser", {followUserID: this.userInfo.userID})
+                axios.post("/api/UserInfo/unfollowUser", { followUserID: this.userInfo.userID })
                     .then(response => {
                         //如果后端返回的状态码是200，那么将isFollowed设置为false
                         this.isFollowed = false;
@@ -696,7 +630,7 @@ export default {
         followUser(userId) {
 
             if (userId) {
-                axios.post("/api/UserInfo/followUser", {followUserID: userId})
+                axios.post("/api/UserInfo/followUser", { followUserID: userId })
                     .then(response => {
                         //如果后端返回的状态码是200，那么将isFollowed设置为true
                         this.followMap.set(userId, true);
@@ -707,7 +641,7 @@ export default {
                         error.defaultHandler();
                     });
             } else {
-                axios.post("/api/UserInfo/followUser", {followUserID: this.userInfo.userID})
+                axios.post("/api/UserInfo/followUser", { followUserID: this.userInfo.userID })
                     .then(response => {
                         //如果后端返回的状态码是200，那么将isFollowed设置为true
                         this.isFollowed = true;
@@ -999,7 +933,7 @@ export default {
     transition: width 0.3s ease;
 }
 
-.input:focus + .highlight {
+.input:focus+.highlight {
     width: 75%;
 }
 
@@ -1046,5 +980,63 @@ export default {
     font-weight: revert;
     margin-top: 10px;
     font-size: small;
+}
+
+.tips {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* 在主轴上居中对齐 */
+  text-align: center;
+  /* 也可以在文本上进行居中对齐 */
+  margin-top: 10px;
+}
+
+.sadTip {
+  background-image: linear-gradient(96.14deg,
+      #8DBEF8 0%,
+      #377EB6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  text-align: left;
+  font: 600 18px "Poppins", sans-serif;
+
+  margin-top: 5px;
+}
+
+.jello-horizontal {
+  animation: jello-horizontal 0.9s both;
+}
+
+@keyframes jello-horizontal {
+  0% {
+    transform: scale3d(1, 1, 1);
+  }
+
+  30% {
+    transform: scale3d(1.25, 0.75, 1);
+  }
+
+  40% {
+    transform: scale3d(0.75, 1.25, 1);
+  }
+
+  50% {
+    transform: scale3d(1.15, 0.85, 1);
+  }
+
+  65% {
+    transform: scale3d(0.95, 1.05, 1);
+  }
+
+  75% {
+    transform: scale3d(1.05, 0.95, 1);
+  }
+
+  100% {
+    transform: scale3d(1, 1, 1);
+  }
 }
 </style>

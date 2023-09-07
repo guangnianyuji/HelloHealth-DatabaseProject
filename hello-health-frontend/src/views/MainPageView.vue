@@ -6,16 +6,16 @@
             <div class="main">
                 <div class="text-content">
                     <div class="main-welcome">
-                        <div class="welcome">Welcome To<br />HelloHealth</div>
+                        <div class="welcome animate__animated animate__fadeInTopRight">Welcome To<br />HelloHealth</div>
 
-                        <div class="contenttext">
+                        <div class="contenttext  animate__animated animate__fadeInBottomLeft">
                             <p>探寻健康之门，启程HelloHealth</p>
                             <p>加入我们，赋予生命更多的关爱与呵护</p>
                             <p>与全球健康爱好者一起，开启身体心灵的奇妙旅程</p>
                         </div>
                     </div>
 
-                    <button class="btn" @click="go('login')">
+                    <button class="btn animate__animated animate__bounceIn" @click="go('login')">
                         <div>登录 / 注册</div>
                         <svg fill="none" viewBox="0 0 24 24" height="25px" width="25px" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linejoin="round" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"
@@ -28,14 +28,14 @@
                     </button>
                 </div>
 
-                <svg class="vector" width="600" height="600" viewBox="0 0 600 600" fill="none"
+                <svg class="vector animate__animated animate__jackInTheBox" width="600" height="600" viewBox="0 0 600 600" fill="none"
                      xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                     <path d="M600 0H0V600H600V0Z" fill="url(#pattern0)" />
                     <defs>
                         <pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
                             <use xlink:href="#image0_208_60" transform="translate(0 -0.0168634) scale(0.00084317)" />
                         </pattern>
-                        <image xlink:href="@/assets/mainPage1.png" id="image0_208_60" width="1186" height="1226"/>
+                        <image xlink:href="/static/mainPage1.png" id="image0_208_60" width="1186" height="1226"/>
                     </defs>
                 </svg>
             </div>
@@ -101,7 +101,7 @@
                 <el-row :gutter="30">
                     <el-col :span="8">
                         <div class="part-el-card">
-                            <div class="icon-circle" style="background-color: #f3effb">
+                            <div class="icon-circle pulsate-fwd" style="background-color: #f3effb">
                                 <i class="fi fi-rs-medicine" style="color:#c6b4e8"></i>
                             </div>
                             <div class="part-el-card-title">
@@ -123,7 +123,7 @@
 
                     <el-col :span="8">
                         <div class="part-el-card">
-                            <div class="icon-circle" style="background-color: #eaf7f0">
+                            <div class="icon-circle pulsate-fwd" style="background-color: #eaf7f0">
                                 <i class="fi fi-rr-pulse" style="color:#64c58d"></i>
                             </div>
 
@@ -145,7 +145,7 @@
 
                     <el-col :span="8">
                         <div class="part-el-card">
-                            <div class="icon-circle" style="background-color: #ebf3fe">
+                            <div class="icon-circle pulsate-fwd" style="background-color: #ebf3fe">
                                 <i class="fi fi-rs-syringe" style="color:#2f80ed"></i>
                             </div>
 
@@ -179,7 +179,7 @@
                             <div class="footer-title">
                                 HelloHealth
                             </div>
-                                <img src="@/assets/logo2.png" class="logo">
+                            <img src="/static/logo2.png" class="logo heartbeat">
                         </div>
                     </el-col>
 
@@ -213,7 +213,7 @@
                                 <br/>
                                 邮编：201804
                                 <br/>
-                                <img src="@/assets/tjlogo-white.png" class="school"/>
+                                <img src="/static/tjlogo-white.png" class="school"/>
 
                             </div>
                         </div>
@@ -247,13 +247,13 @@ export default {
     data() {
 
         return {
-            We:['guangnianyuji','Huge_Black','bulu','luriak','a-little-dust','cicada1212','wukef2425','Karrr-Angel','mint3242','wyfjc'],
+            We:['guangnianyuji','Huge_Black','bulu','Iuriak','a-little-dust','cicada1212','wukef2425','Karrr-Angel','mint3242','wyfjc'],
         }
     },
     methods:{
         flashPic(item)
         {
-            return "src/assets/homeview"+item+".jpg";
+            return "/static/homeview"+item+".jpg";
         },
         go(place)
         {
@@ -342,7 +342,10 @@ export default {
 .top {
     width: 100%;
     position: relative;
-    background: #f2f7ff;
+    background: linear-gradient(to bottom, 
+    rgba(242, 247, 255, 1) 0%, 
+    rgba(242, 247, 255, 0.5) 80%, 
+    rgba(242, 247, 255, 0) 100%);
     padding: 40px 0;
 }
 
@@ -585,6 +588,48 @@ export default {
 .logo{
     margin-left: 18%;
     margin-top: 3%;
+}
+
+.pulsate-fwd {
+	animation: pulsate-fwd 1.5s ease-in-out infinite both;
+}
+@keyframes pulsate-fwd {
+  0% {
+    transform: scale(0.9);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(0.9);
+  }
+}
+
+.heartbeat {
+	animation: heartbeat 1.7s ease-in-out infinite both;
+}
+@keyframes heartbeat {
+  from {
+    transform: scale(1);
+    transform-origin: center center;
+    animation-timing-function: ease-out;
+  }
+  10% {
+    transform: scale(0.91);
+    animation-timing-function: ease-in;
+  }
+  17% {
+    transform: scale(0.98);
+    animation-timing-function: ease-out;
+  }
+  33% {
+    transform: scale(0.87);
+    animation-timing-function: ease-in;
+  }
+  45% {
+    transform: scale(1);
+    animation-timing-function: ease-out;
+  }
 }
 </style>
   
