@@ -463,8 +463,8 @@ export default {
                 { prop: "report_status", label: "举报状态" },
             ],
             statusMap: {
-                0: "不通过",
-                1: "成功",
+                0: "成功",
+                1: "不通过",
                 2: "审核中",
             },
 
