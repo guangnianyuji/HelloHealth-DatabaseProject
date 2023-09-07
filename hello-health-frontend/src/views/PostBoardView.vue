@@ -6,11 +6,10 @@
                     <div class="viewTitle tracking-in-expand" >
                         HH论坛
                     </div>
-
                 </el-col>
 
                 <el-col :span="4">
-                    <img class="jello-horizontal" alt="" src="../assets/10.png" style="height: 100px">
+                    <img class="fade-in-fwd" alt="" src="../assets/10.png" style="height: 100px">
                 </el-col>
             </el-row>
         </div>
@@ -141,7 +140,7 @@
 }
 
 .viewTitle {
-    margin-left: 1%;
+    margin-top: 20px;
     background-image: linear-gradient(96.14deg,
             rgba(0, 191, 168, 1) 0%,
             #0093bf 100%);
@@ -186,31 +185,17 @@
     }
 }
 
-.jello-horizontal {
-	animation: jello-horizontal 0.9s both;
+.fade-in-fwd {
+	animation: fade-in-fwd 0.6s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
 }
-
-@keyframes jello-horizontal {
+@keyframes fade-in-fwd {
   0% {
-    transform: scale3d(1, 1, 1);
-  }
-  30% {
-    transform: scale3d(1.25, 0.75, 1);
-  }
-  40% {
-    transform: scale3d(0.75, 1.25, 1);
-  }
-  50% {
-    transform: scale3d(1.15, 0.85, 1);
-  }
-  65% {
-    transform: scale3d(0.95, 1.05, 1);
-  }
-  75% {
-    transform: scale3d(1.05, 0.95, 1);
+    transform: translateZ(-80px);
+    opacity: 0;
   }
   100% {
-    transform: scale3d(1, 1, 1);
+    transform: translateZ(0);
+    opacity: 1;
   }
 }
 

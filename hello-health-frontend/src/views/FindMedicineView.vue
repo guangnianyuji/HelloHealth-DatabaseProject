@@ -380,7 +380,7 @@ export default {
                     </el-col>
                 </el-row>
             </el-col>
-            <el-col :span="6"><img class="img jello-horizontal" style="margin-top:10px;" alt="" src="@/assets/FindMedicine.png" /></el-col>
+            <el-col :span="6"><img class="img fade-in-fwd" style="margin-top:10px;" alt="" src="@/assets/FindMedicine.png" /></el-col>
         </el-row>
 
         <el-tabs type="border-card" class="result_title result_box">
@@ -628,7 +628,6 @@ export default {
     -webkit-animation: tracking-in-expand 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
     animation: tracking-in-expand 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
 }
-
 @-webkit-keyframes tracking-in-expand {
     0% {
         letter-spacing: -0.5em;
@@ -643,7 +642,6 @@ export default {
         opacity: 1;
     }
 }
-
 @keyframes tracking-in-expand {
     0% {
         letter-spacing: -0.5em;
@@ -659,31 +657,17 @@ export default {
     }
 }
 
-.jello-horizontal {
-	animation: jello-horizontal 0.9s both;
+.fade-in-fwd {
+	animation: fade-in-fwd 0.6s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
 }
-
-@keyframes jello-horizontal {
+@keyframes fade-in-fwd {
   0% {
-    transform: scale3d(1, 1, 1);
-  }
-  30% {
-    transform: scale3d(1.25, 0.75, 1);
-  }
-  40% {
-    transform: scale3d(0.75, 1.25, 1);
-  }
-  50% {
-    transform: scale3d(1.15, 0.85, 1);
-  }
-  65% {
-    transform: scale3d(0.95, 1.05, 1);
-  }
-  75% {
-    transform: scale3d(1.05, 0.95, 1);
+    transform: translateZ(-80px);
+    opacity: 0;
   }
   100% {
-    transform: scale3d(1, 1, 1);
+    transform: translateZ(0);
+    opacity: 1;
   }
 }
 
