@@ -380,7 +380,7 @@ export default {
                     </el-col>
                 </el-row>
             </el-col>
-            <el-col :span="6"><img class="img fade-in-fwd" style="margin-top:10px;" alt="" src="@/assets/FindMedicine.png" /></el-col>
+            <el-col :span="6"><img class="img fade-in-fwd" style="margin-top:10px;" alt="" src="/static/FindMedicine.png" /></el-col>
         </el-row>
 
         <el-tabs type="border-card" class="result_title result_box">

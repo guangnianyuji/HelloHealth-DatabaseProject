@@ -7,7 +7,7 @@
         </div>
         <!--
        <img v-else
-           src="../assets/loading.gif"
+           src="/static/loading.gif"
            class="image"
            />
          -->

@@ -9,7 +9,7 @@
                 </el-col>
 
                 <el-col :span="4">
-                    <img class="fade-in-fwd" alt="" src="../assets/10.png" style="height: 100px">
+                    <img class="fade-in-fwd" alt="" src="/static/10.png" style="height: 100px">
                 </el-col>
             </el-row>
         </div>

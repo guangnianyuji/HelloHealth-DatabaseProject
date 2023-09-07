@@ -41,7 +41,7 @@
               <div class="label">发布单位</div>
               <div class="logo" style="position: relative;">
                 <hr style="position: absolute; top: -10px; width: 83%; border:none;border-top:2px solid var(--el-color-primary);margin-left: 30px;" />
-                <img src="../assets/logo1.png" style=" margin-top: 10px;width:250px;margin-left:40px" />
+                <img src="/static/logo1.png" style=" margin-top: 10px;width:250px;margin-left:40px" />
               </div>
             </div>
           </div>

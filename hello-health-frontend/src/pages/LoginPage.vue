@@ -3,7 +3,7 @@
         <div class="content">
             <el-button class="closeButton" type="primary" link @click="goHome"><i class="fi fi-br-cross"></i></el-button>
             <div class="wrapper">
-                <img alt="" src="../assets/login.gif"/>
+                <img alt="" src="/static/login.gif"/>
                 <RouterView></RouterView>
             </div>
         </div>
