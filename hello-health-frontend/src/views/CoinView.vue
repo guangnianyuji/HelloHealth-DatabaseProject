@@ -1,12 +1,13 @@
 <template>
     <div>
         <el-row class="title-wrapper" style="">
-        <el-button class="button" link @click="goToInfo">
-            <i class="fi fi-br-angle-left" style="font-size:20px;"></i>
-                <div style="margin-left: 3px;font-size:20px ;margin-right:5px;">返回</div>
-        </el-button>
+<!--        <el-button class="button" link @click="goToInfo">-->
+<!--            <i class="fi fi-br-angle-left" style="font-size:20px;"></i>-->
+<!--                <div style="margin-left: 3px;font-size:20px ;margin-right:5px;">返回</div>-->
+<!--        </el-button>-->
+            <button link @click="goToInfo">返回</button>
 
-        <img alt="" src="../assets/杏仁币.png" style="height: 50px;margin-top: 8px;margin-left: 24%;margin-right: 5px;">
+        <img alt="" src="../assets/杏仁币.png" style="height: 50px;margin-top: 10px;margin-left: 24%;margin-right: 5px;">
 
         <div class="title">
             杏仁币详情
@@ -22,14 +23,14 @@
         <el-container>
             <el-aside class="left">
                 <el-row>
-                    <div style="font-size: 15px;">杏仁币记录</div>
-                    <div style="font-size: 15px;color: grey;margin-left: 3px;">
+                    <div style="font-size: 15px;font-weight: bold">杏仁币记录</div>
+                    <div style="font-size: 15px;color: grey;margin-left: 10px;">
                         您最近一周的变化情况
                     </div>
                 </el-row>
                 <el-table :data="CoinRecordList" 
                     :default-sort="{ prop: 'Time', order: 'ascending' }" 
-                    height="230" style="width: 100%" class="table" empty-text="您暂时没有杏仁币记录~">
+                    height="230" style="    width: 100%" class="table" empty-text="您暂时没有杏仁币记录~">
                 <el-table-column prop="Time" label="时间" width="150" />
                 <el-table-column prop="Num" label="变化" width="120" />
                 <el-table-column prop="Reason" label="原因" width="250"/>
@@ -37,41 +38,40 @@
             </el-aside>
             <el-main class="right">
                 <el-row>
-                    <div style="font-size: 16px;margin-bottom: 1%;">杏仁币介绍</div>
+                    <div style="font-size: 16px;margin-bottom: 1%;font-weight: bold">杏仁币介绍</div>
                 </el-row>
                 <el-row>
-                    <div style="font-size: 14px;margin-bottom: 1%;">杏仁币有什么用</div>
-                </el-row>
-                <el-row>
-                    <div style="font-size: 14px;color: grey;">
+                    <div style="font-size: 15px;color: grey;">
                         杏仁币是本平台中专用的虚拟货币，取自“杏林春暖 ，悬壶济世”之意。
                     </div>
                 </el-row>
                 <el-row>
-                    <div style="font-size: 14px;color: grey;">
+                    <div style="font-size: 15px;color: grey;">
                         • 用于对优秀帖子进行投币。
                     </div>
                 </el-row>
                 <el-row>
-                    <div style="font-size: 14px;color: grey;">
+                    <div style="font-size: 15px;color: grey;">
                         • 可以用来悬赏专业医生用户回答专业问题。
                     </div>
                 </el-row>
                 <el-row>
-                    <div style="font-size: 14px;margin-top: 5%;margin-bottom: 1%;">如何获得杏仁币</div>
+                    <div style="font-size: 16px;margin-top: 5%;margin-bottom: 1%;font-weight: bold">如何获得杏仁币</div>
                 </el-row>
                 <el-row>
-                    <div style="font-size: 14px;color: grey;">
+                    <div style="font-size: 15px;color: grey;">
                         • 每日登录。
                     </div>
                 </el-row>
                 <el-row>
-                    <div style="font-size: 14px;color: grey;">
+                    <div style="font-size: 15px;color: grey;">
                         • 发帖被投杏仁币、发帖获得较大浏览量和获得高价值流量认可。
                     </div>
                 </el-row>
             </el-main>
         </el-container>
+            <el-row>
+                <el-col :span="12">
         <el-row>
             <div class="buy-title">购买杏仁币 </div>
         </el-row>
@@ -100,7 +100,6 @@
                 style="margin-left: 1%;"
                 />
         </el-row>
-        <el-row>
             <el-container style="padding-left: 4%;">
                 <el-aside class="pay-image">
                 </el-aside>
@@ -122,10 +121,14 @@
                         style="margin-top: 2.8%;">
                         我已阅读并同意
                         </el-checkbox>
-                        <a @click="GoUserAgreement" style="font-size:14px;margin-top: 3.7%;text-decoration: underline;">《杏仁币用户协议》</a>
+                        <a @click="GoUserAgreement" style="font-size:14px;margin-top: 5.5%;text-decoration: underline;">《杏仁币用户协议》</a>
                     </el-row>
                 </el-main>
             </el-container>
+            </el-col>
+            <el-col :span="12">
+                <img src="../assets/2.png" style="width: 90%;height: 90%;margin-top: 6%;margin-left: 4%">
+            </el-col>
         </el-row>
         </div>
         
@@ -167,7 +170,8 @@
 .title{
     font-size: 30px;
     margin-left: 0%;
-    margin-top: 1%;
+    margin-top: 1.5%;
+    font-weight: bold;
 }
 
 .button{
@@ -190,7 +194,6 @@
 }
 .right{
     width: auto;
-    padding-top: 30px;
     margin-left: 4%;
 }
 .buy-title{
@@ -279,6 +282,35 @@
     color:var(--el-color-primary);
     font-weight: 700;
     font-size: 24px;
+}
+button {
+    margin-left: 6%;
+    margin-top: 1.5%;
+    margin-bottom: 1%;
+    padding: 0.7em 2.4em;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    font-weight: 1000;
+    color: #000;
+    background-color: #fff;
+    border: none;
+    border-radius: 45px;
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease 0s;
+    cursor: pointer;
+    outline: none;
+}
+
+button:hover {
+    background-color: RGB(0,191,168);
+    box-shadow: 0px 15px 20px rgba(46, 229, 157, 0.4);
+    color: #fff;
+    transform: translateY(-7px);
+}
+
+button:active {
+    transform: translateY(-1px);
 }
 </style>
 
