@@ -31,7 +31,7 @@
               <div v-if="item.id === 'medicine_image'">
               <img :src="item.content" style="width: 100%;height: 100%;objec-fit: cover;"><!--alt="Medicine Image"-->
               </div>
-              <div v-if="item.id === 'collect_memory'" class="collectionMemory">
+              <div v-else-if="item.id === 'collect_memory'" class="collectionMemory">
                 <div v-if="isCollected">
                 <el-input v-model="collectMemory" placeholder="Please input" class="input-with-select">
                   <template #append>
@@ -281,7 +281,7 @@ export default {
     --white: #e3e3e3;
     --bc: rgba(15, 70, 115, 0.6);
     --bc-al: rgba(12, 133, 119, 0.62);
-    --bc-st: rgba(120, 255, 217, 0.3);
+    --bc-st: rgba(12, 133, 119, 0.3);
     left: 50%;
     /* 将左侧位置设置为 50% */
     transform: translate(-50%);
