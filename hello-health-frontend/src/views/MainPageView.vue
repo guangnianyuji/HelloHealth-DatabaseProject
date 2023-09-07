@@ -6,36 +6,36 @@
             <div class="main">
                 <div class="text-content">
                     <div class="main-welcome">
-                        <div class="welcome">Welcome To<br />HelloHealth</div>
+                        <div class="welcome focus-in-contract-bck">Welcome To<br />HelloHealth</div>
 
-                        <div class="contenttext">
+                        <div class="contenttext focus-in-contract-bck">
                             <p>探寻健康之门，启程HelloHealth</p>
                             <p>加入我们，赋予生命更多的关爱与呵护</p>
                             <p>与全球健康爱好者一起，开启身体心灵的奇妙旅程</p>
                         </div>
                     </div>
 
-                    <button class="btn" @click="go('login')">
+                    <button class="btn bounce-top" @click="go('login')">
                         <div>登录 / 注册</div>
                         <svg fill="none" viewBox="0 0 24 24" height="25px" width="25px" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linejoin="round" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"
-                                  stroke="white" d="M11.6801 14.62L14.2401 12.06L11.6801 9.5"></path>
+                                stroke="white" d="M11.6801 14.62L14.2401 12.06L11.6801 9.5"></path>
                             <path stroke-linejoin="round" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"
-                                  stroke="white" d="M4 12.0601H14.17"></path>
+                                stroke="white" d="M4 12.0601H14.17"></path>
                             <path stroke-linejoin="round" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"
-                                  stroke="white" d="M12 4C16.42 4 20 7 20 12C20 17 16.42 20 12 20"></path>
+                                stroke="white" d="M12 4C16.42 4 20 7 20 12C20 17 16.42 20 12 20"></path>
                         </svg>
                     </button>
                 </div>
 
-                <svg class="vector" width="600" height="600" viewBox="0 0 600 600" fill="none"
-                     xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                <svg class="vector fade-in-fwd" width="600" height="600" viewBox="0 0 600 600" fill="none"
+                    xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                     <path d="M600 0H0V600H600V0Z" fill="url(#pattern0)" />
                     <defs>
                         <pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
                             <use xlink:href="#image0_208_60" transform="translate(0 -0.0168634) scale(0.00084317)" />
                         </pattern>
-                        <image xlink:href="@/assets/mainPage1.png" id="image0_208_60" width="1186" height="1226"/>
+                        <image xlink:href="@/assets/mainPage1.png" id="image0_208_60" width="1186" height="1226" />
                     </defs>
                 </svg>
             </div>
@@ -45,7 +45,7 @@
 
             <el-row style="display: flex; align-items: center;">
                 <el-col :span="18">
-                    <NewsCarousel/>
+                    <NewsCarousel />
                     <!--
                     <el-carousel >
                         <el-carousel-item v-for="item in 4" :key="item">
@@ -101,13 +101,13 @@
                 <el-row :gutter="30">
                     <el-col :span="8">
                         <div class="part-el-card">
-                            <div class="icon-circle" style="background-color: #f3effb">
+                            <div class="icon-circle pulsate-bck" style="background-color: #f3effb">
                                 <i class="fi fi-rs-medicine" style="color:#c6b4e8"></i>
                             </div>
                             <div class="part-el-card-title">
                                 HH找药
                             </div>
-                            <div class="part-el-card-space cardDesc" >
+                            <div class="part-el-card-space cardDesc">
                                 <p>药品库的详细分类，结合智能推荐，为您快速定位查询所需药品。</p>
                                 <p>收藏您常用和感兴趣的药品，打造您的专属药品库。</p>
                             </div>
@@ -115,7 +115,9 @@
                             <div class="part-el-card-space" style="text-align: center;">
                                 <button class="detailButton" @click="go('medicine')">
                                     <i class="fi-rr-capsules"></i> &nbsp;&nbsp;点击进入
-                                    <div class="detailHoverEffect"><div></div></div>
+                                    <div class="detailHoverEffect">
+                                        <div></div>
+                                    </div>
                                 </button>
                             </div>
                         </div>
@@ -123,7 +125,7 @@
 
                     <el-col :span="8">
                         <div class="part-el-card">
-                            <div class="icon-circle" style="background-color: #eaf7f0">
+                            <div class="icon-circle pulsate-bck" style="background-color: #eaf7f0">
                                 <i class="fi fi-rr-pulse" style="color:#64c58d"></i>
                             </div>
 
@@ -137,7 +139,9 @@
                             <div class="part-el-card-space" style="text-align: center;">
                                 <button class="detailButton" @click="go('calendar')">
                                     <i class="fi-rr-calendar-clock"></i> &nbsp;&nbsp;点击进入
-                                    <div class="detailHoverEffect"><div></div></div>
+                                    <div class="detailHoverEffect">
+                                        <div></div>
+                                    </div>
                                 </button>
                             </div>
                         </div>
@@ -145,7 +149,7 @@
 
                     <el-col :span="8">
                         <div class="part-el-card">
-                            <div class="icon-circle" style="background-color: #ebf3fe">
+                            <div class="icon-circle pulsate-bck" style="background-color: #ebf3fe">
                                 <i class="fi fi-rs-syringe" style="color:#2f80ed"></i>
                             </div>
 
@@ -159,7 +163,9 @@
                             <div class="part-el-card-space" style="text-align: center;">
                                 <button class="detailButton" @click="go('forum')">
                                     <i class="fi-rr-user-md-chat"></i> &nbsp;&nbsp;点击进入
-                                    <div class="detailHoverEffect"><div></div></div>
+                                    <div class="detailHoverEffect">
+                                        <div></div>
+                                    </div>
                                 </button>
                             </div>
                         </div>
@@ -170,7 +176,7 @@
 
         </div>
 
-        <div >
+        <div>
             <div style="background-color: #00bfa8;">
                 <el-row style="width: 95%; margin: 0 auto;">
                     <el-col :span="8">
@@ -193,7 +199,7 @@
                             <div class="footer-content">
                                 <el-row>
                                     <el-col :span="12" v-for="name in We" :key="name">
-                                        <div style="margin-top:10%"> {{name}} </div>
+                                        <div style="margin-top:10%"> {{ name }} </div>
                                     </el-col>
                                 </el-row>
                             </div>
@@ -220,7 +226,7 @@
                 </div>
 
                 <div>
-                    <br/>
+                    <br />
                 </div>
             </div>
         </div>
@@ -231,36 +237,51 @@
 <script>
 import globalData from "@/global/global";
 import router from "@/router";
-import {ElMessage} from "element-plus";
+import { ElMessage } from "element-plus";
 import NewsCarousel from "../components/NewsCarousel.vue";
+
+import WOW from "wow.js";
+
 export default {
 
-    components: {NewsCarousel},
+    components: { NewsCarousel },
     props: {},
     data() {
 
         return {
-            We:['guangnianyuji','Huge_Black','bulu','luriak','a-little-dust','cicada1212','wukef2425','Karrr-Angel','mint3242','wyfjc'],
+            We: ['guangnianyuji', 'Huge_Black', 'bulu', 'luriak', 'a-little-dust', 'cicada1212', 'wukef2425', 'Karrr-Angel', 'mint3242', 'wyfjc'],
         }
     },
-    methods:{
-        flashPic(item)
-        {
-            return "src/assets/homeview"+item+".jpg";
+    mounted() {
+        var wow = new WOW({
+            boxClass: "wow", // animated element css class (default is wow)
+            animateClass: "animated", // animation css class (default is animated)
+            offset: 0, // distance to the element when triggering the animation (default is 0)
+            mobile: true, // trigger animations on mobile devices (default is true)
+            live: true, // act on asynchronously loaded content (default is true)
+            callback: function (box) {
+                // the callback is fired every time an animation is started
+                // the argument that is passed in is the DOM node being animated
+            },
+            scrollContainer: null, // optional scroll container selector, otherwise use window,
+            resetAnimation: true, // reset animation on end (default is true)
+        });
+        wow.init();
+    },
+    methods: {
+        flashPic(item) {
+            return "src/assets/homeview" + item + ".jpg";
         },
-        go(place)
-        {
+        go(place) {
             console.log(place);
-            if(place==='login')
-            {
-                if(globalData.login)
-                {
+            if (place === 'login') {
+                if (globalData.login) {
                     ElMessage.success('您已登录！')
                     return;
                 }
             }
 
-            let pathname="/"+place;
+            let pathname = "/" + place;
             console.log(pathname);
             router.push(pathname)
         }
@@ -268,31 +289,35 @@ export default {
 };
 </script>
 <style scoped>
-
-.beian{
+.beian {
     text-align: center;
-    
-    
+
+
 }
-.el-link{
-    font-size:150%;
-    color:ghostwhite;
+
+.el-link {
+    font-size: 150%;
+    color: ghostwhite;
 }
-.footer-content{
-    color:ghostwhite;
-    font-size:100%;
-    font-weight:300;
+
+.footer-content {
+    color: ghostwhite;
+    font-size: 100%;
+    font-weight: 300;
 }
-.footer-part{
-    margin-left:10%;
+
+.footer-part {
+    margin-left: 10%;
 }
-.footer-title{
-    margin-top:20%;
-    color:ghostwhite;
-    font-size:300%;
-    font-weight:600;
+
+.footer-title {
+    margin-top: 20%;
+    color: ghostwhite;
+    font-size: 300%;
+    font-weight: 600;
 }
-.icon-circle{
+
+.icon-circle {
     width: 5vw;
     height: 5vw;
     border-radius: 50%;
@@ -300,30 +325,31 @@ export default {
 
 }
 
-.part-el-card-space{
+.part-el-card-space {
     color: #9eb4cb;
     margin: 5% 0;
 }
 
-.cardDesc{
+.cardDesc {
     height: 150px;
     max-height: 150px;
     overflow: hidden;
 }
 
-.part-el-card-title{
-    font-size:xx-large;
-    font-weight:600;
+.part-el-card-title {
+    font-size: xx-large;
+    font-weight: 600;
     margin-top: 8%;
 }
-.part-el-card{
-    border-radius:25px ;
+
+.part-el-card {
+    border-radius: 25px;
     background-color: #fff;
     padding: 40px;
-    box-shadow: 0 6px 6px rgba(36,37,38,.02);
+    box-shadow: 0 6px 6px rgba(36, 37, 38, .02);
 }
 
-.part{
+.part {
     margin: 10%;
 }
 
@@ -342,7 +368,7 @@ export default {
 .main {
     display: flex;
     flex-direction: row;
-    
+
     align-items: center;
     justify-content: space-between;
     position: relative;
@@ -358,7 +384,7 @@ export default {
     justify-content: center;
     flex-shrink: 0;
     position: relative;
-    margin-left:10%;
+    margin-left: 10%;
 }
 
 .main-welcome {
@@ -374,10 +400,10 @@ export default {
 
 .welcome {
     background-image: linear-gradient(96.14deg,
-    rgba(0, 191, 168, 1) 0%,
-    #0093bf 100%);
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
+            rgba(0, 191, 168, 1) 0%,
+            #0093bf 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 
     text-align: left;
     font: 700 84px "Poppins", sans-serif;
@@ -388,6 +414,25 @@ export default {
     left: 8px;
 }
 
+.focus-in-contract-bck {
+    animation: focus-in-contract-bck 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+}
+
+@keyframes focus-in-contract-bck {
+    0% {
+        letter-spacing: 1em;
+        transform: translateZ(300px);
+        filter: blur(12px);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateZ(12px);
+        filter: blur(0);
+        opacity: 1;
+    }
+}
+
 .contenttext {
     color: var(--second, #6c87ae);
     text-align: left;
@@ -396,7 +441,7 @@ export default {
     left: 8px;
 }
 
-.contenttext>p{
+.contenttext>p {
     margin-bottom: 5px;
 }
 
@@ -540,31 +585,146 @@ export default {
     }
 }
 
-.icon-circle{
+.icon-circle {
     display: flex;
     align-items: center;
     justify-content: center;
 }
-.icon-circle>.fi{
+
+.icon-circle>.fi {
     height: 44px;
     font-size: 40px;
 }
 
-.functionTitle{
+.functionTitle {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin: 0 0 30px 0;
 }
 
-.functionTitle>.functionDesc{
+.functionTitle>.functionDesc {
     max-width: 50%;
 }
 
-.functionRow{
+.functionRow {
     display: flex;
     gap: 5%;
 }
 
+
+/* ----------------------------------------------
+ * Generated by Animista on 2023-9-6
+ * Licensed under FreeBSD License.
+ * See http://animista.net/license for more info. 
+ * w: http://animista.net, t: @cssanimista
+ * ---------------------------------------------- */
+
+/**
+ * ----------------------------------------
+ * animation bounce-top
+ * ----------------------------------------
+ */
+.bounce-top {
+    animation: bounce-top 0.9s both;
+}
+
+@keyframes bounce-top {
+    0% {
+        transform: translateY(-45px);
+        animation-timing-function: ease-in;
+        opacity: 1;
+    }
+
+    24% {
+        opacity: 1;
+    }
+
+    40% {
+        transform: translateY(-24px);
+        animation-timing-function: ease-in;
+    }
+
+    65% {
+        transform: translateY(-12px);
+        animation-timing-function: ease-in;
+    }
+
+    82% {
+        transform: translateY(-6px);
+        animation-timing-function: ease-in;
+    }
+
+    93% {
+        transform: translateY(-4px);
+        animation-timing-function: ease-in;
+    }
+
+    25%,
+    55%,
+    75%,
+    87% {
+        transform: translateY(0px);
+        animation-timing-function: ease-out;
+    }
+
+    100% {
+        transform: translateY(0px);
+        animation-timing-function: ease-out;
+        opacity: 1;
+    }
+}
+
+.fade-in-fwd {
+    animation: fade-in-fwd 2s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+}
+
+@keyframes fade-in-fwd {
+    0% {
+        transform: translateZ(-80px);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateZ(0);
+        opacity: 1;
+    }
+}
+
+.pulsate-bck {
+    animation: pulsate-bck 2s ease-in-out infinite both;
+}
+
+@keyframes pulsate-bck {
+    0% {
+        transform: scale(1.1);
+    }
+
+    50% {
+        transform: scale(0.9);
+    }
+
+    100% {
+        transform: scale(1.1);
+    }
+}
+
+.swing-in-top-fwd {
+    animation: swing-in-top-fwd 1s cubic-bezier(0.175, 0.885, 0.320, 1.275) both;
+}
+
+@keyframes swing-in-top-fwd {
+    0% {
+        transform: rotateX(-100deg);
+        transform-origin: top;
+        opacity: 0;
+    }
+
+    100% {
+        transform: rotateX(0deg);
+        transform-origin: top;
+        opacity: 1;
+    }
+}
 </style>
   

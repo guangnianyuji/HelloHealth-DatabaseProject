@@ -3,14 +3,14 @@
         <div>
             <el-row >
                 <el-col :span="20">
-                    <div class="forum-title title-with-line" >
+                    <div class="viewTitle tracking-in-expand" >
                         HH论坛
                     </div>
 
                 </el-col>
 
                 <el-col :span="4">
-                    <img alt="" src="../assets/10.png" style="height: 100px">
+                    <img class="jello-horizontal" alt="" src="../assets/10.png" style="height: 100px">
                 </el-col>
             </el-row>
         </div>
@@ -138,6 +138,80 @@
 
 .tagSelector{
     width: 100% !important;
+}
+
+.viewTitle {
+    margin-left: 1%;
+    background-image: linear-gradient(96.14deg,
+            rgba(0, 191, 168, 1) 0%,
+            #0093bf 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    text-align: left;
+    font: 600 32px "Poppins", sans-serif;
+}
+.tracking-in-expand {
+    -webkit-animation: tracking-in-expand 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+    animation: tracking-in-expand 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+}
+
+@-webkit-keyframes tracking-in-expand {
+    0% {
+        letter-spacing: -0.5em;
+        opacity: 0;
+    }
+
+    40% {
+        opacity: 0.6;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes tracking-in-expand {
+    0% {
+        letter-spacing: -0.5em;
+        opacity: 0;
+    }
+
+    40% {
+        opacity: 0.6;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.jello-horizontal {
+	animation: jello-horizontal 0.9s both;
+}
+
+@keyframes jello-horizontal {
+  0% {
+    transform: scale3d(1, 1, 1);
+  }
+  30% {
+    transform: scale3d(1.25, 0.75, 1);
+  }
+  40% {
+    transform: scale3d(0.75, 1.25, 1);
+  }
+  50% {
+    transform: scale3d(1.15, 0.85, 1);
+  }
+  65% {
+    transform: scale3d(0.95, 1.05, 1);
+  }
+  75% {
+    transform: scale3d(1.05, 0.95, 1);
+  }
+  100% {
+    transform: scale3d(1, 1, 1);
+  }
 }
 
 </style>
