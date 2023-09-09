@@ -1,12 +1,13 @@
 <script setup>
 import globalData from "@/global/global";
+import router from "@/router";
 const props = defineProps({
     post_id: Number,
     floor_number:Number
 })
 
 const goOriginPost = () => {
-    window.open(`${globalData.userWebsite}/forum/${props.post_id}?floor=${props.floor_number}`)
+    router.push(`/forum/${props.post_id}?floor=${props.floor_number}`)
 }
 </script>
 
