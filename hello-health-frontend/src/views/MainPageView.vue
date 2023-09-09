@@ -356,7 +356,7 @@ export default {
     align-items: center;
     justify-content: space-between;
     position: relative;
-    margin: 0 auto;
+    margin: 0 10%;
     overflow: hidden;
 }
 
@@ -368,7 +368,6 @@ export default {
     justify-content: center;
     flex-shrink: 0;
     position: relative;
-    margin-left:10%;
 }
 
 .main-welcome {
