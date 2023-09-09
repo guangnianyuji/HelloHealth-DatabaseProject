@@ -182,7 +182,7 @@ const gotoSpecificFloor = ()=>{
             </span>
         </template>
     </el-dialog>
-    <WritePostButton @click="openCommentEditor" v-if="globalData.login && (!postInfo.data.is_bounty || globalData.userInfo.verified)"></WritePostButton>
+    <WritePostButton @click="openCommentEditor" v-if="globalData.login"></WritePostButton>
 </template>
 
 <style scoped>
