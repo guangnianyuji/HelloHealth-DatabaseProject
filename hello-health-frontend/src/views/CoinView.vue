@@ -120,8 +120,9 @@
                         v-model="checkedAgree" size="large" 
                         style="margin-top: 2.8%;">
                         我已阅读并同意
+                            <a @click="GoUserAgreement" style="font-size:14px;margin-top: 5.5%;text-decoration: underline;">《杏仁币用户协议》</a>
                         </el-checkbox>
-                        <a @click="GoUserAgreement" style="font-size:14px;margin-top: 5.5%;text-decoration: underline;">《杏仁币用户协议》</a>
+
                     </el-row>
                 </el-main>
             </el-container>
