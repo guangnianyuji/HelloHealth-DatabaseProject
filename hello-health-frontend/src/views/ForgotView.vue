@@ -22,7 +22,7 @@
             </div>
         </el-form-item>
         <el-form-item label="新密码" v-bind:class="{ error: isError }">
-            <el-input v-model="forgotPasswordCredential.password" type="password" @click="clearErrorBorder" show-password/>
+            <el-input v-model="forgotPasswordCredential.new_password" type="password" @click="clearErrorBorder" show-password/>
         </el-form-item>
         <el-form-item label="确认密码" v-bind:class="{ error: isError }">
             <el-input v-model="repeatPassword" type="password" @click="clearErrorBorder" show-password/>
@@ -66,6 +66,7 @@ const onSubmit = async () => {
     isError.value = false;
 
     let regPhone = /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/
+    console.log(forgotPasswordCredential)
     if(forgotPasswordCredential.user_phone===''){
         errorMsg.value = "请输入手机号！"
         isError.value = true
@@ -78,16 +79,16 @@ const onSubmit = async () => {
         errorMsg.value = '请输入验证码！'
         isError.value = true
         return
-    } else if (forgotPasswordCredential.password === '') {
+    } else if (forgotPasswordCredential.new_password === '') {
         errorMsg.value = '请输入新密码！'
         isError.value = true
         return
-    } else if (repeatPassword.value !== forgotPasswordCredential.password) {
+    } else if (repeatPassword.value !== forgotPasswordCredential.new_password) {
         errorMsg.value = '两次密码输入不一致！'
         isError.value = true
         return
     }
-
+    
     axios.post("/api/Register/ForgotPassword",forgotPasswordCredential).then(response => {
         isError.value = false;
         errorMsg.value = ''
