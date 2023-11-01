@@ -229,6 +229,14 @@
                 <div>
                     <br/>
                 </div>
+                
+                <div class="beian">
+                <a target="_blank" href=" " style="display:inline-block;text-decoration:none;height:20px;line-height:20px;">
+                    <img src="/static/photo.jpg" style="float:left;"/>
+                    <p style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393;">赣公网安备 36112802000130号</p >
+                
+                </a >
+                </div>
             </div>
         </div>
 
