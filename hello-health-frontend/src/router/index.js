@@ -85,6 +85,10 @@ const router = createRouter({
                 path: "UserAgreement",
                 name: "UserAgreement",
                 component: ()=>import("@/views/UserAgreementView.vue"),
+            },{
+                path:"Trajectory",
+                name:"Trajectory",
+                component:()=>import("@/views/TrajectoryView.vue")
             }]
         },
         { path: '/:pathMatch(.*)*', name: 'NotFound', component: ()=>import("@/pages/ErrorPage.vue") },

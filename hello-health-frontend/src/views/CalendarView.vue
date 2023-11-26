@@ -508,6 +508,19 @@ export default {
             </div>
 
             <div class='sidebar-section'>
+                <div class="health-calendar">健康之路
+
+
+                
+                    <div class="goButton" @click="this.$router.push('/Trajectory')">
+                        <i class="fi fi-rr-angle-small-right centerIcon"></i>
+                    </div>
+
+                </div>
+                
+            </div>
+
+            <div class='sidebar-section'>
                 <div class="health-calendar">说明</div>
                 <ul>
                     <li>选择日期或点击右上角+号，开始创建新事件</li>
@@ -535,6 +548,10 @@ export default {
                     暂无待办事项
                 </div>
             </div>
+
+            
+
+
         </div>
 
         <!--日程新增弹窗start-->
@@ -873,4 +890,18 @@ el-dialog {
 .fc-event, .fc-event-main{
     cursor: pointer;
 }
+
+
+.goButton{
+    display: flex;
+    align-items: center;
+    margin-left: 3px;
+}
+
+.goButton:hover i{
+    margin: 0;
+    transition: 0.3s ease-in-out;
+    transform: translateX(5px);
+}
+
 </style>
