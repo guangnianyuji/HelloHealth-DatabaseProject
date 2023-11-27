@@ -8,7 +8,7 @@ import axios from "axios";
 import { onBeforeMount, onMounted, reactive, ref, watch, computed } from "vue";
 import UserInfoCard from "@/components/UserInfoCard.vue";
 import globalData from "@/global/global"
-import { ElMenuItem, ElSubMenu } from "element-plus";
+import { ElMenuItem, ElSubMenu, ElDialog} from "element-plus";
 import NotificationPopup from "@/components/NotificationPopup.vue";
 
 changeTheme("#00bfa8")
@@ -39,6 +39,8 @@ const notificationButtonClicked = () => {
 const updateNotifications = () => {
     notificationBox.value.getNotification();
 }
+
+const helpVisible = ref(false);
 
 const avatarClicked = () => {
     if (!isLogin.value) {
@@ -193,16 +195,54 @@ watch(router.currentRoute, () => {
                         <NotificationPopup ref="notificationBox"></NotificationPopup>
                     </template>
                 </el-popover>
-
                 <div class="line">
                 </div>
+                <LinkButtonWithIcon font-color="#fff" text="帮助" icon="" @click="helpButtonClicked"></LinkButtonWithIcon>
                 <LinkButtonWithIcon font-color="#fff" text="退出" icon="" @click="exitButtonClicked"></LinkButtonWithIcon>
             </div>
             <div class="rightTitle" v-if="!isLogin">
                 <img alt="" src="/static/titleImg1.png">
-
-                <LinkButtonWithIcon font-color="#fff" text="点击登录" icon="" @click="loginButtonClicked"></LinkButtonWithIcon>
+                <LinkButtonWithIcon font-color="#fff" text="帮助" icon="" @click="helpVisible = true"></LinkButtonWithIcon>
+                <LinkButtonWithIcon font-color="#fff" text="登录/注册" icon="" @click="loginButtonClicked"></LinkButtonWithIcon>
             </div>
+
+            <el-dialog 
+                v-model="helpVisible"
+                title="用户使用指南"
+                width="80%"
+                draggable>
+                <div style="float:left;text-align: left;font-size: medium;margin: 20px;">
+                    <p>欢迎您加入HelloHealth健康管理平台，一个全面的健康管理解决方案，专为追求健康生活、管理健康信息和分享健康经验的用户设计。遵循以下步骤，您可以轻松掌握平台的各项功能：</p>
+                    <h3 class="document_h2">创建您的账户</h3>
+                    <p class="document_p">1. 注册账号：访问HelloHealth平台首页，点击右上方“注册”按钮或左上方头像框。</p>
+                    <p class="document_p">2. 输入手机号与验证码：在注册页面输入手机号码。系统发送一个验证码，请输入此验证码以确认身份。</p>
+                    <p class="document_p">3. 注册成功：填写必要的个人信息，设置安全的密码后，点击提交完成注册。</p>
+                    <p class="document_p">4. 登录：使用您的手机号和密码登录进入平台。</p>
+                    <h3 class="document_h2">浏览和交互</h3>
+                    <p class="document_p">1. 健康快讯：作为登录用户，您可以在首页和健康资讯板块浏览管理员发布的最新健康快讯。</p>
+                    <p class="document_p">2. 咨询与分享：用户可以在HH论坛发布健康动态或问题咨询，管理员会审核内容后发布，其他用户可以点赞、收藏和评论。</p>
+                    <p class="document_p">3. 举报不当内容：如遇不适当内容，用户可进行举报，管理员将及时处理。</p>
+                    <h3 class="document_h2">查找和管理信息</h3>
+                    <p class="document_p">1. 查找药品信息：用户可以在HH找药板块搜索或筛选药品信息，登录的用户可以对感兴趣的药品添加到个人收藏。</p>
+                    <p class="document_p">2. 查找健康资讯：用户可以在健康资讯板块搜索或筛选健康资讯，登录的用户可以对感兴趣的资讯添加到个人收藏。</p>
+                    <p class="document_p">3. 收藏管理：登录的用户可以在收藏管理界面对已收藏的药品或资讯进行管理。</p>
+                    <p class="document_p">4. 个人空间：用户可以进入个人空间进行个人信息管理，或查看和管理关注列表、粉丝、个人发布和举报历史。</p>
+                    <h3 class="document_h2">用户互动</h3>
+                    <p class="document_p">1. 健康日历管理：在健康日历，您可以管理您的健康事项、设置手机短信提醒、跟踪健康进度等。</p>
+                    <p class="document_p">2. 关注健康达人：用户可以访问其他用户的个人空间，查看他们的健康动态并选择关注。用户关注的达人在发布新动态时，系统会发出消息通知用户。</p>
+                    <p class="document_p">3. 杏仁币激励：通过解答悬赏贴、每日登录、充值等方式，您可以获得杏仁币，进而可用于发布悬赏型帖子。</p>
+                    <h3 class="document_h2">安全支付</h3>
+                    <p class="document_p">1. 杏仁币充值：在个人空间的“我的杏仁币”板块选择“杏仁币详情”，用户可以在该页面查看杏仁币流水明细，也可以选择购买指定额度的杏仁币。</p>
+                    <p class="document_p">2. 安全支付：系统将引导您前往安全的支付平台完成支付。</p>
+                </div>
+                <template #footer>
+                    <span class="dialog-footer">
+                        <el-button @click="helpVisible = false">确认<meta name="description" content=""></el-button>
+                        <!-- <el-button type="primary" @click="deleteCheck">确认</el-button> -->
+                    </span>
+                </template>
+            </el-dialog>
+
         </div>
         <div class="contentHolder">
             <div class="sideBar">
@@ -501,5 +541,14 @@ watch(router.currentRoute, () => {
         border-radius: 50%;
     }
 
+}
+
+.document_p{
+    line-height: 1.5;
+}
+
+.document_h2{
+    margin-top: 20px;
+    color: #006264;
 }
 </style>
